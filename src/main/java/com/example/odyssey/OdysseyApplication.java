@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OdysseyBackendApplication {
+public class OdysseyApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OdysseyBackendApplication.class, args);
+        SpringApplication.run(OdysseyApplication.class, args);
     }
 
 }
