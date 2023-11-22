@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationCancelledNotification extends NotificationDTO{
+public class ReservationCancelledNotificationDTO extends NotificationDTO{
     //ReservationDTO reservation;
-    public ReservationCancelledNotification(ReservationCancelledNotification notification){
+    public ReservationCancelledNotificationDTO(ReservationCancelledNotificationDTO notification){
         super(notification.getId(),notification.getTitle(),notification.getText(),notification.getReceiver());
         //this.reservation = new ReservationDTO(notification.getReservation());
     }

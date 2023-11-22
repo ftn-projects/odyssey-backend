@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationRequestedNotification extends NotificationDTO{
+public class ReservationRequestedNotificationDTO extends NotificationDTO{
     //ReservationDTO reservation;
-    public ReservationRequestedNotification(ReservationRequestedNotification notification){
+    public ReservationRequestedNotificationDTO(ReservationRequestedNotificationDTO notification){
         super(notification.getId(),notification.getTitle(),notification.getText(),notification.getReceiver());
         //this.reservation = new ReservationDTO(notification.getReservation());
     }
