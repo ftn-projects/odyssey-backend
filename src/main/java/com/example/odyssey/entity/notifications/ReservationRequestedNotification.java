@@ -14,7 +14,6 @@ import org.springframework.lang.NonNull;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class ReservationRequestedNotification extends Notification{
     @Transient
