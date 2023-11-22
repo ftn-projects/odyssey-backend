@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Host extends User{
+    private String bio;
     @OneToMany(mappedBy="host")
     private Set<Accommodation> accommodations;
 }
