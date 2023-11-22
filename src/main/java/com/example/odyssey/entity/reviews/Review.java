@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @MappedSuperclass
 @Getter
 @Setter
@@ -19,6 +21,7 @@ public class Review {
     private Double rating;
     private String comment;
     private Status status;
+    private LocalDateTime submissionDate;
     @OneToOne
     private Guest guest;
     public enum Status{REQUESTED, DECLINED, CANCELLED, ACCEPTED};
