@@ -1,7 +1,7 @@
 package com.example.odyssey.dtos.notifications;
 
 import com.example.odyssey.dtos.reservation.ResponseReservationDTO;
-import com.example.odyssey.entity.notifications.ReservationAccreditedNotif;
+import com.example.odyssey.entity.notifications.ReservationRequestedNotif;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,10 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ReservationAccreditedNotificationDTO extends NotificationDTO {
+public class ReservationRequestedNotifDTO extends NotificationDTO {
     private ResponseReservationDTO reservation;
 
-    public ReservationAccreditedNotificationDTO(ReservationAccreditedNotif notification) {
+    public ReservationRequestedNotifDTO(ReservationRequestedNotif notification) {
         super(notification);
         this.reservation = new ResponseReservationDTO(notification.getReservation());
     }
