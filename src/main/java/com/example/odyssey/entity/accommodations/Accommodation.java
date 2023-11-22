@@ -1,5 +1,6 @@
 package com.example.odyssey.entity.accommodations;
 
+import com.example.odyssey.entity.users.Host;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +36,8 @@ public class Accommodation {
     private Integer maxGuests;
     @ElementCollection
     private Set<String> images;
-
+    @ManyToOne
+    private Host host;
     public enum Type {APARTMENT, ROOM, HOUSE} // ako je usko vezana uz klasu najbolje da bude u njoj
 
     public enum PricingType {PER_PERSON, PER_ACCOMMODATION}
