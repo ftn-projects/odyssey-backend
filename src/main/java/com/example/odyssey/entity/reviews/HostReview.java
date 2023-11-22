@@ -1,8 +1,7 @@
-package com.example.odyssey.entity.reports;
+package com.example.odyssey.entity.reviews;
 
-import com.example.odyssey.entity.users.User;
+import com.example.odyssey.entity.users.Host;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_reports")
-public class UserReport extends Report {
-    @ManyToOne
-    private User reported;
+@Table(name = "host_reviews")
+public class HostReview extends Review {
+    private Host host;
 }

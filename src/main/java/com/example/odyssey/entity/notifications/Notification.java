@@ -1,4 +1,4 @@
-package com.example.odyssey.entity.reports;
+package com.example.odyssey.entity.notifications;
 
 import com.example.odyssey.entity.users.User;
 import jakarta.persistence.*;
@@ -7,23 +7,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
-import static jakarta.persistence.InheritanceType.TABLE_PER_CLASS;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = TABLE_PER_CLASS)
-public abstract class Report {
+@Table(name = "notifications")
+@Inheritance(strategy = SINGLE_TABLE)
+@DiscriminatorColumn(name = "notification_type", discriminatorType = DiscriminatorType.STRING)
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String description;
-    private LocalDateTime submissionDate;
+    private String title;
+    private String text;
     @ManyToOne
-    private User submitter;
+    private User receiver;
 }
