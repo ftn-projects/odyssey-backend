@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,14 +16,17 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "accommodation_modification_requests")
 public class AccommodationModificationRequest {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime submissionDate;
+    @Enumerated(value = EnumType.ORDINAL)
     private Type type;
     private String newTitle;
     private String newDescription;
+    @Enumerated(value = EnumType.ORDINAL)
     private Accommodation.Type newAccommodationType;
     @Embedded
     private Address newAddress;
@@ -30,13 +34,14 @@ public class AccommodationModificationRequest {
     private Boolean newAutomaticApproval;
     private Duration newCancellationDue;
     @ElementCollection
-    private Set<AvailabilitySlot> newAvailableSlots;
-    @ManyToMany
-    private Set<Amenity> newAmenities;
+    private Set<AvailabilitySlot> newAvailableSlots = new HashSet<>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "accommodation_request_has_amenity", joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
+    private Set<Amenity> newAmenities = new HashSet<>();
     private Integer newMinGuests;
     private Integer newMaxGuests;
     @ElementCollection
-    private Set<String> newImages;
+    private Set<String> newImages = new HashSet<>();
 
     public enum Type {CREATE, UPDATE}
 }

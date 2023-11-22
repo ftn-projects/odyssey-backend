@@ -14,16 +14,15 @@ import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy=SINGLE_TABLE)
+@Table(name = "notifications")
+@Inheritance(strategy = SINGLE_TABLE)
+@DiscriminatorColumn(name = "notification_type", discriminatorType = DiscriminatorType.STRING)
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    String title;
-
-    String text;
-
+    private String title;
+    private String text;
     @ManyToOne
-    User receiver;
+    private User receiver;
 }

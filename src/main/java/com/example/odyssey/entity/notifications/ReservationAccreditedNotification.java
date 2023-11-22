@@ -3,6 +3,7 @@ package com.example.odyssey.entity.notifications;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.users.User;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
@@ -16,9 +17,12 @@ import org.springframework.lang.NonNull;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ReservationAccreditedNotification extends Notification{
+@DiscriminatorValue(value = "RESERVATION_ACCREDITED")
+public class ReservationAccreditedNotification extends Notification {
     @Transient
     private static final String defaultTitle = "Reservation accredited";
+    @ManyToOne
+    private Reservation reservation;
 
     public ReservationAccreditedNotification() {
         super(null, defaultTitle, null, null);
@@ -32,11 +36,6 @@ public class ReservationAccreditedNotification extends Notification{
                 "Your request for " + reservation.getAccommodation().getTitle() + " has been " + reservation.getStatus().toString().toLowerCase(),
                 receiver
         );
-
         this.reservation = reservation;
     }
-
-
-    @ManyToOne
-    Reservation reservation;
 }

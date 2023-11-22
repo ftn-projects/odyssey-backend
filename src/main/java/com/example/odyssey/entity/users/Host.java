@@ -1,6 +1,7 @@
 package com.example.odyssey.entity.users;
 
 import com.example.odyssey.entity.accommodations.Accommodation;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
@@ -15,8 +16,9 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Host extends User{
+@DiscriminatorValue(value = "HOST")
+public class Host extends User {
     private String bio;
-    @OneToMany(mappedBy="host")
+    @OneToMany(mappedBy = "host")
     private Set<Accommodation> accommodations;
 }

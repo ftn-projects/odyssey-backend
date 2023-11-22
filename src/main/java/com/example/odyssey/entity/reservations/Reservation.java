@@ -16,27 +16,23 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "reservations")
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    Double price;
-    Integer guestNumber;
-    ReservationStatus status;
-    LocalDateTime requestDate;
-    LocalDateTime reservationDate;
+    private Long id;
+    private Double price;
+    private Integer guestNumber;
+    @Enumerated(value = EnumType.ORDINAL)
+    private ReservationStatus status;
+    private LocalDateTime requestDate;
+    private LocalDateTime reservationDate;
     @Embedded
-    TimeSlot timeSlot;
+    private TimeSlot timeSlot;
     @ManyToOne
-    Accommodation accommodation;
+    private Accommodation accommodation;
     @ManyToOne
-    Guest guest;
-    public enum ReservationStatus {
-        REQUESTED,
-        DECLINED,
-        CANCELLED_REQUEST,
-        CANCELLED_RESERVATION,
-        ACCEPTED
-    }
+    private Guest guest;
+
+    public enum ReservationStatus {REQUESTED, DECLINED, CANCELLED_REQUEST, CANCELLED_RESERVATION, ACCEPTED}
 }

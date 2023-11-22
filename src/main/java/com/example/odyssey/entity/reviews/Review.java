@@ -14,15 +14,18 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Review {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double rating;
     private String comment;
+    @Enumerated(value = EnumType.ORDINAL)
     private Status status;
     private LocalDateTime submissionDate;
-    @OneToOne
-    private Guest guest;
-    public enum Status{REQUESTED, DECLINED, CANCELLED, ACCEPTED};
+    @ManyToOne
+    private Guest submitter;
+
+    public enum Status {REQUESTED, DECLINED, CANCELLED, ACCEPTED}
 }

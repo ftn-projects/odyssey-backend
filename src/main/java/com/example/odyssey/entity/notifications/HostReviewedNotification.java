@@ -3,10 +3,7 @@ package com.example.odyssey.entity.notifications;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.users.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +14,12 @@ import org.springframework.lang.NonNull;
 @Getter
 @Setter
 @AllArgsConstructor
-public class HostReviewedNotification extends  Notification{
+@DiscriminatorValue(value = "HOST_REVIEW")
+public class HostReviewedNotification extends Notification {
     @Transient
     private static final String defaultTitle = "Host page reviewed";
+    @ManyToOne
+    private HostReview review;
 
     public HostReviewedNotification() {
         super(null, defaultTitle, null, null);
@@ -30,14 +30,9 @@ public class HostReviewedNotification extends  Notification{
         super(
                 null,
                 defaultTitle,
-                "Your host page has been reviewed by " + review.getGuest().getName(),
+                "Your host page has been reviewed by " + review.getSubmitter().getName(),
                 receiver
         );
-
         this.review = review;
     }
-
-
-    @ManyToOne
-    HostReview review;
 }
