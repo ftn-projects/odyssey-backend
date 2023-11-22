@@ -2,6 +2,8 @@ package com.example.odyssey.entity.reports;
 
 import com.example.odyssey.entity.users.User;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "user_reports")
 public class UserReport extends Report {
-    private User reported;
+    @ManyToOne
+    private User reportedUser;
 }

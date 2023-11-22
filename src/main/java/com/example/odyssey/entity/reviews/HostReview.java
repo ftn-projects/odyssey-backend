@@ -1,6 +1,6 @@
 package com.example.odyssey.entity.reviews;
 
-import com.example.odyssey.entity.accommodations.Accommodation;
+import com.example.odyssey.entity.users.Host;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "accommodation_reviews")
-public class AccommodationReview extends Review {
-    private Accommodation accommodation;
+@Table(name = "host_reviews")
+public class HostReview extends Review {
+    private Host host;
 }

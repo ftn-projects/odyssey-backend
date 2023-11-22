@@ -1,4 +1,4 @@
-package com.example.odyssey.entity.accommodations;
+package com.example.odyssey.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -15,6 +15,5 @@ public class Address {
     private String street;
     private Integer number;
     private String city;
-    private String state;
     private String country;
 }

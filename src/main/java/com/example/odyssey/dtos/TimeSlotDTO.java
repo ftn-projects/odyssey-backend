@@ -1,24 +1,24 @@
-package com.example.odyssey.entity;
+package com.example.odyssey.dtos;
 
-import jakarta.persistence.Embeddable;
+import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.TimeSlot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
-@Embeddable
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TimeSlot {
+public class TimeSlotDTO {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    public Duration getDuration() {
-        return Duration.between(start, end);
+    public TimeSlotDTO(TimeSlot address) {
+        start = address.getStart();
+        end = address.getEnd();
     }
 }
