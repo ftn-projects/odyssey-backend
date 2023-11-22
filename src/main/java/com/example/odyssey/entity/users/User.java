@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -33,7 +34,7 @@ public class User {
     private String phone;
     private String profileImage;
     @ElementCollection
-    private Map<String, String> settings;
+    private Map<String, String> settings = new HashMap<>();
 
     public enum Role {ADMIN, HOST, GUEST}
 
