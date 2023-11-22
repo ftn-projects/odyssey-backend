@@ -18,7 +18,7 @@ import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     String title;
 
@@ -26,7 +26,4 @@ public class Notification {
 
     @ManyToOne
     User receiver;
-
-
-
 }
