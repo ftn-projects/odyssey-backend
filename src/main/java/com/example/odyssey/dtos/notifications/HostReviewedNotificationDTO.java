@@ -1,8 +1,8 @@
 package com.example.odyssey.dtos.notifications;
 
-import com.example.odyssey.dtos.reviews.HostReviewCreationDTO;
-import com.example.odyssey.entity.notifications.HostReviewedNotification;
-import lombok.AllArgsConstructor;
+import com.example.odyssey.dtos.reviews.RequestHostReviewDTO;
+import com.example.odyssey.dtos.reviews.ResponseHostReviewDTO;
+import com.example.odyssey.entity.notifications.HostReviewedNotif;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,12 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class HostReviewedNotificationDTO extends NotificationDTO{
-    private HostReviewCreationDTO review;
-    public HostReviewedNotificationDTO(HostReviewedNotification notification){
-        super(notification.getId(),notification.getTitle(),notification.getText(),notification.getReceiver());
-        this.review = new HostReviewCreationDTO(notification.getReview());
+public class HostReviewedNotificationDTO extends NotificationDTO {
+    private ResponseHostReviewDTO review;
+
+    public HostReviewedNotificationDTO(HostReviewedNotif notification) {
+        super(notification);
+        this.review = new ResponseHostReviewDTO(notification.getReview());
     }
 }
 

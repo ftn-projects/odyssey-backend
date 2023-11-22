@@ -1,6 +1,5 @@
 package com.example.odyssey.entity.notifications;
 
-import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.users.User;
 import jakarta.persistence.DiscriminatorValue;
@@ -9,34 +8,35 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 
 @Entity
 @Getter
 @Setter
+@Validated
 @AllArgsConstructor
-@DiscriminatorValue(value = "RESERVATION_CANCELLED")
-public class ReservationCancelledNotification extends Notification{
+@DiscriminatorValue(value = "ACCOMMODATION_REVIEW")
+public class AccommodationReviewedNotif extends Notification {
     @Transient
-    private static final String defaultTitle = "Reservation cancelled";
+    private static final String defaultTitle = "Accommodation reviewed";
     @ManyToOne
-    private Reservation reservation;
+    private AccommodationReview review;
 
-    public ReservationCancelledNotification() {
+    public AccommodationReviewedNotif() {
         super(null, defaultTitle, null, null);
-        reservation = null;
+        review = null;
     }
 
-    public ReservationCancelledNotification(@NonNull Reservation reservation, @NonNull User receiver) {
+    public AccommodationReviewedNotif(@NonNull AccommodationReview review, @NonNull User receiver) {
         super(
                 null,
                 defaultTitle,
-                "Reservation has been cancelled" + reservation.getGuest().getName(),
+                "Accommodation " + review.getAccommodation().getTitle() + " has been reviewed by" + review.getSubmitter().getName(),
                 receiver
         );
         // Additional initialization specific to AccommodationReviewedNotification if needed
-        this.reservation = reservation;
+        this.review = review;
     }
 }

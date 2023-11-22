@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegistrationDTO {
@@ -18,13 +17,4 @@ public class RegistrationDTO {
     private String surname;
     private String phone;
     private AddressDTO address;
-
-    public RegistrationDTO(User user){
-        email = user.getEmail();
-        password = user.getPassword();
-        name = user.getName();
-        surname = user.getSurname();
-        phone = user.getPhone();
-        address = new AddressDTO(user.getAddress());
-    }
 }

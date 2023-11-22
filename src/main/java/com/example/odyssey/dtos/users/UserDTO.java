@@ -9,15 +9,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserDTO {
     private Long id;
     private String name;
     private String surname;
+    private User.Role role;
 
-    public UserDTO(User user){
+    public UserDTO(User user) {
         id = user.getId();
         name = user.getName();
         surname = user.getSurname();
+        role = user.getRole();
     }
 }

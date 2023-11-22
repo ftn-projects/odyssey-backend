@@ -16,7 +16,7 @@ public class AddressDTO {
     private String city;
     private String country;
 
-    public AddressDTO(Address address){
+    public AddressDTO(Address address) {
         street = address.getStreet();
         number = address.getNumber();
         city = address.getCity();

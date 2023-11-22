@@ -10,9 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HostDTO extends UserDTO{
+public class HostDTO extends UserDTO {
     String bio;
-    public HostDTO(Host host){
+
+    public HostDTO(Host host) {
         super(host);
         bio = host.getBio();
     }

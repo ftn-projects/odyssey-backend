@@ -1,7 +1,6 @@
 package com.example.odyssey.entity.accommodations;
 
 import com.example.odyssey.entity.Address;
-import com.example.odyssey.entity.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,13 +18,15 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "accommodation_modification_requests")
-public class AccommodationModificationRequest {
+public class AccommodationModification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime submissionDate;
     @Enumerated(value = EnumType.ORDINAL)
     private Type type;
+    @Enumerated(value = EnumType.ORDINAL)
+    private Status status;
     private String newTitle;
     private String newDescription;
     @Enumerated(value = EnumType.ORDINAL)
@@ -46,5 +47,8 @@ public class AccommodationModificationRequest {
     private Set<String> newImages = new HashSet<>();
     @ManyToOne
     private Accommodation accommodationId;
+
     public enum Type {CREATE, UPDATE}
+
+    public enum Status {ACCEPTED, DECLINED}
 }

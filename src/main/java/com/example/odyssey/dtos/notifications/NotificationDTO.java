@@ -2,7 +2,6 @@ package com.example.odyssey.dtos.notifications;
 
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.users.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class NotificationDTO {
     private Long id;
     private String title;

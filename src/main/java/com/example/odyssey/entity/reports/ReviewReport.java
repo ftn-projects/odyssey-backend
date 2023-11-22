@@ -15,5 +15,5 @@ import lombok.Setter;
 @Table(name = "review_reports")
 public class ReviewReport extends Report {
     @ManyToOne
-    private Review reported;
+    private Review reportedReview;
 }

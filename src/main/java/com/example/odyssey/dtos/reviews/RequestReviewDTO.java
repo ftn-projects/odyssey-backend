@@ -13,18 +13,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewCreationDTO {
+public class RequestReviewDTO {
     private Double rating;
     private String comment;
     private Review.Status status;
     private LocalDateTime submissionDate;
-    private Guest submitter;
-
-    public ReviewCreationDTO(Review review){
-        rating = review.getRating();
-        comment = review.getComment();
-        status = review.getStatus();
-        submissionDate = review.getSubmissionDate();
-        submitter = review.getSubmitter();
-    }
+    private Long submitterId;
 }

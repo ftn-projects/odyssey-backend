@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor

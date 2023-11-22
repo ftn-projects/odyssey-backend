@@ -1,7 +1,6 @@
 package com.example.odyssey.dtos.reports;
 
 import com.example.odyssey.entity.reports.Report;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,14 +11,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class ReportDTO {
+public abstract class ResponseReportDTO {
     private Long id;
     private String description;
     private LocalDateTime submissionDate;
     private UserDTO submitter;
 
-    public ReportDTO(Report report){
+    public ResponseReportDTO(Report report) {
         id = report.getId();
         description = report.getDescription();
         submissionDate = report.getSubmissionDate();

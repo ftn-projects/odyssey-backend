@@ -13,9 +13,4 @@ import lombok.Setter;
 public class LoginDTO {
     private String email;
     private String password;
-
-    public LoginDTO(User user){
-        email = user.getEmail();
-        password = user.getPassword();
-    }
 }

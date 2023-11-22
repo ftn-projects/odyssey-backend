@@ -11,14 +11,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class ReservationRequestCreationDTO {
+public class ResponseReservationDTO {
     Long accommodationId;
     TimeSlot timeSlot;
     Integer guestNumber;
     UserDTO guest;
 
-    public ReservationRequestCreationDTO(Reservation reservation){
+    public ResponseReservationDTO(Reservation reservation){
         accommodationId = reservation.getAccommodation().getId();
         timeSlot = reservation.getTimeSlot();
         guestNumber = reservation.getGuestNumber();
