@@ -1,6 +1,6 @@
 package com.example.odyssey.entity.users;
 
-import com.example.odyssey.entity.accommodations.Address;
+import com.example.odyssey.entity.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +27,7 @@ public class User {
     private String name;
     private String surname;
     private String email;
+    private String password;
     @Embedded
     private Address address;
     private String phone;

@@ -1,4 +1,4 @@
-package com.example.odyssey.entity.accommodations;
+package com.example.odyssey.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,6 @@
 package com.example.odyssey.entity.accommodations;
 
+import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.users.Host;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
