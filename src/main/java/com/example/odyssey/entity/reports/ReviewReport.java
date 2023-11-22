@@ -1,6 +1,6 @@
 package com.example.odyssey.entity.reports;
 
-import com.example.odyssey.entity.users.User;
+import com.example.odyssey.entity.reviews.Review;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,5 +15,5 @@ import lombok.Setter;
 @Table(name = "review_reports")
 public class ReviewReport extends Report {
     @ManyToOne
-    private User reported;
+    private Review reported;
 }
