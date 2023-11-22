@@ -1,12 +1,13 @@
 package com.example.odyssey.entity.users;
 
-import com.example.odyssey.entity.accommodations.Address;
+import com.example.odyssey.entity.Address;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -27,12 +28,13 @@ public class User {
     private String name;
     private String surname;
     private String email;
+    private String password;
     @Embedded
     private Address address;
     private String phone;
     private String profileImage;
     @ElementCollection
-    private Map<String, String> settings;
+    private Map<String, String> settings = new HashMap<>();
 
     public enum Role {ADMIN, HOST, GUEST}
 
