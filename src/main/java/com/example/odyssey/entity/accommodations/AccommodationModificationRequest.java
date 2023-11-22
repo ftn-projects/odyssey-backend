@@ -1,6 +1,7 @@
 package com.example.odyssey.entity.accommodations;
 
 import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.users.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,6 +44,7 @@ public class AccommodationModificationRequest {
     private Integer newMaxGuests;
     @ElementCollection
     private Set<String> newImages = new HashSet<>();
-
+    @ManyToOne
+    private Accommodation accommodationId;
     public enum Type {CREATE, UPDATE}
 }
