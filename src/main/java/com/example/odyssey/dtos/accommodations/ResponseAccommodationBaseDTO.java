@@ -1,7 +1,7 @@
 package com.example.odyssey.dtos.accommodations;
 
 import com.example.odyssey.dtos.AddressDTO;
-import com.example.odyssey.dtos.users.HostDTO;
+import com.example.odyssey.dtos.users.ResponseHostDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ public class ResponseAccommodationBaseDTO {
     private Accommodation.Type type;
     private AddressDTO address;
     private Accommodation.PricingType pricing;
-    private HostDTO host;
+    private ResponseHostDTO host;
 
     public ResponseAccommodationBaseDTO(Accommodation accommodation) {
         id = accommodation.getId();
@@ -26,6 +26,6 @@ public class ResponseAccommodationBaseDTO {
         type = accommodation.getType();
         address = new AddressDTO(accommodation.getAddress());
         pricing = accommodation.getPricing();
-        host = new HostDTO(accommodation.getHost());
+        host = new ResponseHostDTO(accommodation.getHost());
     }
 }

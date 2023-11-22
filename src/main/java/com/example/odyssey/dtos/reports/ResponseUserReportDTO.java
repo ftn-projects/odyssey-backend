@@ -1,6 +1,6 @@
 package com.example.odyssey.dtos.reports;
 
-import com.example.odyssey.dtos.users.UserDTO;
+import com.example.odyssey.dtos.users.ResponseUserDTO;
 import com.example.odyssey.entity.reports.UserReport;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +13,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ResponseUserReportDTO extends ResponseReportDTO {
-    private UserDTO reportedUser;
+    private ResponseUserDTO reportedUser;
 
     public ResponseUserReportDTO(UserReport report) {
         super(report);
-        reportedUser = new UserDTO(report.getReportedUser());
+        reportedUser = new ResponseUserDTO(report.getReportedUser());
     }
 }

@@ -9,10 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AccommodationReviewedNotificationDTO extends NotificationDTO {
+public class AccommodationReviewedNotifDTO extends NotificationDTO {
     private ResponseAccommodationReviewDTO review;
 
-    public AccommodationReviewedNotificationDTO(AccommodationReviewedNotif notification) {
+    public AccommodationReviewedNotifDTO(AccommodationReviewedNotif notification) {
         super(notification);
         this.review = new ResponseAccommodationReviewDTO(notification.getReview());
     }

@@ -1,8 +1,6 @@
 package com.example.odyssey.dtos.reservation;
 
-import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.TimeSlot;
-import com.example.odyssey.entity.reservations.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,9 +1,6 @@
 package com.example.odyssey.dtos.accommodations;
 
-import com.example.odyssey.dtos.AddressDTO;
-import com.example.odyssey.dtos.users.HostDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
