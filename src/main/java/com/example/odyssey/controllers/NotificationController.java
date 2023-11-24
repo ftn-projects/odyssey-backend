@@ -43,13 +43,17 @@ public class NotificationController {
         return new ResponseEntity<>(dummyData, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}/types")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<NotificationDTO>> getNotificationsByUserAndTypes(
             @PathVariable Long userId,
-            @RequestParam List<Integer> notificationTypes
+            @RequestParam(required = false) List<Integer> notificationTypes
     ) {
-        //List<NotificationDTO> notifications = notificationService.getNotificationsByUserAndTypes(userId, notificationTypes);
-        List<NotificationDTO> notifications = new ArrayList<>();
+        List<NotificationDTO> notifications;
+        if (notificationTypes != null && !notificationTypes.isEmpty()) {
+            notifications = new ArrayList<>();
+        } else {
+            notifications = new ArrayList<>();
+        }
         return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
 
