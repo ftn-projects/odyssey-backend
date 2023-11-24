@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -18,4 +20,9 @@ import lombok.Setter;
 public class UserReport extends Report {
     @ManyToOne
     private User reportedUser;
+
+    public UserReport(Long id, String description, LocalDateTime submissionDate, User submitter, User reportedUser) {
+        super(id, description, submissionDate, submitter);
+        this.reportedUser = reportedUser;
+    }
 }
