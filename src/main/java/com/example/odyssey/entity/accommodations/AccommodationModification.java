@@ -27,28 +27,38 @@ public class AccommodationModification {
     private Type type;
     @Enumerated(value = EnumType.ORDINAL)
     private Status status;
-    private String newTitle;
-    private String newDescription;
-    @Enumerated(value = EnumType.ORDINAL)
-    private Accommodation.Type newAccommodationType;
     @Embedded
-    private Address newAddress;
-    private Double newDefaultPrice;
-    private Boolean newAutomaticApproval;
-    private Duration newCancellationDue;
-    @ElementCollection
-    private Set<AvailabilitySlot> newAvailableSlots = new HashSet<>();
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "accommodation_request_has_amenity", joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
-    private Set<Amenity> newAmenities = new HashSet<>();
-    private Integer newMinGuests;
-    private Integer newMaxGuests;
-    @ElementCollection
-    private Set<String> newImages = new HashSet<>();
+    private ModificationDetails details;
     @ManyToOne
-    private Accommodation accommodationId;
+    private Accommodation accommodation;
 
     public enum Type {CREATE, UPDATE}
 
-    public enum Status {ACCEPTED, DECLINED}
+    public enum Status {PENDING, ACCEPTED, DECLINED}
+
+    @Embeddable
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ModificationDetails {
+        private String newTitle;
+        private String newDescription;
+        @Enumerated(value = EnumType.ORDINAL)
+        private Accommodation.Type newAccommodationType;
+        @Embedded
+        private Address newAddress;
+        private Double newDefaultPrice;
+        private Boolean newAutomaticApproval;
+        private Duration newCancellationDue;
+        @ElementCollection
+        private Set<AvailabilitySlot> newAvailableSlots = new HashSet<>();
+        @ManyToMany(cascade = CascadeType.ALL)
+        @JoinTable(name = "accommodation_request_has_amenity", joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
+        private Set<Amenity> newAmenities = new HashSet<>();
+        private Integer newMinGuests;
+        private Integer newMaxGuests;
+        @ElementCollection
+        private Set<String> newImages = new HashSet<>();
+    }
 }
