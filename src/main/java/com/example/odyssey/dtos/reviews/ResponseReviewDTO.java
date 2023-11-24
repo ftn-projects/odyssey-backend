@@ -1,6 +1,7 @@
 package com.example.odyssey.dtos.reviews;
 
 import com.example.odyssey.dtos.users.ResponseUserDTO;
+import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.reviews.Review;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,13 @@ public class ResponseReviewDTO {
     private Double rating;
     private String comment;
     private LocalDateTime submissionDate;
-    private ResponseUserDTO submitter;
+    private UserDTO submitter;
 
     public ResponseReviewDTO(Review review) {
         id = review.getId();
         rating = review.getRating();
         comment = review.getComment();
         submissionDate = review.getSubmissionDate();
-        submitter = new ResponseUserDTO(review.getSubmitter());
+        submitter = new UserDTO(review.getSubmitter());
     }
 }

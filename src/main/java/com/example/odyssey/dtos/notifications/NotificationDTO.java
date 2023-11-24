@@ -1,9 +1,6 @@
 package com.example.odyssey.dtos.notifications;
 
-import com.example.odyssey.dtos.reservation.RequestReservationDTO;
 import com.example.odyssey.dtos.reservation.ResponseReservationDTO;
-import com.example.odyssey.dtos.reviews.RequestAccommodationReviewDTO;
-import com.example.odyssey.dtos.reviews.RequestHostReviewDTO;
 import com.example.odyssey.dtos.reviews.ResponseAccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.ResponseHostReviewDTO;
 import com.example.odyssey.dtos.users.ResponseUserDTO;
@@ -11,12 +8,9 @@ import com.example.odyssey.entity.notifications.AccommodationReviewedNotif;
 import com.example.odyssey.entity.notifications.HostReviewedNotif;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.notifications.ReservationNotif;
-import com.example.odyssey.entity.users.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.awt.geom.QuadCurve2D;
 
 @Getter
 @Setter
