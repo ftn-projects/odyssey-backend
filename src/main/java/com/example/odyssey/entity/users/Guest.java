@@ -21,7 +21,9 @@ public class Guest extends User {
     @JoinTable(name = "guest_favourited", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "accommodation_id", referencedColumnName = "id"))
     private Set<Accommodation> favourites;
 
-    public Guest(Long id, Role role, AccountStatus status, String name, String surname, String email, String password, Address address, String phone, String profileImage, Map<String, String> settings, Set<Accommodation> favourites) {
+    public Guest(Long id, Role role, AccountStatus status, String name, String surname,
+                 String email, String password, Address address, String phone, String profileImage,
+                 Map<String, String> settings, Set<Accommodation> favourites) {
         super(id, role, status, name, surname, email, password, address, phone, profileImage, settings);
         this.favourites = favourites;
     }
