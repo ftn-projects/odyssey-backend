@@ -1,6 +1,7 @@
 package com.example.odyssey.dtos.users;
 
 import com.example.odyssey.dtos.AddressDTO;
+import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,4 +23,10 @@ public class RegistrationDTO extends UserDTO{
     private AddressDTO address;
     private Map<String, String> settings;
     private String bio;
+
+    public RegistrationDTO(User user){this(user.getId(), user.getRole(),user.getEmail(),user.getPassword(),user.getName(),
+            user.getSurname(),user.getPhone(),new AddressDTO(user.getAddress()), user.getSettings(),"");}
+
+    public RegistrationDTO(Host host){this(host.getId(), host.getRole(),host.getEmail(),host.getPassword(),host.getName(),
+            host.getSurname(),host.getPhone(),new AddressDTO(host.getAddress()), host.getSettings(),host.getBio());}
 }
