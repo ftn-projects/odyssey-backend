@@ -36,30 +36,25 @@ public class NotificationController {
         return new ResponseEntity<>(dummyData, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/user/{userId}")
-    public ResponseEntity<List<NotificationDTO>> getNotificationsByUser(Integer userId){
-        List<NotificationDTO> dummyData = new ArrayList<>();
-        //dummy data = notificationService.getAllByUser(userId);
-        return new ResponseEntity<>(dummyData, HttpStatus.OK);
-    }
-
-    @GetMapping("/user/{userId}/types")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<NotificationDTO>> getNotificationsByUserAndTypes(
             @PathVariable Long userId,
-            @RequestParam List<Integer> notificationTypes
+            @RequestParam(required = false) List<Integer> notificationTypes
     ) {
-        //List<NotificationDTO> notifications = notificationService.getNotificationsByUserAndTypes(userId, notificationTypes);
-        List<NotificationDTO> notifications = new ArrayList<>();
+        List<NotificationDTO> notifications;
+        if (notificationTypes != null && !notificationTypes.isEmpty()) {
+            notifications = new ArrayList<>();
+        } else {
+            notifications = new ArrayList<>();
+        }
         return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<NotificationDTO> updateNotification(@PathVariable Long id) {
         NotificationDTO updatedNotification = new NotificationDTO();
-
         //updatedNotification = notificationService.updateNotification(id);
         //This is for setting the notification as read, service method name is placeholder
-
         if (updatedNotification != null) {
             return new ResponseEntity<>(updatedNotification, HttpStatus.OK);
         } else {
