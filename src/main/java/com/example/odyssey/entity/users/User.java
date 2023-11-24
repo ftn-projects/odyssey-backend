@@ -38,5 +38,5 @@ public class User {
 
     public enum Role {ADMIN, HOST, GUEST}
 
-    public enum AccountStatus {PENDING_ACTIVATION, ACTIVE, BLOCKED, DEACTIVATED}
+    public enum AccountStatus {PENDING, ACTIVE, BLOCKED, DEACTIVATED}
 }
