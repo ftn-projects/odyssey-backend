@@ -14,6 +14,4 @@ public class NotificationController {
     // PUT OpenNotification(Long notificationID)
     // PUT OpenAllNotifications(Long userID)
 
-
-
 }
