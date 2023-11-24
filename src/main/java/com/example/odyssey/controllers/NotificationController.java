@@ -36,13 +36,6 @@ public class NotificationController {
         return new ResponseEntity<>(dummyData, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/user/{userId}")
-    public ResponseEntity<List<NotificationDTO>> getNotificationsByUser(Integer userId){
-        List<NotificationDTO> dummyData = new ArrayList<>();
-        //dummy data = notificationService.getAllByUser(userId);
-        return new ResponseEntity<>(dummyData, HttpStatus.OK);
-    }
-
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<NotificationDTO>> getNotificationsByUserAndTypes(
             @PathVariable Long userId,
