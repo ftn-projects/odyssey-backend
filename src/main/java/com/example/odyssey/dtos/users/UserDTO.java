@@ -5,22 +5,20 @@ import com.example.odyssey.entity.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestUserModificationDTO {
+public class UserDTO {
     private Long id;
+    private User.Role role;
+    private String email;
     private String name;
     private String surname;
-    private String email;
-    private String password;
-    private AddressDTO address;
     private String phone;
-    private Map<String, String> settings = new HashMap<>();
+    private AddressDTO address;
+    private Map<String, String> settings;
+    private String bio;
 }
