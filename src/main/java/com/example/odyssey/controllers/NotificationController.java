@@ -56,10 +56,8 @@ public class NotificationController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<NotificationDTO> updateNotification(@PathVariable Long id) {
         NotificationDTO updatedNotification = new NotificationDTO();
-
         //updatedNotification = notificationService.updateNotification(id);
         //This is for setting the notification as read, service method name is placeholder
-
         if (updatedNotification != null) {
             return new ResponseEntity<>(updatedNotification, HttpStatus.OK);
         } else {
