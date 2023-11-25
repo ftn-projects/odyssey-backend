@@ -1,13 +1,15 @@
 package com.example.odyssey.dtos.notifications;
 
-import com.example.odyssey.dtos.reservation.ResponseReservationDTO;
-import com.example.odyssey.dtos.reviews.ResponseAccommodationReviewDTO;
-import com.example.odyssey.dtos.reviews.ResponseHostReviewDTO;
-import com.example.odyssey.dtos.users.ResponseUserDTO;
+import com.example.odyssey.dtos.reservation.ReservationDTO;
+import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
+import com.example.odyssey.dtos.reviews.HostReviewDTO;
+import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.notifications.AccommodationReviewedNotif;
 import com.example.odyssey.entity.notifications.HostReviewedNotif;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.notifications.ReservationNotif;
+import com.example.odyssey.entity.users.User;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,46 +17,39 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class NotificationDTO {
     private Long id;
     private String title;
     private String text;
-    private ResponseUserDTO receiver;
-    private ResponseReservationDTO reservation;
-    private ResponseAccommodationReviewDTO accommodationReview;
-    private ResponseHostReviewDTO hostReview;
+    private UserDTO receiver;
+    private ReservationDTO reservation;
+    private AccommodationReviewDTO accommodationReview;
+    private HostReviewDTO hostReview;
 
-
-    public NotificationDTO(Notification notification){
-        this.id = notification.getId();
-        this.title = notification.getTitle();
-        this.text = notification.getText();
-        this.receiver = new ResponseUserDTO(notification.getReceiver());
+    public NotificationDTO(Long id, String title, String text, User receiver) {
+        this.id = id;
+        this.title = title;
+        this.text = text;
+        this.receiver = new UserDTO(receiver);
     }
 
-    public NotificationDTO(AccommodationReviewedNotif notification){
-        this.id = notification.getId();
-        this.title = notification.getTitle();
-        this.text = notification.getText();
-        this.receiver = new ResponseUserDTO(notification.getReceiver());
-        this.accommodationReview = new ResponseAccommodationReviewDTO(notification.getReview());
+    public NotificationDTO(Notification notification) {
+        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
     }
 
-    public NotificationDTO(HostReviewedNotif notification){
-        this.id = notification.getId();
-        this.title = notification.getTitle();
-        this.text = notification.getText();
-        this.receiver = new ResponseUserDTO(notification.getReceiver());
-        this.hostReview = new ResponseHostReviewDTO(notification.getReview());
+    public NotificationDTO(AccommodationReviewedNotif notification) {
+        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
+        accommodationReview = new AccommodationReviewDTO(notification.getReview());
     }
 
-    public NotificationDTO(ReservationNotif notification){
-        this.id = notification.getId();
-        this.title = notification.getTitle();
-        this.text = notification.getText();
-        this.receiver = new ResponseUserDTO(notification.getReceiver());
-        this.reservation = new ResponseReservationDTO(notification.getReservation());
+    public NotificationDTO(HostReviewedNotif notification) {
+        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
+        hostReview = new HostReviewDTO(notification.getReview());
     }
 
-
+    public NotificationDTO(ReservationNotif notification) {
+        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
+        reservation = new ReservationDTO(notification.getReservation());
+    }
 }

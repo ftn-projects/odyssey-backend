@@ -1,6 +1,5 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.AddressDTO;
 import com.example.odyssey.dtos.users.RegistrationDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.Address;
@@ -11,110 +10,119 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
 public class UserController {
-    @GetMapping("/{id}")
-    public Guest getGuestById(@PathVariable Long id){
-        return new Guest(id,User.Role.GUEST,User.AccountStatus.ACTIVE,"Milan","Stankovic",
-                "milan@gmail.com","123", new Address("Ulica",15,"Beograd","Srbija"),
-                "0612345678","image.png", new HashMap<>(), new HashSet<>());
+//    @Autowired
+//    private UserService service;
+//
+//    @Autowired
+//    public UserController(UserService service) {
+//        this.service = service;
+//    }
+
+    private final List<User> data;
+
+    public static List<User> generateDataUsers() {
+        return new ArrayList<>() {{
+            add(new Guest());
+            add(new Host());
+            add(new Guest());
+            add(new Guest());
+            add(new User());
+        }};
+    }
+
+    public UserController() {
+        data = generateDataUsers();
     }
 
     @GetMapping("/{id}")
-    public Host getHostById(@PathVariable Long id){
-        return new Host(id,User.Role.HOST,User.AccountStatus.ACTIVE,"Rada","Manojlovic",
-                "radojka@gmail.com","456", new Address("Ulica",16,"Beograd","Srbija"),
-                "0612345678","image.png", new HashMap<>(),"bio",new HashSet<>());
+    public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+        User user = data.get(0);
+
+//        user = service.findById(id);
+
+        UserDTO userDTO;
+        if (user.getRole().equals(User.Role.HOST))
+            userDTO = new UserDTO((Host) user);
+        else userDTO = new UserDTO(user);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+//        TODO Guest g = new Guest(id, User.Role.GUEST, User.AccountStatus.ACTIVE, "Milan", "Stankovic",
+//                "milan@gmail.com", "123", new Address("Ulica", 15, "Beograd", "Srbija"),
+//                "0612345678", "image.png", new HashMap<>(), new HashSet<>());
     }
 
     @GetMapping("/login/{email}/{password}")
-    public UserDTO login(@PathVariable String email, @PathVariable String password){
-        return new UserDTO(123L, User.Role.HOST, email,
-                "Slavica","Cukteras","0622345678",
-                new AddressDTO(new Address("Ulica",16,"Beograd","Srbija")),
-                new HashMap<>(),"");
+    public ResponseEntity<UserDTO> login(@PathVariable String email, @PathVariable String password) {
+        User user = data.get(1);
+
+//        user = service.login(email, password);
+
+        UserDTO dto;
+        if (user.getRole().equals(User.Role.HOST))
+            dto = new UserDTO((Host) user);
+        else dto = new UserDTO(user);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+//        TODO new UserDTO(123L, User.Role.HOST, email,
+//                "Slavica", "Cukteras", "0622345678",
+//                new AddressDTO(new Address("Ulica", 16, "Beograd", "Srbija")),
+//                new HashMap<>(), "");
     }
 
-    @PutMapping(consumes = "application/json")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO dto){
-        if(dto.getRole().equals(User.Role.HOST)){
-            Host host = new Host();
-            host.setName(dto.getName());
-            host.setSurname(dto.getSurname());
-            host.setPhone(dto.getPhone());
-            host.setAddress(new Address(dto.getAddress().getStreet(),dto.getAddress().getNumber(),dto.getAddress().getCity(),dto.getAddress().getCountry()));
-            host.setSettings(dto.getSettings());
+    @PutMapping
+    public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDTO) {
+        User user = data.get(2);
 
-            return new ResponseEntity<>(new UserDTO(host), HttpStatus.OK);
-        }
+//        user = service.update(user);
 
-        User user = new User();
-        user.setEmail(dto.getEmail());
-        user.setName(dto.getName());
-        user.setSurname(dto.getSurname());
-        user.setPhone(dto.getPhone());
-        user.setAddress(new Address(dto.getAddress().getStreet(),dto.getAddress().getNumber(),dto.getAddress().getCity(),dto.getAddress().getCountry()));
-        user.setSettings(dto.getSettings());
-
-        return new ResponseEntity<>(new UserDTO(user), HttpStatus.OK);
-
+        UserDTO dto;
+        if (user.getRole().equals(User.Role.HOST))
+            dto = new UserDTO((Host) user);
+        else dto = new UserDTO(user);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void>  deactivateUser(@PathVariable Long id){
-        User user = new User();
-        user.setId(id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserDTO> deactivate(@PathVariable Long id) {
+        User user = data.get(2);
+
+//        user = service.deactivate(id);
         user.setStatus(User.AccountStatus.DEACTIVATED);
-        if(id != null){
-//            userService.save(user);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
+        UserDTO dto;
+        if (user.getRole().equals(User.Role.HOST))
+            dto = new UserDTO((Host) user);
+        else dto = new UserDTO(user);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<UserDTO> blockUser(@PathVariable Long id){
-        User user = new User();
-        user.setId(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDTO> block(@PathVariable Long id) {
+        User user = data.get(1);
+
+//        user = service.block(id);
         user.setStatus(User.AccountStatus.BLOCKED);
-        return new ResponseEntity<>(new UserDTO(user),HttpStatus.OK);
+
+        UserDTO dto;
+        if (user.getRole().equals(User.Role.HOST))
+            dto = new UserDTO((Host) user);
+        else dto = new UserDTO(user);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<RegistrationDTO> register(@RequestBody RegistrationDTO dto){
-        if(dto.getRole().equals(User.Role.HOST)){
-            Host host = new Host();
-            host.setId(dto.getId());
-            host.setRole(dto.getRole());
-            host.setEmail(dto.getEmail());
-            host.setPassword(dto.getPassword());
-            host.setName(dto.getName());
-            host.setSurname(dto.getSurname());
-            host.setPhone(dto.getPhone());
-            host.setAddress(new Address(dto.getAddress().getStreet(),dto.getAddress().getNumber(),dto.getAddress().getCity(),dto.getAddress().getCountry()));
-            host.setSettings(dto.getSettings());
-            host.setBio(dto.getBio());
+    public ResponseEntity<UserDTO> register(@RequestBody RegistrationDTO userDTO) {
+        User user = data.get(3);
 
-            return new ResponseEntity<>(new RegistrationDTO(host),HttpStatus.CREATED);
+//        user = service.register(user);
 
-        }
-
-        User user = new User();
-        user.setId(dto.getId());
-        user.setRole(dto.getRole());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
-        user.setName(dto.getName());
-        user.setSurname(dto.getSurname());
-        user.setPhone(dto.getPhone());
-        user.setAddress(new Address(dto.getAddress().getStreet(),dto.getAddress().getNumber(),dto.getAddress().getCity(),dto.getAddress().getCountry()));
-        user.setSettings(dto.getSettings());
-
-        return new ResponseEntity<>(new RegistrationDTO(user),HttpStatus.CREATED);
+        UserDTO dto;
+        if (user.getRole().equals(User.Role.HOST))
+            dto = new UserDTO((Host) user);
+        else dto = new UserDTO(user);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 }
