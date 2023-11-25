@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
-        User user = data.get(0);
+        User user = data.get(Math.toIntExact(id-1));
 
 //        user = service.findById(id);
 
