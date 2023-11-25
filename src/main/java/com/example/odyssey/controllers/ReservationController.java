@@ -1,13 +1,12 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.notifications.NotificationDTO;
 import com.example.odyssey.dtos.reservation.ReservationDTO;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.mappers.ReservationDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,21 +21,7 @@ public class ReservationController {
 //        this.service = service;
 //    }
 
-    private final List<Reservation> data;
-
-    public static List<Reservation> generateData() {
-        return new ArrayList<>() {{
-            add(new Reservation());
-            add(new Reservation());
-            add(new Reservation());
-            add(new Reservation());
-            add(new Reservation());
-        }};
-    }
-
-    public ReservationController() {
-        data = generateData();
-    }
+    private final List<Reservation> data = DummyData.getReservations();
 
     // GET method for getting all reservations
     @GetMapping
@@ -64,9 +49,9 @@ public class ReservationController {
             @PathVariable Long id,
             @RequestParam(required = false) Long accommodationId,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate) {
-        List<Reservation> reservations = data.subList(3, 5);
+            @RequestParam(required = false) Long startDate,
+            @RequestParam(required = false) Long endDate) {
+        List<Reservation> reservations = data.subList(2, 4);
 
 //        reservations = service.getByGuestId(id);
 //        reservations = service.filter(reservations, accommodationId, status, startDate, endDate);
@@ -80,9 +65,9 @@ public class ReservationController {
             @PathVariable Long id,
             @RequestParam(required = false) Long accommodationId,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate) {
-        List<Reservation> reservations = data.subList(2, 4);
+            @RequestParam(required = false) Long startDate,
+            @RequestParam(required = false) Long endDate) {
+        List<Reservation> reservations = data.subList(1, 4);
 
 //        reservations = service.getByHostId(id);
 //        reservations = service.filter(reservations, accommodationId, status, startDate, endDate);
@@ -93,11 +78,11 @@ public class ReservationController {
     // POST method for creating a reservation
     @PostMapping
     public ResponseEntity<ReservationDTO> create(@RequestBody ReservationDTO reservationDTO) {
-        Reservation reservation = new Reservation();
+        Reservation reservation = ReservationDTOMapper.fromDTOtoReservation(reservationDTO);
 
 //        reservation = service.create(reservation);
 
-        return new ResponseEntity<>(new ReservationDTO(reservation), HttpStatus.CREATED);
+        return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.CREATED);
     }
 
     // PUT method for updating a reservation status
@@ -113,7 +98,7 @@ public class ReservationController {
         reservation.setStatus(Reservation.Status.valueOf(status));
 //        reservation = service.update(reservation);
 
-        return new ResponseEntity<>(new ReservationDTO(reservation), HttpStatus.OK);
+        return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }
 
     private static List<ReservationDTO> mapToDTO(List<Reservation> reservations) {

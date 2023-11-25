@@ -23,7 +23,7 @@ public class Host extends User {
     @OneToMany(mappedBy = "host")
     private Set<Accommodation> accommodations;
 
-    public Host(Long id, Role role, AccountStatus status, String name, String surname, String email, String password, Address address, String phone, String profileImage, Map<String, String> settings, String bio, Set<Accommodation> accommodations) {
+    public Host(Long id, Role role, AccountStatus status, String name, String surname, String email, String password, Address address, String phone, String profileImage, User.Settings settings, String bio, Set<Accommodation> accommodations) {
         super(id, role, status, name, surname, email, password, address, phone, profileImage, settings);
         this.bio = bio;
         this.accommodations = accommodations;

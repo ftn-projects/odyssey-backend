@@ -1,16 +1,12 @@
 package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.notifications.NotificationDTO;
-import com.example.odyssey.dtos.reservation.ReservationDTO;
-import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.notifications.Notification;
-import com.example.odyssey.entity.reservations.Reservation;
-import org.aspectj.weaver.ast.Not;
+import com.example.odyssey.mappers.NotificationDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,21 +20,7 @@ public class NotificationController {
 //        this.service = service;
 //    }
 
-    private final List<Notification> data;
-
-    public static List<Notification> generateData() {
-        return new ArrayList<>() {{
-            add(new Notification());
-            add(new Notification());
-            add(new Notification());
-            add(new Notification());
-            add(new Notification());
-        }};
-    }
-
-    public NotificationController() {
-        data = generateData();
-    }
+    private final List<Notification> data = DummyData.getNotifications();
 
     @GetMapping
     public ResponseEntity<List<NotificationDTO>> getAll() {
@@ -55,12 +37,12 @@ public class NotificationController {
 
 //        notification = service.findById(id);
 
-        return new ResponseEntity<>(new NotificationDTO(notification), HttpStatus.OK);
+        return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<List<NotificationDTO>> findByUserId(@PathVariable Long id) {
-        List<Notification> notifications = data.subList(2, 4);
+        List<Notification> notifications = data.subList(1, 3);
 
 //        notifications = service.findByUserId(id);
 
@@ -74,7 +56,7 @@ public class NotificationController {
 //        notification = service.readNotification(id);
 
         if (notification != null) {
-            return new ResponseEntity<>(new NotificationDTO(notification), HttpStatus.OK);
+            return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

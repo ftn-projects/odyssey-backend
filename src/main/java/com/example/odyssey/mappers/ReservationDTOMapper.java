@@ -17,11 +17,11 @@ public class ReservationDTOMapper {
         ReservationDTOMapper.mapper = mapper;
     }
 
-    public static Reservation fromDTOtoReservation(ReviewReportDTO dto) {
+    public static Reservation fromDTOtoReservation(ReservationDTO dto) {
         return mapper.map(dto, Reservation.class);
     }
 
-    public static ReservationDTO fromReservationToDTO(Reservation model) {
-        return mapper.map(model, ReservationDTO.class);
+    public static ReservationDTO fromReservationToDTO(Reservation reservation) {
+        return new ReservationDTO(reservation);
     }
 }

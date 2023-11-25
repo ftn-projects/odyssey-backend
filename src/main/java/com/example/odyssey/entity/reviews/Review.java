@@ -27,5 +27,5 @@ public abstract class Review {
     @ManyToOne
     private Guest submitter;
 
-    public enum Status {REQUESTED, DECLINED, CANCELLED, ACCEPTED}
+    public enum Status {REQUESTED, DECLINED, ACCEPTED}
 }

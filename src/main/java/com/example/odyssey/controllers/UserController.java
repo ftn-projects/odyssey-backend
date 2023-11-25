@@ -3,9 +3,11 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.users.RegistrationDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.mappers.UserDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,21 +25,7 @@ public class UserController {
 //        this.service = service;
 //    }
 
-    private final List<User> data;
-
-    public static List<User> generateDataUsers() {
-        return new ArrayList<>() {{
-            add(new Guest());
-            add(new Host());
-            add(new Guest());
-            add(new Guest());
-            add(new User());
-        }};
-    }
-
-    public UserController() {
-        data = generateDataUsers();
-    }
+    private final List<User> data = DummyData.getUsers();
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
@@ -45,14 +33,7 @@ public class UserController {
 
 //        user = service.findById(id);
 
-        UserDTO userDTO;
-        if (user.getRole().equals(User.Role.HOST))
-            userDTO = new UserDTO((Host) user);
-        else userDTO = new UserDTO(user);
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
-//        TODO Guest g = new Guest(id, User.Role.GUEST, User.AccountStatus.ACTIVE, "Milan", "Stankovic",
-//                "milan@gmail.com", "123", new Address("Ulica", 15, "Beograd", "Srbija"),
-//                "0612345678", "image.png", new HashMap<>(), new HashSet<>());
+        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @GetMapping("/login/{email}/{password}")
@@ -61,28 +42,16 @@ public class UserController {
 
 //        user = service.login(email, password);
 
-        UserDTO dto;
-        if (user.getRole().equals(User.Role.HOST))
-            dto = new UserDTO((Host) user);
-        else dto = new UserDTO(user);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
-//        TODO new UserDTO(123L, User.Role.HOST, email,
-//                "Slavica", "Cukteras", "0622345678",
-//                new AddressDTO(new Address("Ulica", 16, "Beograd", "Srbija")),
-//                new HashMap<>(), "");
+        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDTO) {
-        User user = data.get(2);
+        User user = UserDTOMapper.fromDTOtoUser(userDTO);
 
 //        user = service.update(user);
 
-        UserDTO dto;
-        if (user.getRole().equals(User.Role.HOST))
-            dto = new UserDTO((Host) user);
-        else dto = new UserDTO(user);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -92,11 +61,7 @@ public class UserController {
 //        user = service.deactivate(id);
         user.setStatus(User.AccountStatus.DEACTIVATED);
 
-        UserDTO dto;
-        if (user.getRole().equals(User.Role.HOST))
-            dto = new UserDTO((Host) user);
-        else dto = new UserDTO(user);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -106,23 +71,15 @@ public class UserController {
 //        user = service.block(id);
         user.setStatus(User.AccountStatus.BLOCKED);
 
-        UserDTO dto;
-        if (user.getRole().equals(User.Role.HOST))
-            dto = new UserDTO((Host) user);
-        else dto = new UserDTO(user);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<UserDTO> register(@RequestBody RegistrationDTO userDTO) {
-        User user = data.get(3);
+        User user = UserDTOMapper.fromRegistrationDTOtoUser(userDTO);
 
 //        user = service.register(user);
 
-        UserDTO dto;
-        if (user.getRole().equals(User.Role.HOST))
-            dto = new UserDTO((Host) user);
-        else dto = new UserDTO(user);
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.CREATED);
     }
 }

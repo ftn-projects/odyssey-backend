@@ -23,7 +23,7 @@ public class Guest extends User {
 
     public Guest(Long id, Role role, AccountStatus status, String name, String surname,
                  String email, String password, Address address, String phone, String profileImage,
-                 Map<String, String> settings, Set<Accommodation> favourites) {
+                 User.Settings settings, Set<Accommodation> favourites) {
         super(id, role, status, name, surname, email, password, address, phone, profileImage, settings);
         this.favourites = favourites;
     }

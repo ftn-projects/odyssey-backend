@@ -4,13 +4,18 @@ import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDetailsDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationSearchDTO;
 import com.example.odyssey.dtos.notifications.NotificationDTO;
+import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.notifications.Notification;
+import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.entity.users.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,21 +30,7 @@ public class AccommodationController {
 //        this.service = service;
 //    }
 
-    private final List<Accommodation> data;
-
-    public static List<Accommodation> generateData() {
-        return new ArrayList<>() {{
-            add(new Accommodation());
-            add(new Accommodation());
-            add(new Accommodation());
-            add(new Accommodation());
-            add(new Accommodation());
-        }};
-    }
-
-    public AccommodationController() {
-        data = generateData();
-    }
+    private final List<Accommodation> data = DummyData.getAccommodations();
 
     @GetMapping
     public ResponseEntity<List<AccommodationSearchDTO>> getAll(

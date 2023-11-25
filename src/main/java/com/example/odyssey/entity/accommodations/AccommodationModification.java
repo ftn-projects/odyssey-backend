@@ -34,7 +34,7 @@ public class AccommodationModification {
 
     public enum Type {CREATE, UPDATE}
 
-    public enum Status {PENDING, ACCEPTED, DECLINED}
+    public enum Status {REQUESTED, ACCEPTED, DECLINED}
 
     @Embeddable
     @Getter

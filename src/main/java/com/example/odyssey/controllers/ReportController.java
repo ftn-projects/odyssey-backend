@@ -6,11 +6,11 @@ import com.example.odyssey.dtos.reports.UserReportDTO;
 import com.example.odyssey.entity.reports.Report;
 import com.example.odyssey.entity.reports.ReviewReport;
 import com.example.odyssey.entity.reports.UserReport;
+import com.example.odyssey.mappers.ReportDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,25 +24,8 @@ public class ReportController {
 //        this.service = service;
 //    }
 
-    private final List<ReviewReport> reviewData;
-    private final List<UserReport> userData;
-
-    public ReportController() {
-        reviewData = new ArrayList<>() {{
-            add(new ReviewReport());
-            add(new ReviewReport());
-            add(new ReviewReport());
-            add(new ReviewReport());
-            add(new ReviewReport());
-        }};
-        userData = new ArrayList<>() {{
-            add(new UserReport());
-            add(new UserReport());
-            add(new UserReport());
-            add(new UserReport());
-            add(new UserReport());
-        }};
-    }
+    private final List<ReviewReport> reviewData = DummyData.getReviewReports();
+    private final List<UserReport> userData = DummyData.getUserReports();
 
     @GetMapping("/review")
     public ResponseEntity<List<ReviewReportDTO>> getAllReviewReports() {
@@ -64,32 +47,28 @@ public class ReportController {
 
     @PostMapping
     public ResponseEntity<ReviewReportDTO> createReviewReport(@RequestBody ReviewReportDTO reportDTO) {
-        ReviewReport report = new ReviewReport();
+        ReviewReport report = ReportDTOMapper.fromDTOtoReviewReport(reportDTO);
 
 //        service.saveReviewReport(report);
 
-        return new ResponseEntity<>(new ReviewReportDTO(report), HttpStatus.CREATED);
+        return new ResponseEntity<>(ReportDTOMapper.fromReviewReportToDTO(report), HttpStatus.CREATED);
     }
 
     @PostMapping
     public ResponseEntity<UserReportDTO> createUserReport(@RequestBody UserReportDTO reportDTO) {
-        UserReport report = new UserReport();
+        UserReport report = ReportDTOMapper.fromDTOtoUserReport(reportDTO);
 
 //        service.saveUserReport(report);
 
-        return new ResponseEntity<>(new UserReportDTO(report), HttpStatus.CREATED);
+        return new ResponseEntity<>(ReportDTOMapper.fromUserReportToDTO(report), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ReportDTO> delete(@PathVariable Long id) {
-        Report report = new UserReport();
+        Report report = reviewData.get(0);
 
 //        report = service.delete(id);
 
-        ReportDTO reportDTO;
-        if (report instanceof ReviewReport)
-            reportDTO = new ReviewReportDTO((ReviewReport) report);
-        else reportDTO = new UserReportDTO((UserReport) report);
-        return new ResponseEntity<>(reportDTO, HttpStatus.OK);
+        return new ResponseEntity<>(ReportDTOMapper.fromReportToDTO(report), HttpStatus.OK);
     }
 }

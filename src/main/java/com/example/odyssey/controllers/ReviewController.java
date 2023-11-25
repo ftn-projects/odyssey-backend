@@ -1,28 +1,16 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.reports.ReportDTO;
-import com.example.odyssey.dtos.reports.ReviewReportDTO;
-import com.example.odyssey.dtos.reports.UserReportDTO;
-import com.example.odyssey.dtos.reservation.ReservationDTO;
 import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.HostReviewDTO;
 import com.example.odyssey.dtos.reviews.ReviewDTO;
-import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.reports.Report;
-import com.example.odyssey.entity.reports.ReviewReport;
-import com.example.odyssey.entity.reports.UserReport;
-import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
-import com.example.odyssey.entity.users.Guest;
-import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.mappers.ReviewDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,74 +25,63 @@ public class ReviewController {
 //        this.service = service;
 //    }
 
-    private final List<HostReview> dataHost;
-    private final List<AccommodationReview> dataAccommodation;
-
-    public ReviewController() {
-        dataHost = new ArrayList<>() {{
-            add(new HostReview());
-            add(new HostReview());
-        }};
-        dataAccommodation = new ArrayList<>() {{
-            add(new AccommodationReview());
-            add(new AccommodationReview());
-        }};
-    }
+    private final List<HostReview> hostData = DummyData.getHostReviews();
+    private final List<AccommodationReview> accommodationData = DummyData.getAccommodationReviews();
 
     @GetMapping("/host")
     public ResponseEntity<List<HostReviewDTO>> getAllHostReviews() {
-        List<HostReview> reviews = dataHost;
+        List<HostReview> reviews = hostData;
 
 //        reviews = service.getAllHostReviews(id);
-        // TODO return new AccommodationReview(id, 5.0, "bravo", Review.Status.ACCEPTED, LocalDateTime.now(), new Guest(), new Accommodation());
+
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
     }
 
     @GetMapping("/accommodation")
     public ResponseEntity<List<AccommodationReviewDTO>> getAllAccommodationReviews() {
-        List<AccommodationReview> reviews = dataAccommodation;
+        List<AccommodationReview> reviews = accommodationData;
 
 //        reviews = service.getAllAccommodationReviews(id);
-        // TODO return new AccommodationReview(id, 5.0, "bravo", Review.Status.ACCEPTED, LocalDateTime.now(), new Guest(), new Accommodation());
+
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
     @GetMapping("/host/{id}")
     public ResponseEntity<HostReviewDTO> getHostReviewById(@PathVariable Long id) {
-        HostReview review = dataHost.stream().filter((r) -> Objects.equals(r.getId(), id))
+        HostReview review = hostData.stream().filter((r) -> Objects.equals(r.getId(), id))
                 .findFirst().orElse(new HostReview());
 
 //        review = service.findHostReviewById(id);
-        // TODO new HostReview(id, 5.0, "bravo", Review.Status.ACCEPTED, LocalDateTime.now(), new Guest(), new Host());
-        return new ResponseEntity<>(new HostReviewDTO(review), HttpStatus.OK);
+
+        return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
     }
 
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<AccommodationReviewDTO> getAccommodationReviewById(@PathVariable Long id) {
-        AccommodationReview review = dataAccommodation.stream().filter((r) -> Objects.equals(r.getId(), id))
+        AccommodationReview review = accommodationData.stream().filter((r) -> Objects.equals(r.getId(), id))
                 .findFirst().orElse(new AccommodationReview());
 
 //        review = service.findAccommodationReviewById(id);
-        // TODO return new AccommodationReview(id, 5.0, "bravo", Review.Status.ACCEPTED, LocalDateTime.now(), new Guest(), new Accommodation());
-        return new ResponseEntity<>(new AccommodationReviewDTO(review), HttpStatus.OK);
+
+        return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<HostReviewDTO> createHostReview(@RequestBody HostReviewDTO reviewDTO) {
-        HostReview review = new HostReview();
+        HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
 
 //        review = service.createHostReview(review);
 
-        return new ResponseEntity<>(new HostReviewDTO(review), HttpStatus.CREATED);
+        return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
 
     @PostMapping
     public ResponseEntity<AccommodationReviewDTO> createAccommodationReview(@RequestBody AccommodationReviewDTO reviewDTO) {
-        AccommodationReview review = new AccommodationReview();
+        AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(reviewDTO);
 
 //        review = service.createAccommodationReview(review);
 
-        return new ResponseEntity<>(new AccommodationReviewDTO(review), HttpStatus.CREATED);
+        return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -113,10 +90,6 @@ public class ReviewController {
 
 //        review = service.delete(id);
 
-        ReviewDTO reviewDTO;
-        if (review instanceof HostReview)
-            reviewDTO = new HostReviewDTO((HostReview) review);
-        else reviewDTO = new AccommodationReviewDTO((AccommodationReview) review);
-        return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
+        return new ResponseEntity<>(ReviewDTOMapper.fromReviewToDTO(review), HttpStatus.OK);
     }
 }
