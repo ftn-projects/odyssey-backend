@@ -1,22 +1,74 @@
 package com.example.odyssey.controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.odyssey.dtos.reports.ReportDTO;
+import com.example.odyssey.dtos.reports.ReviewReportDTO;
+import com.example.odyssey.dtos.reports.UserReportDTO;
+import com.example.odyssey.entity.reports.Report;
+import com.example.odyssey.entity.reports.ReviewReport;
+import com.example.odyssey.entity.reports.UserReport;
+import com.example.odyssey.mappers.ReportDTOMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/reports")
 public class ReportController {
+//    @Autowired
+//    private ReportService service;
+//
+//    @Autowired
+//    public ReportController(ReportService service) {
+//        this.service = service;
+//    }
 
-        // GET AllReports()
-        // GET AllReports(String type)
-        // GET AllUserReports()
-        // GET GetAllUserReports(String type)
-        // GET AllReviewReports()
-        // GET AllReviewReports(String type)
-        // GET ReportsByUser(Long userID)
-        // GET ReportByUserAndType(Long userID, String type)
-        // POST CreateUserReport(RequestUserReportDTO report)
-        // POST CreateReviewReport(RequestReviewReportDTO report)
-        // PUT UpdateReport(RequestReportDTO report)
-        // DELETE DeleteReport(Long reportID)
+    private final List<ReviewReport> reviewData = DummyData.getReviewReports();
+    private final List<UserReport> userData = DummyData.getUserReports();
+
+    @GetMapping("/review")
+    public ResponseEntity<List<ReviewReportDTO>> getAllReviewReports() {
+        List<ReviewReport> reports = reviewData;
+
+//        service.getAllReviewReports();
+
+        return new ResponseEntity<>(reports.stream().map(ReviewReportDTO::new).toList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<UserReportDTO>> getAllUserReports() {
+        List<UserReport> reports = userData;
+
+//        service.getAllReviewReports();
+
+        return new ResponseEntity<>(reports.stream().map(UserReportDTO::new).toList(), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<ReviewReportDTO> createReviewReport(@RequestBody ReviewReportDTO reportDTO) {
+        ReviewReport report = ReportDTOMapper.fromDTOtoReviewReport(reportDTO);
+
+//        service.saveReviewReport(report);
+
+        return new ResponseEntity<>(ReportDTOMapper.fromReviewReportToDTO(report), HttpStatus.CREATED);
+    }
+
+    @PostMapping
+    public ResponseEntity<UserReportDTO> createUserReport(@RequestBody UserReportDTO reportDTO) {
+        UserReport report = ReportDTOMapper.fromDTOtoUserReport(reportDTO);
+
+//        service.saveUserReport(report);
+
+        return new ResponseEntity<>(ReportDTOMapper.fromUserReportToDTO(report), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ReportDTO> delete(@PathVariable Long id) {
+        Report report = reviewData.get(0);
+
+//        report = service.delete(id);
+
+        return new ResponseEntity<>(ReportDTOMapper.fromReportToDTO(report), HttpStatus.OK);
+    }
 }

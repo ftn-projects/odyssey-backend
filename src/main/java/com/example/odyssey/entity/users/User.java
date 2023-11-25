@@ -33,10 +33,20 @@ public class User {
     private Address address;
     private String phone;
     private String profileImage;
-    @ElementCollection
-    private Map<String, String> settings = new HashMap<>();
+    @Embedded
+    private Settings settings = new Settings();
 
     public enum Role {ADMIN, HOST, GUEST}
 
-    public enum AccountStatus {PENDING_ACTIVATION, ACTIVE, BLOCKED, DEACTIVATED}
+    public enum AccountStatus {PENDING, ACTIVE, BLOCKED, DEACTIVATED}
+
+    @Embeddable
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Settings {
+        private Boolean ReservationNotification_On = true;
+        private Boolean HostNotification_On = true;
+    }
 }

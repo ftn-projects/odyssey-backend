@@ -1,26 +1,28 @@
 package com.example.odyssey.dtos.users;
 
 import com.example.odyssey.dtos.AddressDTO;
+import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class RequestUserModificationDTO {
-    private Long id;
-    private String name;
-    private String surname;
-    private String email;
+public class RegistrationDTO extends UserDTO {
     private String password;
-    private AddressDTO address;
-    private String phone;
-    private Map<String, String> settings = new HashMap<>();
+
+    public RegistrationDTO(User user, String password) {
+        super(user);
+        this.password = password;
+    }
+
+    public RegistrationDTO(Host host, String password) {
+        super(host);
+        this.password = password;
+    }
 }

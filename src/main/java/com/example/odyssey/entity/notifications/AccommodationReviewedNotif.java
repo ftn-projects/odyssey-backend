@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 @Setter
 @Validated
-@AllArgsConstructor
 @DiscriminatorValue(value = "ACCOMMODATION_REVIEW")
 public class AccommodationReviewedNotif extends Notification {
     @Transient
@@ -29,6 +28,7 @@ public class AccommodationReviewedNotif extends Notification {
         review = null;
     }
 
+
     public AccommodationReviewedNotif(@NonNull AccommodationReview review, @NonNull User receiver) {
         super(
                 null,
@@ -39,4 +39,6 @@ public class AccommodationReviewedNotif extends Notification {
         // Additional initialization specific to AccommodationReviewedNotification if needed
         this.review = review;
     }
+
+
 }
