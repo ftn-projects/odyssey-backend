@@ -11,7 +11,6 @@ import org.springframework.lang.NonNull;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @DiscriminatorValue(value = "HOST_REVIEW")
 public class HostReviewedNotif extends Notification {
     @Transient

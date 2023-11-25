@@ -66,7 +66,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/host")
     public ResponseEntity<HostReviewDTO> createHostReview(@RequestBody HostReviewDTO reviewDTO) {
         HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
 
@@ -75,7 +75,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
 
-    @PostMapping
+    @PostMapping("accommodation")
     public ResponseEntity<AccommodationReviewDTO> createAccommodationReview(@RequestBody AccommodationReviewDTO reviewDTO) {
         AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(reviewDTO);
 

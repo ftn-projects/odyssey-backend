@@ -22,7 +22,7 @@ public class UserDTO {
     private String surname;
     private String phone;
     private AddressDTO address;
-    private Map<String, String> settings;
+    private User.Settings settings;
     private String bio;
 
     public UserDTO(User user) {

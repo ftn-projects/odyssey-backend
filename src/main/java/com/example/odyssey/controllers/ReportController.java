@@ -45,7 +45,7 @@ public class ReportController {
         return new ResponseEntity<>(reports.stream().map(UserReportDTO::new).toList(), HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/review")
     public ResponseEntity<ReviewReportDTO> createReviewReport(@RequestBody ReviewReportDTO reportDTO) {
         ReviewReport report = ReportDTOMapper.fromDTOtoReviewReport(reportDTO);
 
@@ -54,7 +54,7 @@ public class ReportController {
         return new ResponseEntity<>(ReportDTOMapper.fromReviewReportToDTO(report), HttpStatus.CREATED);
     }
 
-    @PostMapping
+    @PostMapping("/user")
     public ResponseEntity<UserReportDTO> createUserReport(@RequestBody UserReportDTO reportDTO) {
         UserReport report = ReportDTOMapper.fromDTOtoUserReport(reportDTO);
 

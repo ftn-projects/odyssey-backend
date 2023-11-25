@@ -11,8 +11,7 @@ import org.springframework.lang.NonNull;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@DiscriminatorColumn(name = "NOTIF_TYPE")
+@DiscriminatorValue(value = "RESERVATION")
 public class ReservationNotif extends Notification {
 
     @Transient
