@@ -18,43 +18,39 @@ public class ReservationNotif extends Notification {
     @Transient
     private static final String defaultTitle = "Reservation Notification";
 
-    @Enumerated(value = EnumType.ORDINAL)
-    NotificationType type;
-
     @ManyToOne
     private Reservation reservation;
-
-
-    public enum NotificationType {
-        RESERVATION_ACCREDITED,
-        RESERVATION_CANCELLED,
-        RESERVATION_REQUESTED
-        // Add more notification types as needed
-    }
 
     public ReservationNotif() {
         super(null, defaultTitle, null, null);
         reservation = null;
     }
 
-    public ReservationNotif(@NonNull NotificationType notificationType, @NonNull Reservation reservation, @NonNull User receiver) {
+    public ReservationNotif(@NonNull Reservation reservation, @NonNull User receiver) {
         super(null, defaultTitle, null, receiver);
         this.reservation = reservation;
 
-        switch (notificationType) {
-            case RESERVATION_ACCREDITED:
+        switch (reservation.getStatus()) {
+            case ACCEPTED :
                 setText("Your request for " + reservation.getAccommodation().getTitle() +
-                        " has been " + reservation.getStatus().toString().toLowerCase());
+                        " has been accepted");
                 break;
-            case RESERVATION_CANCELLED:
-                setText("Reservation has been cancelled" + reservation.getGuest().getName());
+            case DECLINED:
+                setText("Your request for " + reservation.getAccommodation().getTitle() +
+                        " has been declined");
                 break;
-            case RESERVATION_REQUESTED:
-                setText("Your request has been " + reservation.getStatus().toString().toLowerCase());
+            case CANCELLED_RESERVATION:
+                setText("Reservation for your accommodation has been cancelled by " + reservation.getGuest().getName());
                 break;
-            // Add more cases for additional notification types
+            case REQUESTED:
+                setText("You have a new reservation request for " + reservation.getAccommodation().getTitle());
+                break;
+            case CANCELLED_REQUEST:
+                setText("A reservation request for " + reservation.getAccommodation().getTitle() +
+                        " has been cancelled");
+                break;
             default:
-                // Handle unknown type or throw an exception
+                setText("You have a new reservation notification");
                 break;
         }
     }
