@@ -5,7 +5,6 @@ import com.example.odyssey.entity.users.Host;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,10 +18,10 @@ import java.time.LocalDateTime;
 @Table(name = "host_reviews")
 public class HostReview extends Review {
     @ManyToOne
-    private Host host;
+    private Host reviewedHost;
 
-    public HostReview(Long id, Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter, Host host) {
+    public HostReview(Long id, Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter, Host reviewedHost) {
         super(id, rating, comment, status, submissionDate, submitter);
-        this.host = host;
+        this.reviewedHost = reviewedHost;
     }
 }

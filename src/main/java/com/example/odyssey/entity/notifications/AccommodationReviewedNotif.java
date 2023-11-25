@@ -2,11 +2,7 @@ package com.example.odyssey.entity.notifications;
 
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.users.User;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Transient;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
@@ -21,6 +17,7 @@ public class AccommodationReviewedNotif extends Notification {
     @Transient
     private static final String defaultTitle = "Accommodation reviewed";
     @ManyToOne
+    @JoinColumn(name = "accommodation_review_id", referencedColumnName = "id")
     private AccommodationReview review;
 
     public AccommodationReviewedNotif() {
@@ -33,7 +30,7 @@ public class AccommodationReviewedNotif extends Notification {
         super(
                 null,
                 defaultTitle,
-                "Accommodation " + review.getAccommodation().getTitle() + " has been reviewed by" + review.getSubmitter().getName(),
+                "Accommodation " + review.getReviewedAccommodation().getTitle() + " has been reviewed by" + review.getSubmitter().getName(),
                 receiver
         );
         // Additional initialization specific to AccommodationReviewedNotification if needed

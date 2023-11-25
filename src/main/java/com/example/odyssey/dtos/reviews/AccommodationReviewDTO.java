@@ -22,6 +22,6 @@ public class AccommodationReviewDTO extends ReviewDTO {
 
     public AccommodationReviewDTO(AccommodationReview review) {
         super(review);
-        accommodation = new AccommodationDTO(review.getAccommodation());
+        accommodation = new AccommodationDTO(review.getReviewedAccommodation());
     }
 }

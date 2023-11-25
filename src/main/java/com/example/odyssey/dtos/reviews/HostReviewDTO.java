@@ -21,6 +21,6 @@ public class HostReviewDTO extends ReviewDTO {
 
     public HostReviewDTO(HostReview review) {
         super(review);
-        host = new UserDTO(review.getHost());
+        host = new UserDTO(review.getReviewedHost());
     }
 }

@@ -16,6 +16,7 @@ public class HostReviewedNotif extends Notification {
     @Transient
     private static final String defaultTitle = "Host page reviewed";
     @ManyToOne
+    @JoinColumn(name = "host_review_id", referencedColumnName = "id")
     private HostReview review;
 
     public HostReviewedNotif() {
