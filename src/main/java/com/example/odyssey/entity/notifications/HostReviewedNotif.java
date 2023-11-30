@@ -11,12 +11,12 @@ import org.springframework.lang.NonNull;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @DiscriminatorValue(value = "HOST_REVIEW")
 public class HostReviewedNotif extends Notification {
     @Transient
     private static final String defaultTitle = "Host page reviewed";
     @ManyToOne
+    @JoinColumn(name = "host_review_id", referencedColumnName = "id")
     private HostReview review;
 
     public HostReviewedNotif() {

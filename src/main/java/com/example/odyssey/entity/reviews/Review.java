@@ -9,15 +9,16 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+import static jakarta.persistence.InheritanceType.TABLE_PER_CLASS;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = TABLE_PER_CLASS)
 public abstract class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double rating;
     private String comment;
@@ -27,5 +28,5 @@ public abstract class Review {
     @ManyToOne
     private Guest submitter;
 
-    public enum Status {REQUESTED, DECLINED, CANCELLED, ACCEPTED}
+    public enum Status {REQUESTED, DECLINED, ACCEPTED}
 }

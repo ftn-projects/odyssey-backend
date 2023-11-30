@@ -24,7 +24,7 @@ public class Reservation {
     private Double price;
     private Integer guestNumber;
     @Enumerated(value = EnumType.ORDINAL)
-    private ReservationStatus status;
+    private Status status;
     private LocalDateTime requestDate;
     private LocalDateTime reservationDate;
     @Embedded
@@ -34,5 +34,5 @@ public class Reservation {
     @ManyToOne
     private Guest guest;
 
-    public enum ReservationStatus {REQUESTED, DECLINED, CANCELLED_REQUEST, CANCELLED_RESERVATION, ACCEPTED}
+    public enum Status {REQUESTED, DECLINED, CANCELLED_REQUEST, CANCELLED_RESERVATION, ACCEPTED}
 }

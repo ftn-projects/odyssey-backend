@@ -1,5 +1,6 @@
 package com.example.odyssey.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +16,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimeSlot {
+    @Column(name = "startDate")
     private LocalDateTime start;
+    @Column(name = "endDate")
     private LocalDateTime end;
 
     public Duration getDuration() {
