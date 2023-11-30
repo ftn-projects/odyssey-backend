@@ -35,7 +35,7 @@ public class UserController {
 
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
-
+// post
     @GetMapping("/login/{email}/{password}")
     public ResponseEntity<UserDTO> login(@PathVariable String email, @PathVariable String password) {
         User user = data.get(1);
