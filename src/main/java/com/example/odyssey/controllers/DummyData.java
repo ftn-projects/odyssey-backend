@@ -139,7 +139,7 @@ public abstract class DummyData {
         List<Reservation> reservations = getReservations();
         List<User> users = getUsers();
         return new ArrayList<>() {{
-            add(new Notification(1L, "Account blocked", "You have been blocked.", users.get(2)));
+            add(new Notification(1L, users.get(2)));
 
             ReservationNotif n1 = new ReservationNotif(reservations.get(0), users.get(1));
             n1.setId(2L);
