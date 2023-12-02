@@ -3,6 +3,7 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.notifications.NotificationDTO;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.mappers.NotificationDTOMapper;
+import com.example.odyssey.mappers.UserDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class NotificationController {
     private final List<Notification> data = DummyData.getNotifications();
 
     @GetMapping
-    public ResponseEntity<List<NotificationDTO>> getAll() {
+    public ResponseEntity<?> getAll() {
         List<Notification> notifications = data;
 
 //        notifications = service.getAll();
@@ -32,7 +33,7 @@ public class NotificationController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<NotificationDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable Long id) {
         Notification notification = data.get(0);
 
 //        notification = service.findById(id);
@@ -41,7 +42,7 @@ public class NotificationController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<NotificationDTO>> findByUserId(@PathVariable Long id) {
+    public ResponseEntity<?> findByUserId(@PathVariable Long id) {
         List<Notification> notifications = data.subList(1, 3);
 
 //        notifications = service.findByUserId(id);
@@ -49,8 +50,15 @@ public class NotificationController {
         return new ResponseEntity<>(mapToDTO(notifications), HttpStatus.OK);
     }
 
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody NotificationDTO notificationDTO) {
+        Notification notification = NotificationDTOMapper.fromDTOtoNotification(notificationDTO);
+
+        return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
+    }
+
     @PutMapping(value = "/{id}")
-    public ResponseEntity<NotificationDTO> readNotification(@PathVariable Long id) {
+    public ResponseEntity<?> readNotification(@PathVariable Long id) {
         Notification notification = data.get(0);
 
 //        notification = service.readNotification(id);
@@ -62,7 +70,7 @@ public class NotificationController {
         }
     }
 
-    private static List<NotificationDTO> mapToDTO(List<Notification> notifications) {
+    private static List<?> mapToDTO(List<Notification> notifications) {
         return notifications.stream().map(NotificationDTO::new).toList();
     }
 }

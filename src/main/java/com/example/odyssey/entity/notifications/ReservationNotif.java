@@ -21,36 +21,12 @@ public class ReservationNotif extends Notification {
     private Reservation reservation;
 
     public ReservationNotif() {
-        super(null, defaultTitle, null, null);
+        super(null, null);
         reservation = null;
     }
 
     public ReservationNotif(@NonNull Reservation reservation, @NonNull User receiver) {
-        super(null, defaultTitle, null, receiver);
+        super(null, receiver);
         this.reservation = reservation;
-
-        switch (reservation.getStatus()) {
-            case ACCEPTED :
-                setText("Your request for " + reservation.getAccommodation().getTitle() +
-                        " has been accepted");
-                break;
-            case DECLINED:
-                setText("Your request for " + reservation.getAccommodation().getTitle() +
-                        " has been declined");
-                break;
-            case CANCELLED_RESERVATION:
-                setText("Reservation for your accommodation has been cancelled by " + reservation.getGuest().getName());
-                break;
-            case REQUESTED:
-                setText("You have a new reservation request for " + reservation.getAccommodation().getTitle());
-                break;
-            case CANCELLED_REQUEST:
-                setText("A reservation request for " + reservation.getAccommodation().getTitle() +
-                        " has been cancelled");
-                break;
-            default:
-                setText("You have a new reservation notification");
-                break;
-        }
     }
 }

@@ -20,17 +20,12 @@ public class HostReviewedNotif extends Notification {
     private HostReview review;
 
     public HostReviewedNotif() {
-        super(null, defaultTitle, null, null);
+        super(null, null);
         review = null;
     }
 
     public HostReviewedNotif(@NonNull HostReview review, @NonNull User receiver) {
-        super(
-                null,
-                defaultTitle,
-                "Your host page has been reviewed by " + review.getSubmitter().getName(),
-                receiver
-        );
+        super(null, receiver);
         this.review = review;
     }
 }
