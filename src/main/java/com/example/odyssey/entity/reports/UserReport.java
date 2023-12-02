@@ -19,10 +19,10 @@ import java.time.LocalDateTime;
 @Table(name = "user_reports")
 public class UserReport extends Report {
     @ManyToOne
-    private User reportedUser;
+    private User user;
 
-    public UserReport(Long id, String description, LocalDateTime submissionDate, User submitter, User reportedUser) {
+    public UserReport(Long id, String description, LocalDateTime submissionDate, User submitter, User user) {
         super(id, description, submissionDate, submitter);
-        this.reportedUser = reportedUser;
+        this.user = user;
     }
 }

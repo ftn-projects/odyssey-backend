@@ -33,11 +33,11 @@ public class AccommodationController {
     private final List<Accommodation> data = DummyData.getAccommodations();
 
     @GetMapping
-    public ResponseEntity<List<AccommodationSearchDTO>> getAll(
-            @RequestParam String search,
-            @RequestParam Long dateStart,
-            @RequestParam Long dateEnd,
-            @RequestParam Integer guestNumber,
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long dateStart,
+            @RequestParam(required = false) Long dateEnd,
+            @RequestParam(required = false) Integer guestNumber,
             @RequestParam(required = false) List<Long> amenities,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Double priceStart,
@@ -55,15 +55,26 @@ public class AccommodationController {
     public ResponseEntity<AccommodationDetailsDTO> findById(@PathVariable Long id) {
         Accommodation accommodation = data.stream()
                 .filter((a) -> Objects.equals(a.getId(), id))
-                .findFirst().orElse(new Accommodation());
+                .findFirst().orElse(null);
 
         // accommodation = service.findById(id);
 
-        return new ResponseEntity<>(new AccommodationDetailsDTO(accommodation), HttpStatus.OK);
+        if (accommodation != null)
+            return new ResponseEntity<>(new AccommodationDetailsDTO(accommodation), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/favorites/{id}")
-    public ResponseEntity<List<AccommodationSearchDTO>> findByGuestFavorites(@PathVariable Long id) {
+    public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
+        List<Accommodation> accommodations = data.subList(3, 5);
+
+        // accommodation = service.findByGuestFavorites(id);
+
+        return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody AccommodationDTO id) {
         List<Accommodation> accommodations = data.subList(3, 5);
 
         // accommodation = service.findByGuestFavorites(id);

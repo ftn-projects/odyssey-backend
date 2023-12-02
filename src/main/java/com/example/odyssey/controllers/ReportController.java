@@ -28,7 +28,7 @@ public class ReportController {
     private final List<UserReport> userData = DummyData.getUserReports();
 
     @GetMapping("/review")
-    public ResponseEntity<List<ReviewReportDTO>> getAllReviewReports() {
+    public ResponseEntity<?> getAllReviewReports() {
         List<ReviewReport> reports = reviewData;
 
 //        service.getAllReviewReports();
@@ -37,7 +37,7 @@ public class ReportController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<UserReportDTO>> getAllUserReports() {
+    public ResponseEntity<?> getAllUserReports() {
         List<UserReport> reports = userData;
 
 //        service.getAllReviewReports();
@@ -46,29 +46,30 @@ public class ReportController {
     }
 
     @PostMapping("/review")
-    public ResponseEntity<ReviewReportDTO> createReviewReport(@RequestBody ReviewReportDTO reportDTO) {
+    public ResponseEntity<?> createReviewReport(@RequestBody ReviewReportDTO reportDTO) {
         ReviewReport report = ReportDTOMapper.fromDTOtoReviewReport(reportDTO);
 
 //        service.saveReviewReport(report);
 
-        return new ResponseEntity<>(ReportDTOMapper.fromReviewReportToDTO(report), HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/user")
-    public ResponseEntity<UserReportDTO> createUserReport(@RequestBody UserReportDTO reportDTO) {
+    public ResponseEntity<?> createUserReport(@RequestBody UserReportDTO reportDTO) {
         UserReport report = ReportDTOMapper.fromDTOtoUserReport(reportDTO);
 
 //        service.saveUserReport(report);
 
-        return new ResponseEntity<>(ReportDTOMapper.fromUserReportToDTO(report), HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ReportDTO> delete(@PathVariable Long id) {
-        Report report = reviewData.get(0);
-
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        boolean found = reviewData.stream().anyMatch((r) -> r.getId().equals(id));
 //        report = service.delete(id);
 
-        return new ResponseEntity<>(ReportDTOMapper.fromReportToDTO(report), HttpStatus.OK);
+        if (found)
+            return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

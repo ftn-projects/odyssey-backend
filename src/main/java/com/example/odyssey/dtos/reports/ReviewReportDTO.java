@@ -25,6 +25,6 @@ public class ReviewReportDTO extends ReportDTO {
 
     public ReviewReportDTO(ReviewReport report) {
         super(report);
-        review = new ReviewDTO(report.getReportedReview());
+        review = new ReviewDTO(report.getReview());
     }
 }
