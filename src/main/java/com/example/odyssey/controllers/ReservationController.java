@@ -25,7 +25,7 @@ public class ReservationController {
 
     // GET method for getting all reservations
     @GetMapping
-    public ResponseEntity<List<ReservationDTO>> getAll() {
+    public ResponseEntity<?> getAll() {
         List<Reservation> reservations = data;
 
 //        reservations = service.getAll();
@@ -35,7 +35,7 @@ public class ReservationController {
 
     // GET method for getting all reservations for accommodation
     @GetMapping("/accommodation/{id}")
-    public ResponseEntity<List<ReservationDTO>> getByAccommodationId(@PathVariable Long id) {
+    public ResponseEntity<?> getByAccommodationId(@PathVariable Long id) {
         List<Reservation> reservations = data.subList(0, 3);
 
 //        reservations = service.getByAccommodationId(id);
@@ -45,7 +45,7 @@ public class ReservationController {
 
     // GET method for getting all reservations for guest
     @GetMapping("/guest/{id}")
-    public ResponseEntity<List<ReservationDTO>> getByGuestId(
+    public ResponseEntity<?> getByGuestId(
             @PathVariable Long id,
             @RequestParam(required = false) Long accommodationId,
             @RequestParam(required = false) String status,
@@ -61,7 +61,7 @@ public class ReservationController {
 
     // GET method for getting all reservations for host
     @GetMapping("/host/{id}")
-    public ResponseEntity<List<ReservationDTO>> getReservationsByHost(
+    public ResponseEntity<?> getReservationsByHost(
             @PathVariable Long id,
             @RequestParam(required = false) Long accommodationId,
             @RequestParam(required = false) String status,
@@ -77,7 +77,7 @@ public class ReservationController {
 
     // POST method for creating a reservation
     @PostMapping
-    public ResponseEntity<ReservationDTO> create(@RequestBody ReservationDTO reservationDTO) {
+    public ResponseEntity<?> create(@RequestBody ReservationDTO reservationDTO) {
         Reservation reservation = ReservationDTOMapper.fromDTOtoReservation(reservationDTO);
 
 //        reservation = service.create(reservation);
@@ -87,7 +87,7 @@ public class ReservationController {
 
     // PUT method for updating a reservation status
     @PutMapping("/{id}/status")
-    public ResponseEntity<ReservationDTO> updateStatus(
+    public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status
     ) {

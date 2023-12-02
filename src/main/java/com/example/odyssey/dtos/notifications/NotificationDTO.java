@@ -27,29 +27,27 @@ public class NotificationDTO {
     private AccommodationReviewDTO accommodationReview;
     private HostReviewDTO hostReview;
 
-    public NotificationDTO(Long id, String title, String text, User receiver) {
+    public NotificationDTO(Long id, User receiver) {
         this.id = id;
-        this.title = title;
-        this.text = text;
         this.receiver = new UserDTO(receiver);
     }
 
     public NotificationDTO(Notification notification) {
-        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
+        this(notification.getId(), notification.getReceiver());
     }
 
     public NotificationDTO(AccommodationReviewedNotif notification) {
-        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
+        this(notification.getId(), notification.getReceiver());
         accommodationReview = new AccommodationReviewDTO(notification.getReview());
     }
 
     public NotificationDTO(HostReviewedNotif notification) {
-        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
+        this(notification.getId(), notification.getReceiver());
         hostReview = new HostReviewDTO(notification.getReview());
     }
 
     public NotificationDTO(ReservationNotif notification) {
-        this(notification.getId(), notification.getTitle(), notification.getText(), notification.getReceiver());
+        this(notification.getId(), notification.getReceiver());
         reservation = new ReservationDTO(notification.getReservation());
     }
 }

@@ -15,15 +15,15 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class UserReportDTO extends ReportDTO {
-    private UserDTO reportedUser;
+    private UserDTO user;
 
     public UserReportDTO(Long id, String description, LocalDateTime submissionDate, UserDTO submitter, UserDTO reportedUser) {
         super(id, description, submissionDate, submitter);
-        this.reportedUser = reportedUser;
+        this.user = reportedUser;
     }
 
     public UserReportDTO(UserReport report) {
         super(report);
-        reportedUser = new UserDTO(report.getReportedUser());
+        user = new UserDTO(report.getUser());
     }
 }

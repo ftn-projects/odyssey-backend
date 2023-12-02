@@ -21,17 +21,14 @@ public class AccommodationReviewedNotif extends Notification {
     private AccommodationReview review;
 
     public AccommodationReviewedNotif() {
-        super(null, defaultTitle, null, null);
+        super(null, null);
         review = null;
     }
 
 
     public AccommodationReviewedNotif(@NonNull AccommodationReview review, @NonNull User receiver) {
         super(
-                null,
-                defaultTitle,
-                "Accommodation " + review.getReviewedAccommodation().getTitle() + " has been reviewed by" + review.getSubmitter().getName(),
-                receiver
+                null, receiver
         );
         // Additional initialization specific to AccommodationReviewedNotification if needed
         this.review = review;

@@ -23,9 +23,7 @@ public class AccommodationModification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime submissionDate;
-    @Enumerated(value = EnumType.ORDINAL)
     private Type type;
-    @Enumerated(value = EnumType.ORDINAL)
     private Status status;
     @Embedded
     private ModificationDetails details;
@@ -44,7 +42,6 @@ public class AccommodationModification {
     public static class ModificationDetails {
         private String newTitle;
         private String newDescription;
-        @Enumerated(value = EnumType.ORDINAL)
         private Accommodation.Type newAccommodationType;
         @Embedded
         private Address newAddress;

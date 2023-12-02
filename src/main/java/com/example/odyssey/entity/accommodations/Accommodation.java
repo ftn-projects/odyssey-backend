@@ -24,11 +24,9 @@ public class Accommodation {
     private Long id;
     private String title;
     private String description;
-    @Enumerated(value = EnumType.ORDINAL)
     private Type type;
     @Embedded
     private Address address;
-    @Enumerated(value = EnumType.ORDINAL)
     private PricingType pricing;
     private Double defaultPrice;
     private Boolean automaticApproval;

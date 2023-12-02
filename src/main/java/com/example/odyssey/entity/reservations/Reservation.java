@@ -23,7 +23,6 @@ public class Reservation {
     private Long id;
     private Double price;
     private Integer guestNumber;
-    @Enumerated(value = EnumType.ORDINAL)
     private Status status;
     private LocalDateTime requestDate;
     private LocalDateTime reservationDate;

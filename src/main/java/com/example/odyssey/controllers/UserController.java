@@ -1,8 +1,10 @@
 package com.example.odyssey.controllers;
 
+import com.example.odyssey.dtos.notifications.NotificationDTO;
 import com.example.odyssey.dtos.users.RegistrationDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
@@ -27,59 +29,69 @@ public class UserController {
 
     private final List<User> data = DummyData.getUsers();
 
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        List<User> users = data;
+
+        if (users.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(mapToDTO(users),HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable Long id) {
         User user = data.get(Math.toIntExact(id-1));
 
 //        user = service.findById(id);
-
+        if(user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 // post
     @GetMapping("/login/{email}/{password}")
-    public ResponseEntity<UserDTO> login(@PathVariable String email, @PathVariable String password) {
+    public ResponseEntity<?> login(@PathVariable String email, @PathVariable String password) {
         User user = data.get(1);
 
 //        user = service.login(email, password);
-
+        if(user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PutMapping
-    public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> update(@RequestBody UserDTO userDTO) {
         User user = UserDTOMapper.fromDTOtoUser(userDTO);
 
 //        user = service.update(user);
-
+        if (user == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserDTO> deactivate(@PathVariable Long id) {
+    public ResponseEntity<?> deactivate(@PathVariable Long id) {
         User user = data.get(2);
 
 //        user = service.deactivate(id);
         user.setStatus(User.AccountStatus.DEACTIVATED);
-
-        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> block(@PathVariable Long id) {
+    public ResponseEntity<?> block(@PathVariable Long id) {
         User user = data.get(1);
 
 //        user = service.block(id);
         user.setStatus(User.AccountStatus.BLOCKED);
-
+        if (user == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> register(@RequestBody RegistrationDTO userDTO) {
+    public ResponseEntity<?> register(@RequestBody RegistrationDTO userDTO) {
         User user = UserDTOMapper.fromRegistrationDTOtoUser(userDTO);
 
 //        user = service.register(user);
-
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.CREATED);
+    }
+
+    private static List<UserDTO> mapToDTO(List<User> users) {
+        return users.stream().map(UserDTO::new).toList();
     }
 }

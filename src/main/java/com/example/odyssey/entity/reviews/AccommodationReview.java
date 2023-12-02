@@ -20,10 +20,10 @@ import java.time.LocalDateTime;
 @Table(name = "accommodation_reviews")
 public class AccommodationReview extends Review {
     @ManyToOne
-    private Accommodation reviewedAccommodation;
+    private Accommodation accommodation;
 
     public AccommodationReview(Long id, Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter, Accommodation reviewedAccommodation) {
         super(id, rating, comment, status, submissionDate, submitter);
-        this.reviewedAccommodation = reviewedAccommodation;
+        this.accommodation = reviewedAccommodation;
     }
 }

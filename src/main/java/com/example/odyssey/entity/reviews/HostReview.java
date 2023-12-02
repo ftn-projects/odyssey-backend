@@ -18,10 +18,10 @@ import java.time.LocalDateTime;
 @Table(name = "host_reviews")
 public class HostReview extends Review {
     @ManyToOne
-    private Host reviewedHost;
+    private Host host;
 
     public HostReview(Long id, Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter, Host reviewedHost) {
         super(id, rating, comment, status, submissionDate, submitter);
-        this.reviewedHost = reviewedHost;
+        this.host = reviewedHost;
     }
 }
