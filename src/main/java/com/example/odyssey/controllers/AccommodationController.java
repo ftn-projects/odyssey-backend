@@ -22,8 +22,8 @@ import java.util.Objects;
 @RestController
 @RequestMapping(value = "/api/v1/accommodations")
 public class AccommodationController {
-//    @Autowired
-//    private AccommodationService service;
+    //    @Autowired
+    //    private AccommodationService service;
 
 //    @Autowired
 //    public AccommodationController(AccommodationService service) {

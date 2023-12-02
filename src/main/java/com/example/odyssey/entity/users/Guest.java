@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @DiscriminatorValue(value = "GUEST")
 public class Guest extends User {
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "guest_favourited", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "accommodation_id", referencedColumnName = "id"))
     private Set<Accommodation> favorites;
 
