@@ -23,7 +23,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Role role;
-    @Enumerated(value = EnumType.ORDINAL)
     private AccountStatus status;
     private String name;
     private String surname;

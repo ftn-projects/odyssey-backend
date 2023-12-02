@@ -22,7 +22,6 @@ public abstract class Review {
     private Long id;
     private Double rating;
     private String comment;
-    @Enumerated(value = EnumType.ORDINAL)
     private Status status;
     private LocalDateTime submissionDate;
     @ManyToOne
