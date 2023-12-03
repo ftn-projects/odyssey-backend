@@ -3,7 +3,6 @@ package com.example.odyssey.services;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.repositories.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
