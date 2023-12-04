@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,4 +48,11 @@ public class Accommodation {
     public enum Type {APARTMENT, ROOM, HOUSE} // ako je usko vezana uz klasu najbolje da bude u njoj
 
     public enum PricingType {PER_PERSON, PER_ACCOMMODATION}
+
+    public Double getDatesPrice(LocalDate date){
+        for(AvailabilitySlot x: availableSlots)
+            if(x.getTimeSlot().containsDay(date))
+                return x.getPrice();
+        return null;
+    }
 }
