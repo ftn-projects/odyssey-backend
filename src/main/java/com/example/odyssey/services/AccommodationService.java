@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import com.example.odyssey.entity.accommodations.AvailabilitySlot;
+import org.springframework.stereotype.Service;
+
 import java.util.Set;
 
 @Service
@@ -76,4 +79,11 @@ public class AccommodationService {
     }
 
     public Accommodation save(Accommodation accommodation){return accommodationRepository.save(accommodation);}
+    public boolean slotsOverlap(Set<AvailabilitySlot> slots) {
+        for(AvailabilitySlot i:slots)
+            for(AvailabilitySlot j:slots)
+                if(i!=j && i.getTimeSlot().isOverlap(j.getTimeSlot()))
+                    return true;
+        return false;
+    }
 }

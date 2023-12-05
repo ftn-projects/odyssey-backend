@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,4 +35,11 @@ public class Reservation {
     private Guest guest;
 
     public enum Status {REQUESTED, DECLINED, CANCELLED_REQUEST, CANCELLED_RESERVATION, ACCEPTED}
+
+    public boolean checkPrice() {
+        Double total = 0.0;
+        for (LocalDate i : timeSlot.getDays())
+            total += accommodation.getDatesPrice(i);
+        return total.equals(price);
+    }
 }
