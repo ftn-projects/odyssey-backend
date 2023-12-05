@@ -6,24 +6,25 @@ import com.example.odyssey.dtos.accommodations.AccommodationSearchDTO;
 import com.example.odyssey.dtos.notifications.NotificationDTO;
 import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.accommodations.Accommodation;
+import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.mappers.AccommodationDTOMapper;
+import com.example.odyssey.services.AccommodationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/accommodations")
 public class AccommodationController {
-//    @Autowired
-//    private AccommodationService service;
+        @Autowired
+        private AccommodationService service;
 
 //    @Autowired
 //    public AccommodationController(AccommodationService service) {
@@ -34,30 +35,23 @@ public class AccommodationController {
 
     @GetMapping
     public ResponseEntity<?> getAll(
-            @RequestParam(required = false) String search,
             @RequestParam(required = false) Long dateStart,
             @RequestParam(required = false) Long dateEnd,
             @RequestParam(required = false) Integer guestNumber,
-            @RequestParam(required = false) List<Long> amenities,
+            @RequestParam(required = false) List<Amenity> amenities,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Double priceStart,
             @RequestParam(required = false) Double priceEnd
     ) {
         List<Accommodation> accommodations = data.subList(0, 3);
-
-        // accommodations = service.searchAll(search, dateStart, dateEnd, guestNumber);
-        // accommodations = service.filter(accommodations, amenities, type, priceStart, priceEnd)
+        accommodations = service.getAll(dateStart, dateEnd, guestNumber, amenities, type, priceStart, priceEnd);
 
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AccommodationDetailsDTO> findById(@PathVariable Long id) {
-        Accommodation accommodation = data.stream()
-                .filter((a) -> Objects.equals(a.getId(), id))
-                .findFirst().orElse(null);
-
-        // accommodation = service.findById(id);
+        Accommodation accommodation = service.getOne(id);
 
         if (accommodation != null)
             return new ResponseEntity<>(new AccommodationDetailsDTO(accommodation), HttpStatus.OK);
@@ -74,12 +68,11 @@ public class AccommodationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody AccommodationDTO id) {
-        List<Accommodation> accommodations = data.subList(3, 5);
+    public ResponseEntity<?> create(@RequestBody AccommodationDTO accommodationDTO) {
+        Accommodation accommodation = AccommodationDTOMapper.fromDTOToAccommodation(accommodationDTO);
+         accommodation = service.save(accommodation);
 
-        // accommodation = service.findByGuestFavorites(id);
-
-        return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
+        return new ResponseEntity<>(AccommodationDTOMapper.fromAccommodationToDTO(accommodation), HttpStatus.OK);
     }
 
     private static List<AccommodationSearchDTO> mapToDTO(List<Accommodation> accommodations) {
