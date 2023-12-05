@@ -10,6 +10,7 @@ import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.mappers.AccommodationDTOMapper;
 import com.example.odyssey.services.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,12 +68,11 @@ public class AccommodationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody AccommodationDTO id) {
-        List<Accommodation> accommodations = data.subList(3, 5);
+    public ResponseEntity<?> create(@RequestBody AccommodationDTO accommodationDTO) {
+        Accommodation accommodation = AccommodationDTOMapper.fromDTOToAccommodation(accommodationDTO);
+         accommodation = service.save(accommodation);
 
-        // accommodation = service.findByGuestFavorites(id);
-
-        return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
+        return new ResponseEntity<>(AccommodationDTOMapper.fromAccommodationToDTO(accommodation), HttpStatus.OK);
     }
 
     private static List<AccommodationSearchDTO> mapToDTO(List<Accommodation> accommodations) {
