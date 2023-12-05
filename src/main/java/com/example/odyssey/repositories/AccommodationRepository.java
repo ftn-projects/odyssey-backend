@@ -35,8 +35,8 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             "  AND EXISTS (" +
             "    SELECT 1 " +
             "    FROM a.availableSlots s " +
-            "    WHERE s.timeSlot.start <= :reservationEndDate " +
-            "      AND s.timeSlot.end >= :reservationStartDate " +
+            "    WHERE (COALESCE(:reservationStartDate, :reservationEndDate, NULL) IS NULL " +
+            "            OR (s.timeSlot.start <= :reservationEndDate AND s.timeSlot.end >= :reservationStartDate)) " +
             "      AND (:startSlotPrice IS NULL OR s.price BETWEEN :startSlotPrice AND :endSlotPrice)")
     List<Accommodation> findAccommodationsWithFilter(
             @Param("startGuests") Integer startGuests,
@@ -47,6 +47,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             @Param("reservationEndDate") LocalDate reservationEndDate,
             @Param("startSlotPrice") Double startSlotPrice,
             @Param("endSlotPrice") Double endSlotPrice);
+
 
     Accommodation findOneById(Long id);
 
