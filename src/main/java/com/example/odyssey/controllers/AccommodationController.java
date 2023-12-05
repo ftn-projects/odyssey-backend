@@ -9,6 +9,8 @@ import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.services.AccommodationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,8 @@ import java.util.Objects;
 @RestController
 @RequestMapping(value = "/api/v1/accommodations")
 public class AccommodationController {
-    //    @Autowired
-    //    private AccommodationService service;
+        @Autowired
+        private AccommodationService service;
 
 //    @Autowired
 //    public AccommodationController(AccommodationService service) {
@@ -45,8 +47,8 @@ public class AccommodationController {
     ) {
         List<Accommodation> accommodations = data.subList(0, 3);
 
-        // accommodations = service.searchAll(search, dateStart, dateEnd, guestNumber);
-        // accommodations = service.filter(accommodations, amenities, type, priceStart, priceEnd)
+        accommodations = service.getAll();
+        accommodations = service.filter(accommodations, search, dateStart, dateEnd, guestNumber, amenities, type, priceStart, priceEnd);
 
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
