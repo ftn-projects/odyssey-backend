@@ -1,23 +1,27 @@
 package com.example.odyssey.services;
 
+import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.entity.users.User;
 import com.example.odyssey.repositories.AccommodationRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
+
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service
 public class AccommodationService {
     @Autowired
     private AccommodationRepository accommodationRepository;
+
 
     public List<Accommodation> getAll(
             Long dateStart,
@@ -28,8 +32,12 @@ public class AccommodationService {
             Double priceStart,
             Double priceEnd
     ){
+
+        LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
+        LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
+        Accommodation.Type accommodationType = (type != null) ? Accommodation.Type.valueOf(type) : null;
         return accommodationRepository.findAllWithFilter(
-                guestNumber, Accommodation.Type.valueOf(type), amenities, new ReservationService().convertToDate(dateStart), new ReservationService().convertToDate(dateStart), priceStart, priceEnd
+                guestNumber, accommodationType, amenities, startDate, endDate, priceStart, priceEnd
         );
     }
 

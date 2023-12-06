@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/v1/accommodations")
 public class AccommodationController {
         @Autowired
@@ -60,7 +61,7 @@ public class AccommodationController {
 
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
-        List<Accommodation> accommodations = data.subList(3, 5);
+        List<Accommodation> accommodations = data.subList(1, 3);
 
         // accommodation = service.findByGuestFavorites(id);
 
@@ -75,7 +76,7 @@ public class AccommodationController {
         return new ResponseEntity<>(AccommodationDTOMapper.fromAccommodationToDTO(accommodation), HttpStatus.OK);
     }
 
-    private static List<AccommodationSearchDTO> mapToDTO(List<Accommodation> accommodations) {
-        return accommodations.stream().map((a) -> new AccommodationSearchDTO(a, 1000.0, 0.0)).toList();
+    private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
+        return accommodations.stream().map((a) -> new AccommodationDTO(a)).toList();
     }
 }

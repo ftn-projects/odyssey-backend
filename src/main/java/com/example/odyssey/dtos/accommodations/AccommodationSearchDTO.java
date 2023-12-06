@@ -17,7 +17,7 @@ public class AccommodationSearchDTO extends AccommodationDTO {
     private Double averageRating;
 
     public AccommodationSearchDTO(Long id, String title, String description, Accommodation.Type type, AddressDTO address, Accommodation.PricingType pricing, Set<AmenityDTO> amenities, UserDTO host, Double totalPrice, Double averageRating) {
-        super(id, title, description, type, address, pricing, amenities, host);
+        //super(id, title, description, type, address, pricing, amenities, host);
         this.totalPrice = totalPrice;
         this.averageRating = averageRating;
     }

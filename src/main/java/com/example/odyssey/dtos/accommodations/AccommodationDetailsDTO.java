@@ -23,7 +23,7 @@ public class AccommodationDetailsDTO extends AccommodationDTO {
     private Integer maxGuests;
 
     public AccommodationDetailsDTO(Long id, String title, String description, Accommodation.Type type, AddressDTO address, Accommodation.PricingType pricing, Set<AmenityDTO> amenities, UserDTO host, Double defaultPrice, Boolean automaticApproval, Duration cancellationDue, Set<AvailabilitySlotDTO> availableSlots, Integer minGuests, Integer maxGuests) {
-        super(id, title, description, type, address, pricing, amenities, host);
+        //super(id, title, description, type, address, pricing, amenities, host);
         this.defaultPrice = defaultPrice;
         this.automaticApproval = automaticApproval;
         this.cancellationDue = cancellationDue;
