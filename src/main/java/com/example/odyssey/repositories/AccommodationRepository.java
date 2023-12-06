@@ -21,7 +21,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
     @NonNull
     @Query("SELECT DISTINCT a " +
             "FROM Accommodation a " +
-            "JOIN FETCH a.amenities am " +
+            "LEFT JOIN FETCH a.amenities am " +
             "WHERE (:guestNumber IS NULL OR :guestNumber BETWEEN a.minGuests AND a.maxGuests) " +
             "  AND (:type IS NULL OR a.type = :type) " +
             "  AND (COALESCE(:amenityIds, NULL) IS NULL OR am IN :amenityIds) " +
@@ -29,16 +29,16 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             "    SELECT 1 " +
             "    FROM Reservation r " +
             "    WHERE r.accommodation = a " +
-            "      AND (cast(:reservationStartDate as localdatetime) IS NOT NULL AND cast(:reservationEndDate as localdatetime) IS NOT NULL) " +
-            "      AND (r.timeSlot.end > :reservationStartDate AND r.timeSlot.start < :reservationEndDate)) " +
-            "  AND EXISTS (" +
+            "      AND (cast(:reservationStartDate as localdatetime) IS NULL AND cast(:reservationEndDate as localdatetime) IS NULL) " +
+            "      OR (r.timeSlot.end > :reservationStartDate AND r.timeSlot.start < :reservationEndDate)) " +
+            "  AND ((cast(:reservationStartDate as localdatetime) IS NULL AND cast(:reservationEndDate as localdatetime) IS NULL) OR EXISTS (" +
             "    SELECT 1 " +
             "    FROM a.availableSlots s " +
             "    WHERE (" +
-            "      (cast(:reservationStartDate as localdatetime) IS NOT NULL AND cast(:reservationEndDate as localdatetime) IS NOT NULL) " +
-            "      AND (s.timeSlot.end >= :reservationStartDate OR s.timeSlot.start <= :reservationEndDate)" +
+            "      (cast(:reservationStartDate as localdatetime) IS NULL AND cast(:reservationEndDate as localdatetime) IS NULL) " +
+            "      OR ((s.timeSlot.end >= :reservationStartDate OR s.timeSlot.start <= :reservationEndDate)" +
             "    )" +
-            "    AND ((cast(:startSlotPrice as double ) IS NULL OR cast(:endSlotPrice as double) IS NULL ) OR s.price BETWEEN :startSlotPrice AND :endSlotPrice))")
+            "    AND ((cast(:startSlotPrice as double ) IS NULL AND cast(:endSlotPrice as double) IS NULL ) OR s.price BETWEEN :startSlotPrice AND :endSlotPrice))))")
     List<Accommodation> findAllWithFilter(
             @Param("guestNumber") Integer guests,
             @Param("type") Accommodation.Type type,

@@ -76,7 +76,7 @@ public class AccommodationController {
         return new ResponseEntity<>(AccommodationDTOMapper.fromAccommodationToDTO(accommodation), HttpStatus.OK);
     }
 
-    private static List<AccommodationSearchDTO> mapToDTO(List<Accommodation> accommodations) {
-        return accommodations.stream().map((a) -> new AccommodationSearchDTO(a, 1000.0, 0.0)).toList();
+    private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
+        return accommodations.stream().map((a) -> new AccommodationDTO(a)).toList();
     }
 }
