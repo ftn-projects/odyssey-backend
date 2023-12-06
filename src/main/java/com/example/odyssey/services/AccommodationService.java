@@ -7,6 +7,7 @@ import com.example.odyssey.repositories.AccommodationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
@@ -28,8 +29,12 @@ public class AccommodationService {
             Double priceStart,
             Double priceEnd
     ){
+
+        LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
+        LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
+        Accommodation.Type accommodationType = (type != null) ? Accommodation.Type.valueOf(type) : null;
         return accommodationRepository.findAllWithFilter(
-                guestNumber, Accommodation.Type.valueOf(type), amenities, new ReservationService().convertToDate(dateStart), new ReservationService().convertToDate(dateStart), priceStart, priceEnd
+                guestNumber, accommodationType, amenities, startDate, endDate, priceStart, priceEnd
         );
     }
 

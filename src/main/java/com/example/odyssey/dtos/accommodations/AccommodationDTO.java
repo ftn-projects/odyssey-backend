@@ -43,5 +43,11 @@ public class AccommodationDTO {
         pricing = accommodation.getPricing();
         accommodation.getAmenities().forEach((a) -> amenities.add(new AmenityDTO(a)));
         host = new UserDTO(accommodation.getHost());
+        defaultPrice = accommodation.getDefaultPrice();
+        automaticApproval = accommodation.getAutomaticApproval();
+        cancellationDue = accommodation.getCancellationDue();
+        accommodation.getAvailableSlots().forEach((s) -> availableSlots.add(new AvailabilitySlotDTO(s)));
+        minGuests = accommodation.getMinGuests();
+        maxGuests = accommodation.getMaxGuests();
     }
 }

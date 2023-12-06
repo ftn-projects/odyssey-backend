@@ -29,16 +29,16 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             "    SELECT 1 " +
             "    FROM Reservation r " +
             "    WHERE r.accommodation = a " +
-            "      AND (:reservationStartDate IS NOT NULL AND r.timeSlot.end > :reservationStartDate) " +
-            "      AND (:reservationEndDate IS NOT NULL AND r.timeSlot.start < :reservationEndDate)) " +
+            "      AND (cast(:reservationStartDate as localdatetime) IS NOT NULL AND r.timeSlot.end > :reservationStartDate) " +
+            "      AND (cast(:reservationEndDate as localdatetime) IS NOT NULL AND r.timeSlot.start < :reservationEndDate)) " +
             "  AND EXISTS (" +
             "    SELECT 1 " +
             "    FROM a.availableSlots s " +
             "    WHERE (" +
-            "      (:reservationStartDate IS NULL OR s.timeSlot.end >= :reservationStartDate) " +
-            "      AND (:reservationEndDate IS NULL OR s.timeSlot.start <= :reservationEndDate)" +
+            "      (cast(:reservationStartDate as localdatetime) IS NULL OR s.timeSlot.end >= :reservationStartDate) " +
+            "      AND (cast(:reservationEndDate as localdatetime) IS NULL OR s.timeSlot.start <= :reservationEndDate)" +
             "    )" +
-            "    AND (:startSlotPrice IS NULL OR s.price BETWEEN :startSlotPrice AND :endSlotPrice))")
+            "    AND ((cast(:startSlotPrice as double ) IS NULL OR cast(:endSlotPrice as double) IS NULL ) OR s.price BETWEEN :startSlotPrice AND :endSlotPrice))")
     List<Accommodation> findAllWithFilter(
             @Param("guestNumber") Integer guests,
             @Param("type") Accommodation.Type type,
