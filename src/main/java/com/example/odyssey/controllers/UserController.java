@@ -1,6 +1,7 @@
 package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.notifications.NotificationDTO;
+import com.example.odyssey.dtos.users.PasswordDTO;
 import com.example.odyssey.dtos.users.RegistrationDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.Address;
@@ -9,6 +10,7 @@ import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.exceptions.IncorrectPasswordException;
 import com.example.odyssey.mappers.UserDTOMapper;
 import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,19 @@ public class UserController {
         user = service.update(user);
         if (user == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordDTO passwordDTO) {
+        try {
+            service.updatePassword(
+                    passwordDTO.getUserId(),
+                    passwordDTO.getOldPassword(),
+                    passwordDTO.getNewPassword());
+        } catch (IncorrectPasswordException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
