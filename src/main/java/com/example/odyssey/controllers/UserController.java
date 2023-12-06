@@ -10,6 +10,8 @@ import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
+import com.example.odyssey.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,29 +21,27 @@ import java.util.*;
 @RestController
 @RequestMapping(value = "/api/v1/users")
 public class UserController {
-//    @Autowired
-//    private UserService service;
-//
-//    @Autowired
-//    public UserController(UserService service) {
-//        this.service = service;
-//    }
+    @Autowired
+    private UserService service;
+
+    @Autowired
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     private final List<User> data = DummyData.getUsers();
 
     @GetMapping
     public ResponseEntity<?> getAll(){
-        List<User> users = data;
+        List<User> users = service.getAll();
 
-        if (users.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        if (users.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(mapToDTO(users),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        User user = data.get(Math.toIntExact(id-1));
-
-//        user = service.findById(id);
+        User user = service.find(id);
         if(user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
@@ -59,7 +59,7 @@ public class UserController {
     public ResponseEntity<?> update(@RequestBody UserDTO userDTO) {
         User user = UserDTOMapper.fromDTOtoUser(userDTO);
 
-//        user = service.update(user);
+        user = service.update(user);
         if (user == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
@@ -87,7 +87,7 @@ public class UserController {
     public ResponseEntity<?> register(@RequestBody RegistrationDTO userDTO) {
         User user = UserDTOMapper.fromRegistrationDTOtoUser(userDTO);
 
-//        user = service.register(user);
+        user = service.register(user);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.CREATED);
     }
 
