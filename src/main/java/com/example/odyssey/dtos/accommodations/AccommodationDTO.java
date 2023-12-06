@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,14 @@ public class AccommodationDTO {
     private Accommodation.PricingType pricing;
     private Set<AmenityDTO> amenities = new HashSet<>();
     private UserDTO host;
+    private Double defaultPrice;
+    private Boolean automaticApproval;
+    private Duration cancellationDue;
+    private Set<AvailabilitySlotDTO> availableSlots = new HashSet<>();
+    private Integer minGuests;
+    private Integer maxGuests;
+    private Double totalPrice;
+    private Double averageRating;
 
     public AccommodationDTO(Accommodation accommodation) {
         id = accommodation.getId();

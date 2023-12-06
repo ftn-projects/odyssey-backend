@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/v1/accommodations")
 public class AccommodationController {
         @Autowired
@@ -60,7 +61,7 @@ public class AccommodationController {
 
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
-        List<Accommodation> accommodations = data.subList(3, 5);
+        List<Accommodation> accommodations = data.subList(1, 3);
 
         // accommodation = service.findByGuestFavorites(id);
 
