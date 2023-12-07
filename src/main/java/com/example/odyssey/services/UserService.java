@@ -3,8 +3,6 @@ package com.example.odyssey.services;
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.User;
-import com.example.odyssey.exceptions.IncorrectPasswordException;
-import com.example.odyssey.exceptions.UserDeactivationException;
 import com.example.odyssey.repositories.ReservationRepository;
 import com.example.odyssey.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

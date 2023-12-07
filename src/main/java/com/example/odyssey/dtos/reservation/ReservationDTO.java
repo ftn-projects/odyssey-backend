@@ -9,14 +9,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationDTO {
     private Long id;
+    private Double price;
     private Integer guestNumber;
     private Reservation.Status status;
+    private LocalDateTime requestDate;
+    private LocalDateTime reservationDate;
     private TimeSlotDTO timeSlot;
     private AccommodationDTO accommodation;
     private UserDTO guest;
