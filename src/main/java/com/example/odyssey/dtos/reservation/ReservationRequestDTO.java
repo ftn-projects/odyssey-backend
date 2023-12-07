@@ -15,26 +15,24 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationDTO {
+public class ReservationRequestDTO {
     private Long id;
     private Double price;
     private Integer guestNumber;
     private Reservation.Status status;
     private LocalDateTime requestDate;
-    private LocalDateTime reservationDate;
     private TimeSlotDTO timeSlot;
-    private AccommodationDTO accommodation;
-    private UserDTO guest;
+    private Long accommodationId;
+    private Long guestId;
 
-    public ReservationDTO(Reservation reservation) {
+    public ReservationRequestDTO(Reservation reservation) {
         id = reservation.getId();
         price = reservation.getPrice();
         guestNumber = reservation.getGuestNumber();
         status = reservation.getStatus();
         requestDate = reservation.getRequestDate();
-        reservationDate = reservation.getReservationDate();
         timeSlot = new TimeSlotDTO(reservation.getTimeSlot());
-        accommodation = new AccommodationDTO(reservation.getAccommodation());
-        guest = new UserDTO(reservation.getGuest());
+        accommodationId = reservation.getAccommodation().getId();
+        guestId = reservation.getGuest().getId();
     }
 }

@@ -1,9 +1,14 @@
 package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.reservation.ReservationDTO;
+import com.example.odyssey.dtos.reservation.ReservationRequestDTO;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReservationDTOMapper;
+import com.example.odyssey.mappers.ReservationRequestDTOMapper;
+import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.ReservationService;
+import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +21,15 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/v1/reservations")
 public class ReservationController {
     @Autowired
     private ReservationService service;
+    @Autowired
+    private AccommodationService accommodationService;
+    @Autowired
+    private UserService userService;
 
     // GET method for getting all reservations
     @GetMapping
@@ -71,12 +81,19 @@ public class ReservationController {
 
     // POST method for creating a reservation
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ReservationDTO reservationDTO) {
-        Reservation reservation = ReservationDTOMapper.fromDTOtoReservation(reservationDTO);
-
-        reservation = service.save(reservation);
-
-        return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.CREATED);
+    public ResponseEntity<?> create(@RequestBody ReservationRequestDTO requestDTO) {
+        Reservation reservation;
+        ReservationDTO dto;
+        try {
+            reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
+            reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
+            reservation.setGuest((Guest) userService.find(requestDTO.getGuestId()));
+            reservation = service.save(reservation);
+            dto = ReservationDTOMapper.fromReservationToDTO(reservation);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
     }
 
     // PUT method for updating a reservation status
