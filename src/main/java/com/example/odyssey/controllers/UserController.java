@@ -73,29 +73,26 @@ public class UserController {
                     passwordDTO.getUserId(),
                     passwordDTO.getOldPassword(),
                     passwordDTO.getNewPassword());
-        } catch (IncorrectPasswordException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deactivate/{id}")
     public ResponseEntity<?> deactivate(@PathVariable Long id) {
-        User user = data.get(2);
-
-//        user = service.deactivate(id);
-        user.setStatus(User.AccountStatus.DEACTIVATED);
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        try {
+            service.deactivate(id);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @DeleteMapping("/block/{id}")
     public ResponseEntity<?> block(@PathVariable Long id) {
-        User user = data.get(1);
-
-//        user = service.block(id);
-        user.setStatus(User.AccountStatus.BLOCKED);
-        if (user == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
+        service.block(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping
