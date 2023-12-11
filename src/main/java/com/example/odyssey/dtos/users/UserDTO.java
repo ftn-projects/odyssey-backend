@@ -16,7 +16,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class UserDTO {
     private Long id;
-    private User.Role role;
     private String email;
     private String name;
     private String surname;
@@ -26,12 +25,12 @@ public class UserDTO {
     private String bio;
 
     public UserDTO(User user) {
-        this(user.getId(), user.getRole(), user.getEmail(), user.getName(), user.getSurname(),
+        this(user.getId(), user.getEmail(), user.getName(), user.getSurname(),
                 user.getPhone(), new AddressDTO(user.getAddress()), user.getSettings(), "");
     }
 
     public UserDTO(Host host) {
-        this(host.getId(), host.getRole(), host.getEmail(), host.getName(), host.getSurname(),
+        this(host.getId(), host.getEmail(), host.getName(), host.getSurname(),
                 host.getPhone(), new AddressDTO(host.getAddress()), host.getSettings(), host.getBio());
     }
 }

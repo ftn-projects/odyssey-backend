@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,12 +25,10 @@ public class ReportController {
 //        this.service = service;
 //    }
 
-    private final List<ReviewReport> reviewData = DummyData.getReviewReports();
-    private final List<UserReport> userData = DummyData.getUserReports();
 
     @GetMapping("/review")
     public ResponseEntity<?> getAllReviewReports() {
-        List<ReviewReport> reports = reviewData;
+        List<ReviewReport> reports = new ArrayList<>();
 
 //        service.getAllReviewReports();
 
@@ -38,7 +37,7 @@ public class ReportController {
 
     @GetMapping("/user")
     public ResponseEntity<?> getAllUserReports() {
-        List<UserReport> reports = userData;
+        List<UserReport> reports = new ArrayList<>();
 
 //        service.getAllReviewReports();
 
@@ -65,7 +64,7 @@ public class ReportController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        boolean found = reviewData.stream().anyMatch((r) -> r.getId().equals(id));
+        boolean found = true;
 //        report = service.delete(id);
 
         if (found)
