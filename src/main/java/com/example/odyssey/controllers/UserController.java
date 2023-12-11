@@ -1,15 +1,20 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.users.PasswordDTO;
-import com.example.odyssey.dtos.users.RegistrationDTO;
-import com.example.odyssey.dtos.users.UserDTO;
+import com.example.odyssey.dtos.users.*;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
+import com.example.odyssey.util.TokenUtils;
 import com.example.odyssey.services.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import java.util.List;
 
@@ -18,13 +23,15 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService service;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @Autowired
     public UserController(UserService service) {
         this.service = service;
     }
-
-    private final List<User> data = DummyData.getUsers();
 
     @GetMapping
     public ResponseEntity<?> getAll() {
@@ -41,14 +48,30 @@ public class UserController {
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
-    // post
-    @GetMapping("/login/{email}/{password}")
-    public ResponseEntity<?> login(@PathVariable String email, @PathVariable String password) {
-        User user = data.get(1);
+    @PostMapping("/login")
+    public ResponseEntity<UserTokenState> createAuthenticationToken(
+            @RequestBody JwtAuthenticationRequest authenticationRequest) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
-//        user = service.login(email, password);
-        if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        User user = (User) authentication.getPrincipal();
+        String jwt = tokenUtils.generateToken(user.getUsername(), user.getAuthorities());
+        long expiresIn = tokenUtils.getExpiredIn();
+
+        return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth instanceof AnonymousAuthenticationToken)){
+            SecurityContextHolder.clearContext();
+
+            return new ResponseEntity<>("You successfully logged out!", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("User is not authenticated!", HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping

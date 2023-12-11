@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,13 +26,9 @@ public class ReviewController {
 //        this.service = service;
 //    }
 
-    private final List<HostReview> hostData = DummyData.getHostReviews();
-    private final List<AccommodationReview> accommodationData = DummyData.getAccommodationReviews();
-
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews() {
-        List<HostReview> reviews = hostData;
-
+        List<HostReview> reviews = new ArrayList<>();
 //        reviews = service.getAllHostReviews(id);
         if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
@@ -39,7 +36,7 @@ public class ReviewController {
 
     @GetMapping("/accommodation")
     public ResponseEntity<?> getAllAccommodationReviews() {
-        List<AccommodationReview> reviews = accommodationData;
+        List<AccommodationReview> reviews = new ArrayList<>();
 
 //        reviews = service.getAllAccommodationReviews(id);
         if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -48,8 +45,7 @@ public class ReviewController {
 
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getHostReviewById(@PathVariable Long id) {
-        HostReview review = hostData.stream().filter((r) -> Objects.equals(r.getId(), id))
-                .findFirst().orElse(new HostReview());
+        HostReview review = new HostReview();
 
 //        review = service.findHostReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
@@ -58,8 +54,7 @@ public class ReviewController {
 
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getAccommodationReviewById(@PathVariable Long id) {
-        AccommodationReview review = accommodationData.stream().filter((r) -> Objects.equals(r.getId(), id))
-                .findFirst().orElse(new AccommodationReview());
+        AccommodationReview review =new AccommodationReview();
 
 //        review = service.findAccommodationReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
