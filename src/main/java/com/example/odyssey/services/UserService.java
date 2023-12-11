@@ -41,7 +41,7 @@ public class UserService {
 
     public void deactivate(Long id) throws Exception {
         User user = userRepository.findUserById(id);
-        if (user.getRole().equals(User.Role.GUEST))
+        if (user.getAuthorities().contains("GUEST"))
             throw new Exception("Account deactivation is not possible because you have active reservations.");
 
         updateAccountStatus(user, User.AccountStatus.DEACTIVATED);

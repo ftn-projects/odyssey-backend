@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,11 +22,9 @@ public class NotificationController {
 //        this.service = service;
 //    }
 
-    private final List<Notification> data = DummyData.getNotifications();
-
     @GetMapping
     public ResponseEntity<?> getAll() {
-        List<Notification> notifications = data;
+        List<Notification> notifications = new ArrayList<>();
 
 //        notifications = service.getAll();
 
@@ -34,7 +33,7 @@ public class NotificationController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        Notification notification = data.get(0);
+        Notification notification = new Notification();
 
 //        notification = service.findById(id);
 
@@ -43,7 +42,7 @@ public class NotificationController {
 
     @GetMapping("/user/{id}")
     public ResponseEntity<?> findByUserId(@PathVariable Long id) {
-        List<Notification> notifications = data.subList(1, 3);
+        List<Notification> notifications = new ArrayList<>();
 
 //        notifications = service.findByUserId(id);
 
@@ -59,7 +58,7 @@ public class NotificationController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> readNotification(@PathVariable Long id) {
-        Notification notification = data.get(0);
+        Notification notification = new Notification();
 
 //        notification = service.readNotification(id);
 

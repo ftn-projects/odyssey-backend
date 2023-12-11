@@ -2,14 +2,8 @@ package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDetailsDTO;
-import com.example.odyssey.dtos.accommodations.AccommodationSearchDTO;
-import com.example.odyssey.dtos.notifications.NotificationDTO;
-import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.Amenity;
-import com.example.odyssey.entity.notifications.Notification;
-import com.example.odyssey.entity.users.Host;
-import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.AccommodationDTOMapper;
 import com.example.odyssey.services.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +15,6 @@ import java.time.Duration;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/v1/accommodations")
 public class AccommodationController {
         @Autowired
@@ -31,8 +24,6 @@ public class AccommodationController {
 //    public AccommodationController(AccommodationService service) {
 //        this.service = service;
 //    }
-
-    private final List<Accommodation> data = DummyData.getAccommodations();
 
     @GetMapping
     public ResponseEntity<?> getAll(
@@ -44,7 +35,7 @@ public class AccommodationController {
             @RequestParam(required = false) Double priceStart,
             @RequestParam(required = false) Double priceEnd
     ) {
-        List<Accommodation> accommodations = data.subList(0, 3);
+        List<Accommodation> accommodations;
         accommodations = service.getAll(dateStart, dateEnd, guestNumber, amenities, type, priceStart, priceEnd);
 
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
@@ -61,7 +52,7 @@ public class AccommodationController {
 
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
-        List<Accommodation> accommodations = data.subList(1, 3);
+        List<Accommodation> accommodations = new ArrayList<>();;
 
         // accommodation = service.findByGuestFavorites(id);
 
