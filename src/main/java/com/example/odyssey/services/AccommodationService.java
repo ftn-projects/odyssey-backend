@@ -7,22 +7,32 @@ import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.repositories.AccommodationRepository;
+import com.example.odyssey.util.ImageUploadUtil;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class AccommodationService {
     @Autowired
     private AccommodationRepository accommodationRepository;
 
-
+    private static final String imagesDirPath = "src/main/resources/images/accommodations/";
     public List<Accommodation> getAll(
             Long dateStart,
             Long dateEnd,
@@ -56,5 +66,42 @@ public class AccommodationService {
                 if(i!=j && i.getTimeSlot().isOverlap(j.getTimeSlot()))
                     return true;
         return false;
+    }
+
+    public void uploadProfileImage(Long id, MultipartFile image) throws IOException {
+
+    }
+
+    public byte[] getImage(Long id, String imageName) throws IOException {
+        String accommodationDirPath = imagesDirPath + "accommodation" + id;
+
+        Path imageFilePath = Paths.get(accommodationDirPath, imageName);
+
+        if (!Files.exists(imageFilePath) || Files.isDirectory(imageFilePath)) {
+            throw new IOException("Image not found: " + imageName);
+        }
+
+        return Files.readAllBytes(imageFilePath);
+    }
+
+    public List<String> getImageNames(Long id) throws IOException {
+        String accommodationDirPath = imagesDirPath + "accommodation" + id;
+
+        Path accommodationDir = Paths.get(accommodationDirPath);
+
+        if (!Files.exists(accommodationDir) || !Files.isDirectory(accommodationDir)) {
+            throw new IOException("Accommodation directory not found for id: " + id);
+        }
+
+        List<String> imageNames = new ArrayList<>();
+
+        try (var stream = Files.walk(accommodationDir)) {
+            stream.filter(Files::isRegularFile)
+                    .forEach(filePath -> {
+                        imageNames.add(filePath.getFileName().toString());
+                    });
+        }
+
+        return imageNames;
     }
 }

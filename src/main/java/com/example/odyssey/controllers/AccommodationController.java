@@ -7,10 +7,14 @@ import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.mappers.AccommodationDTOMapper;
 import com.example.odyssey.services.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
@@ -19,6 +23,7 @@ import java.util.*;
 public class AccommodationController {
         @Autowired
         private AccommodationService service;
+
 
 //    @Autowired
 //    public AccommodationController(AccommodationService service) {
@@ -59,6 +64,18 @@ public class AccommodationController {
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
 
+
+    @GetMapping(value = "/{id}/images/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<?> getImage(@PathVariable Long id, @PathVariable String imageName) throws IOException {
+        return new ResponseEntity<>(service.getImage(id, imageName), HttpStatus.OK);
+    }
+    @GetMapping(value = "/{id}/images")
+    public ResponseEntity<?> getImages(@PathVariable Long id) throws IOException {
+        return new ResponseEntity<>(service.getImageNames(id), HttpStatus.OK);
+    }
+
+
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody AccommodationDTO accommodationDTO) {
         Accommodation accommodation = AccommodationDTOMapper.fromDTOToAccommodation(accommodationDTO);
@@ -70,4 +87,7 @@ public class AccommodationController {
     private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
         return accommodations.stream().map((a) -> new AccommodationDTO(a)).toList();
     }
+
+
+
 }

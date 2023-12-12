@@ -92,6 +92,9 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(requests -> {
             requests .requestMatchers("/api/v1/users/*").permitAll()
                     .requestMatchers("/api/v1/accommodations/*").permitAll()
+                    .requestMatchers("/api/v1/accommodations/*/images").permitAll()
+                    .requestMatchers("/api/v1/accommodations/*/images/*").permitAll()
+
                     .anyRequest().authenticated();
         });
 
@@ -105,9 +108,11 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/v1/users/login")
-                .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico",
+                .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico", "/*.jpg",
                         "/*/*.html", "/*/*.css", "/*/*.js",
-                        "/api/v1/accommodations", "/api/v1/users/logout");
+                        "/api/v1/accommodations", "/api/v1/users/logout",
+                        "/api/v1/accommodations/*", "/api/v1/accommodations/favorites/*", "/api/v1/accommodations/*/images",
+                        "/api/v1/accommodations/*/images/*");
 
     }
 }
