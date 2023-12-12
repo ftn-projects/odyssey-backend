@@ -104,7 +104,7 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/v1/users/login")
+        return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/v1/users/login", "/api/v1/users/register")
                 .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico",
                         "/*/*.html", "/*/*.css", "/*/*.js",
                         "/api/v1/accommodations", "/api/v1/users/logout");

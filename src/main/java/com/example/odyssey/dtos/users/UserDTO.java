@@ -2,6 +2,7 @@ package com.example.odyssey.dtos.users;
 
 import com.example.odyssey.dtos.AddressDTO;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
