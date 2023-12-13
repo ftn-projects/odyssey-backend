@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -61,6 +62,7 @@ public class AccommodationController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
         List<Accommodation> accommodations = new ArrayList<>();;

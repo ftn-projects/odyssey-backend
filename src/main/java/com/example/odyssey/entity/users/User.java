@@ -67,7 +67,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return status!=AccountStatus.BLOCKED;
+        return status==AccountStatus.ACTIVE;
     }
 
     @JsonIgnore

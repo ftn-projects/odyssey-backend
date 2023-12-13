@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,7 +39,7 @@ public class WebSecurityConfig {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:4200")
                         .allowedHeaders("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
                         .allowCredentials(false);
             }
         };
@@ -81,20 +82,24 @@ public class WebSecurityConfig {
         http.securityContext((securityContext) -> securityContext
                 .securityContextRepository(new RequestAttributeSecurityContextRepository())
         );
-        http.csrf(csrf -> csrf.disable());
+        http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> {
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         });
         http.exceptionHandling(exceptionHandling-> {
             exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint);
         });
-
         http.authorizeHttpRequests(requests -> {
-            requests .requestMatchers("/api/v1/users/*").permitAll()
-                    .requestMatchers("/api/v1/accommodations/*").permitAll()
+            requests
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/api/v1/users/login").permitAll()
+                    .requestMatchers("/api/v1/users/register").permitAll()
+                    .requestMatchers("/api/v1/users/confirmEmail/*").permitAll()
+                    .requestMatchers("/api/v1/users/image/**").permitAll()
+                    .requestMatchers("/api/v1/accommodations").permitAll()
+                    .requestMatchers("/api/v1/accommodations/**").permitAll()
                     .requestMatchers("/api/v1/accommodations/*/images").permitAll()
                     .requestMatchers("/api/v1/accommodations/*/images/*").permitAll()
-
                     .anyRequest().authenticated();
         });
 
@@ -107,13 +112,8 @@ public class WebSecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/v1/users/login")
-                .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico", "/*.jpg",
-
-                        "/*/*.html", "/*/*.css", "/*/*.js",
-                        "/api/v1/accommodations", "/api/v1/users/logout",
-                        "/api/v1/accommodations/*", "/api/v1/accommodations/favorites/*", "/api/v1/accommodations/*/images",
-                        "/api/v1/accommodations/*/images/*");
-
+        return (web) -> web.ignoring()
+                .requestMatchers(HttpMethod.GET,
+                        "/", "/webjars/*", "/*.html", "favicon.ico", "/*/*.html", "/*/*.css", "/*/*.js");
     }
 }
