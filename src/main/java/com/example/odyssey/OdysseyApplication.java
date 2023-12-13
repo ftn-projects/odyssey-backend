@@ -1,5 +1,6 @@
 package com.example.odyssey;
 
+import com.example.odyssey.util.EmailUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

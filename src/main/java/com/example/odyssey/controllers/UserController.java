@@ -3,26 +3,22 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.users.*;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
+import com.example.odyssey.services.UserService;
 import com.example.odyssey.util.EmailUtils;
 import com.example.odyssey.util.TokenUtils;
-import com.example.odyssey.services.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.Console;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -104,13 +100,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/confirmEmail/{email}")
-    public ResponseEntity<?> confirmEmail(@PathVariable String email){
-        EmailUtils.sendConfirmation(email,"mamatvoja");
-        try{
-            service.confirmEmail(email);
-        }catch(Exception e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    @PostMapping("/confirmEmail/{id}")
+    public ResponseEntity<String> confirmEmail(@PathVariable Long id) {
+        try {
+            service.confirmEmail(id);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -136,11 +131,11 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegistrationDTO userDTO) {
         User exists = this.service.findByEmail(userDTO.getEmail());
-        if(exists != null) return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
+        if (exists != null) return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
 
         User user = UserDTOMapper.fromRegistrationDTOtoUser(userDTO);
 
-        user = service.register(user,userDTO.getRole());
+        user = service.register(user, userDTO.getRole());
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.CREATED);
     }
 

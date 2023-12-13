@@ -10,25 +10,29 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
+
 public class EmailUtils {
-    public static void sendConfirmation(String email, String name){
+    public static void sendConfirmation(String email, String name, Long id){
         RestTemplate restTemplate = new RestTemplate();
         JSONObject body = new JSONObject();
         try {
             JSONObject from = new JSONObject();
             from.put("Email", "dimitrije.gasic.02@gmail.com");
             from.put("Name", "Odyssey");
-//            JSONObject to = new JSONObject();
-//            JSONArray emails = new JSONArray();
-//            emails.put(email);
-//            to.put("Emails", emails);
-//            to.put("Name", name);
+
+            JSONArray to = new JSONArray();
+            JSONObject receiver = new JSONObject();
+            receiver.put("Email", email);
+            receiver.put("Name", name);
+            to.put(receiver);
+
             JSONObject message = new JSONObject();
             message.put("From", from);
-            message.put("To", email);
+            message.put("To", to);
             message.put("Subject","Welcome!");
-            message.put("TextPart","You tried to make an Odyssey account, before you can proceed you need to confirm your email. Click here in the next 24 hours to activate your account: ");
-            message.put("HTMLPart","<ahref=\\\\\\\"http://localhost:4200/emailConfirmation\\\\\\\">\\");
+            message.put("HTMLPart", "You tried to make an Odyssey account, before you can proceed you need to confirm your email. Click <a href=\"http://localhost:4200/emailConfirmation/" + id +"\">here</a> in the next 24 hours to activate your account.");
+
             JSONArray messages = new JSONArray();
             messages.put(message);
             body.put("Messages", messages);
@@ -44,10 +48,11 @@ public class EmailUtils {
 
         HttpEntity<?> entity = new HttpEntity<>(body.toString(),headers);
 
-//        HttpEntity<String> response = restTemplate.exchange(
-//                builder.toUriString(),
-//                HttpMethod.POST,
-//                entity,
-//                String.class);
+
+        restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.POST,
+                entity,
+                String.class);
     }
 }
