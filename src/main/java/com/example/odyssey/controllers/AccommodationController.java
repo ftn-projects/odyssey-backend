@@ -7,12 +7,19 @@ import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.mappers.AccommodationDTOMapper;
 import com.example.odyssey.services.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @RestController
@@ -20,6 +27,7 @@ import java.util.*;
 public class AccommodationController {
         @Autowired
         private AccommodationService service;
+
 
 //    @Autowired
 //    public AccommodationController(AccommodationService service) {
@@ -31,15 +39,18 @@ public class AccommodationController {
             @RequestParam(required = false) Long dateStart,
             @RequestParam(required = false) Long dateEnd,
             @RequestParam(required = false) Integer guestNumber,
-            @RequestParam(required = false) List<Amenity> amenities,
+            @RequestParam(required = false) List<Long> amenities,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Double priceStart,
             @RequestParam(required = false) Double priceEnd
     ) {
         List<Accommodation> accommodations;
         accommodations = service.getAll(dateStart, dateEnd, guestNumber, amenities, type, priceStart, priceEnd);
-
-        return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
+        List<AccommodationDTO> AccommodationDTOs = mapToDTO(accommodations);
+        for (AccommodationDTO accommodationDTO: AccommodationDTOs) {
+            accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodationDTO.getId(), dateStart, dateEnd, guestNumber));
+        }
+        return new ResponseEntity<>(AccommodationDTOs, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -58,7 +69,23 @@ public class AccommodationController {
 
         // accommodation = service.findByGuestFavorites(id);
 
+
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/{id}/images/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<?> getImage(@PathVariable Long id, @PathVariable String imageName) throws IOException {
+        return new ResponseEntity<>(service.getImage(id, imageName), HttpStatus.OK);
+    }
+    @GetMapping(value = "/{id}/images")
+    public ResponseEntity<?> getImages(@PathVariable Long id) throws IOException {
+        return new ResponseEntity<>(service.getImageNames(id), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/amenities")
+    public ResponseEntity<?> getAmenities() throws IOException {
+        return new ResponseEntity<>(service.getAmenities(), HttpStatus.OK);
     }
 
     @PostMapping

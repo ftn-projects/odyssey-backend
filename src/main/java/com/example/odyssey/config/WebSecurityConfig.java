@@ -98,6 +98,8 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/v1/users/image/**").permitAll()
                     .requestMatchers("/api/v1/accommodations").permitAll()
                     .requestMatchers("/api/v1/accommodations/**").permitAll()
+                    .requestMatchers("/api/v1/accommodations/*/images").permitAll()
+                    .requestMatchers("/api/v1/accommodations/*/images/*").permitAll()
                     .anyRequest().authenticated();
         });
 
@@ -113,6 +115,5 @@ public class WebSecurityConfig {
         return (web) -> web.ignoring()
                 .requestMatchers(HttpMethod.GET,
                         "/", "/webjars/*", "/*.html", "favicon.ico", "/*/*.html", "/*/*.css", "/*/*.js");
-
     }
 }
