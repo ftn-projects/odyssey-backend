@@ -7,6 +7,7 @@ import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.repositories.AccommodationRepository;
+import com.example.odyssey.repositories.AmenityRepository;
 import com.example.odyssey.util.ImageUploadUtil;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +33,15 @@ public class AccommodationService {
     @Autowired
     private AccommodationRepository accommodationRepository;
 
+    @Autowired
+    private AmenityRepository amenityRepository;
+
     private static final String imagesDirPath = "src/main/resources/images/accommodations/";
     public List<Accommodation> getAll(
             Long dateStart,
             Long dateEnd,
             Integer guestNumber,
-            List<Amenity> amenities,
+            List<Long> amenities,
             String type,
             Double priceStart,
             Double priceEnd
@@ -103,5 +107,9 @@ public class AccommodationService {
         }
 
         return imageNames;
+    }
+
+    public List<Amenity> getAmenities() {
+        return amenityRepository.findAll();
     }
 }

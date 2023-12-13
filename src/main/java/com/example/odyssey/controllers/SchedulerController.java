@@ -14,7 +14,7 @@ public class SchedulerController {
     @Autowired
     private UserService service;
 
-    @Scheduled(initialDelayString = "0", fixedRateString = "5000")
+    @Scheduled(initialDelayString = "0", fixedRateString = "500000")
     public void fixedRateJobWithInitialDelay() {
         logger.info("> fixedRateJobWithInitialDelay");
         service.deleteExpiredAccounts();

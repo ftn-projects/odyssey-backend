@@ -35,7 +35,7 @@ public class AccommodationController {
             @RequestParam(required = false) Long dateStart,
             @RequestParam(required = false) Long dateEnd,
             @RequestParam(required = false) Integer guestNumber,
-            @RequestParam(required = false) List<Amenity> amenities,
+            @RequestParam(required = false) List<Long> amenities,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Double priceStart,
             @RequestParam(required = false) Double priceEnd
@@ -74,7 +74,10 @@ public class AccommodationController {
         return new ResponseEntity<>(service.getImageNames(id), HttpStatus.OK);
     }
 
-
+    @GetMapping(value = "/amenities")
+    public ResponseEntity<?> getAmenities() throws IOException {
+        return new ResponseEntity<>(service.getAmenities(), HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody AccommodationDTO accommodationDTO) {

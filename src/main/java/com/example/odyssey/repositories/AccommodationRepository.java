@@ -24,7 +24,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             "LEFT JOIN FETCH a.amenities am " +
             "WHERE (:guestNumber IS NULL OR :guestNumber BETWEEN a.minGuests AND a.maxGuests) " +
             "  AND (:type IS NULL OR a.type = :type) " +
-            "  AND (COALESCE(:amenityIds, NULL) IS NULL OR am IN :amenityIds) " +
+            "  AND (COALESCE(:amenityIds, NULL) IS NULL OR am.id IN :amenityIds) " +
             "  AND NOT EXISTS (" +
             "    SELECT 1 " +
             "    FROM Reservation r " +
@@ -42,7 +42,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
     List<Accommodation> findAllWithFilter(
             @Param("guestNumber") Integer guests,
             @Param("type") Accommodation.Type type,
-            @Param("amenityIds") List<Amenity> amenityIds,
+            @Param("amenityIds") List<Long> amenityIds,
             @Param("reservationStartDate") LocalDateTime reservationStartDate,
             @Param("reservationEndDate") LocalDateTime reservationEndDate,
             @Param("startSlotPrice") Double startSlotPrice,

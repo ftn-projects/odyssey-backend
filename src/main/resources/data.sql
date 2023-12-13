@@ -16,14 +16,14 @@ VALUES (1,1), (2,2), (3,2), (4,2), (5,3), (6,3), (7,3);
 
 INSERT INTO accommodations (host_id, type, title, street, number, city, country, pricing, default_price, automatic_approval, cancellation_due, max_guests, min_guests, description)
 VALUES
-    (2, 1, 'Soba sa 3 kreveta', 'Rujanska', 23, 'Zlatibor', 'Serbia', 0, 4100.0, false, 172800000, 4, 1, 'Soba sa pogledom na šetalište.'),
-    (2, 2, 'Kuća na brdu', 'Bore Vasiljevića', 14, 'Vrnjačka Banja', 'Serbia', 0, 26000.0, false, 172800000, 5, 2, 'Kuća na sprat sa 2 terase.'),
-    (3, 0, 'Mali apartman', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 4500.0, true, 172800000, 2, 1, 'Mali apartman u strogom centru grada.'),
-    (3, 0, 'Veliki apartman', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 9000.0, true, 172800000, 4, 1, 'Veliki apartman u strogom centru grada.'),
-    (3, 0, 'Delux apartman', 'Bulevar Nemanjića', 45, 'Niš', 'Serbia', 1, 13000.0, false, 172800000, 2, 1, 'Apartman u strogom centru grada.'),
-    (4, 1, 'Soba sa bračnim ležajem', 'Južni bulevar', 89, 'Beograd', 'Serbia', 1, 6300.0, true, 172800000, 3, 1, 'Soba sa pogledom na Južni bulevar.'),
-    (4, 1, 'Soba sa 3 ležaja', 'Južni bulevar', 40, 'Beograd', 'Serbia', 1, 9700.0, true, 172800000, 5, 2, 'Soba sa pogledom sa 3 ležaja.'),
-    (4, 0, 'Veliki apartman', 'Karađorđeva', 92, 'Beograd', 'Serbia', 1, 12000.0, true, 172800000, 7, 3, 'Apartman blizu Kalemegdana sa pogledom na ušće.');
+    (2, 1, 'Soba sa 3 kreveta', 'Rujanska', 23, 'Zlatibor', 'Serbia', 0, 4100.0, false, 364, 4, 1, 'Soba sa pogledom na šetalište.'),
+    (2, 2, 'Kuća na brdu', 'Bore Vasiljevića', 14, 'Vrnjačka Banja', 'Serbia', 0, 26000.0, false, 563, 5, 2, 'Kuća na sprat sa 2 terase.'),
+    (3, 0, 'Mali apartman', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 4500.0, true, 1265, 2, 1, 'Mali apartman u strogom centru grada.'),
+    (3, 0, 'Veliki apartman', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 9000.0, true, 2446, 4, 1, 'Veliki apartman u strogom centru grada.'),
+    (3, 0, 'Delux apartman', 'Bulevar Nemanjića', 45, 'Niš', 'Serbia', 1, 13000.0, false, 125, 2, 1, 'Apartman u strogom centru grada.'),
+    (4, 1, 'Soba sa bračnim ležajem', 'Južni bulevar', 89, 'Beograd', 'Serbia', 1, 6300.0, true, 76, 3, 1, 'Soba sa pogledom na Južni bulevar.'),
+    (4, 1, 'Soba sa 3 ležaja', 'Južni bulevar', 40, 'Beograd', 'Serbia', 1, 9700.0, true, 552, 5, 2, 'Soba sa pogledom sa 3 ležaja.'),
+    (4, 0, 'Veliki apartman', 'Karađorđeva', 92, 'Beograd', 'Serbia', 1, 12000.0, true, 4155, 7, 3, 'Apartman blizu Kalemegdana sa pogledom na ušće.');
 
 INSERT INTO amenities (title)
 VALUES ('TV'), ('WiFi'), ('Kitchen'), ('Free parking'), ('Beach access'), ('Washer'), ('Spa'), ('Air conditioning'), ('King bed'), ('Smoking room');
