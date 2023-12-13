@@ -15,14 +15,17 @@ import java.util.Map;
 @NoArgsConstructor
 public class RegistrationDTO extends UserDTO {
     private String password;
+    private String role;
 
-    public RegistrationDTO(User user, String password) {
+    public RegistrationDTO(User user, String password, String role) {
         super(user);
         this.password = password;
+        this.role = role;
     }
 
-    public RegistrationDTO(Host host, String password) {
+    public RegistrationDTO(Host host, String password, String role) {
         super(host);
         this.password = password;
+        this.role = role;
     }
 }

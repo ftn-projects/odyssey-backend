@@ -109,6 +109,7 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(HttpMethod.POST, "/api/v1/users/login")
                 .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico", "/*.jpg",
+
                         "/*/*.html", "/*/*.css", "/*/*.js",
                         "/api/v1/accommodations", "/api/v1/users/logout",
                         "/api/v1/accommodations/*", "/api/v1/accommodations/favorites/*", "/api/v1/accommodations/*/images",

@@ -3,6 +3,7 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.users.*;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
+import com.example.odyssey.util.EmailUtils;
 import com.example.odyssey.util.TokenUtils;
 import com.example.odyssey.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -96,6 +97,17 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/confirmEmail")
+    public ResponseEntity<?> confirmEmail(@PathVariable String email){
+        EmailUtils.sendConfirmation(email,"mamatvoja");
+        try{
+            service.confirmEmail(email);
+        }catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @DeleteMapping("/deactivate/{id}")
     public ResponseEntity<?> deactivate(@PathVariable Long id) {
         try {
@@ -112,11 +124,14 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegistrationDTO userDTO) {
+        User exists = this.service.findByEmail(userDTO.getEmail());
+        if(exists != null) return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
+
         User user = UserDTOMapper.fromRegistrationDTOtoUser(userDTO);
 
-        user = service.register(user);
+        user = service.register(user,userDTO.getRole());
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.CREATED);
     }
 
