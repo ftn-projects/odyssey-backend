@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @RestController
@@ -42,8 +45,11 @@ public class AccommodationController {
     ) {
         List<Accommodation> accommodations;
         accommodations = service.getAll(dateStart, dateEnd, guestNumber, amenities, type, priceStart, priceEnd);
-
-        return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
+        List<AccommodationDTO> AccommodationDTOs = mapToDTO(accommodations);
+        for (AccommodationDTO accommodationDTO: AccommodationDTOs) {
+            accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodationDTO.getId(), dateStart, dateEnd, guestNumber));
+        }
+        return new ResponseEntity<>(AccommodationDTOs, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -60,6 +66,7 @@ public class AccommodationController {
         List<Accommodation> accommodations = new ArrayList<>();;
 
         // accommodation = service.findByGuestFavorites(id);
+
 
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
@@ -90,7 +97,4 @@ public class AccommodationController {
     private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
         return accommodations.stream().map((a) -> new AccommodationDTO(a)).toList();
     }
-
-
-
 }

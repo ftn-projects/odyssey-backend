@@ -10,6 +10,7 @@ import com.example.odyssey.repositories.AccommodationRepository;
 import com.example.odyssey.repositories.AmenityRepository;
 import com.example.odyssey.util.ImageUploadUtil;
 import jakarta.annotation.PostConstruct;
+import org.modelmapper.internal.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
@@ -111,5 +114,24 @@ public class AccommodationService {
 
     public List<Amenity> getAmenities() {
         return amenityRepository.findAll();
+    }
+
+    public double calculateTotalPrice(Long accommodationID, Long startDateLong, Long endDateLong, Integer guestNumber){
+        if(accommodationID == null || startDateLong == null || endDateLong == null)
+            return -1;
+        LocalDateTime startDate = new ReservationService().convertToDate(startDateLong);
+        LocalDateTime endDate = new ReservationService().convertToDate(endDateLong);
+        Accommodation accommodation = getOne(accommodationID);
+
+        long days = endDate.toLocalDate().toEpochDay() - startDate.toLocalDate().toEpochDay();
+        if(accommodation.getPricing()==Accommodation.PricingType.PER_ACCOMMODATION)
+            return (days *  accommodation.getDefaultPrice());
+        else if(accommodation.getPricing()==Accommodation.PricingType.PER_PERSON)
+            if(guestNumber != null && guestNumber > 0)
+                return (days *  accommodation.getDefaultPrice() * guestNumber);
+            else
+                return -1;
+        else
+            return -1;
     }
 }
