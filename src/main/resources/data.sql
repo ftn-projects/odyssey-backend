@@ -11,6 +11,7 @@ VALUES
     ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$x5kr/gYepaBqSumUrGKFP.MpG9sMO0PmmsG5zu5AdSSBPaFHWz3RC', '+38163756640', 'Stražilovska', 3, 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00'),
     ('GUEST', 0, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$ltjGQndex32s0vfh9NGqauwuvdQuJ1a1fdgUYVbJKMnk7z1N9w7Wi', '+381651859940', 'Svetozara Radojčića', 17, 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00');
 
+
 INSERT INTO user_roles (user_id, role_id)
 VALUES (1, 1), (2, 2), (3, 2), (4, 2), (5, 3), (6, 3), (7, 3),
        (1, 4), (2, 4), (3, 4), (4, 4), (5, 4), (6, 4), (7, 4);
@@ -25,6 +26,20 @@ VALUES
     (4, 1, 'Soba sa bračnim ležajem', 'Južni bulevar', 89, 'Beograd', 'Serbia', 1, 6300.0, true, 172800000, 3, 1, 'Soba sa pogledom na Južni bulevar.'),
     (4, 1, 'Soba sa 3 ležaja', 'Južni bulevar', 40, 'Beograd', 'Serbia', 1, 9700.0, true, 172800000, 5, 2, 'Soba sa pogledom sa 3 ležaja.'),
     (4, 0, 'Veliki apartman', 'Karađorđeva', 92, 'Beograd', 'Serbia', 1, 12000.0, true, 172800000, 7, 3, 'Apartman blizu Kalemegdana sa pogledom na ušće.');
+
+INSERT INTO amenities (title)
+VALUES ('TV'), ('WiFi'), ('Kitchen'), ('Free parking'), ('Beach access'), ('Washer'), ('Spa'), ('Air conditioning'), ('King bed'), ('Smoking room');
+
+INSERT INTO accommodation_has_amenity (accommodation_id, amenity_id)
+VALUES
+    (1, 1), (1, 2), (1, 4), (1, 6), (1, 7), (1, 9),
+    (2, 1), (2, 2), (2, 5), (2, 7), (2, 10),
+    (3, 2), (3, 4), (3, 6), (3, 8), (3, 9), (3, 10),
+    (4, 1), (4, 2), (4, 3), (4, 4), (4, 6), (4, 7), (4, 9),
+    (5, 2), (5, 4), (5, 5), (5, 7), (5, 8),
+    (6, 1), (6, 2), (6, 3), (6, 5), (6, 7), (6, 9),
+    (7, 2), (7, 3), (7, 7), (7, 8),
+    (8, 1), (8, 2), (8, 3), (8, 5), (8, 7), (8, 9);
 
 -- INSERT INTO reservations (id, status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
 -- VALUES
