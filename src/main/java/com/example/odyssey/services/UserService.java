@@ -1,7 +1,5 @@
 package com.example.odyssey.services;
 
-import com.example.odyssey.entity.TimeSlot;
-import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.Role;
@@ -14,20 +12,14 @@ import com.example.odyssey.util.ImageUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
 
 @Service
 public class UserService {
@@ -42,27 +34,40 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     private final String imagesDirPath = "src/main/resources/images/users/";
 
-    public List<User> getAll() { return userRepository.findAll(); }
-    public User find(Long id) { return userRepository.findUserById(id); }
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
+
+    public User find(Long id) {
+        return userRepository.findUserById(id);
+    }
+
     public User register(User user, String role) {
-        if(role.equalsIgnoreCase("ADMIN"))
+        if (role.equalsIgnoreCase("ADMIN"))
             throw new IllegalArgumentException("Registering a new Admin is forbidden");
         List<Role> roles = roleRepository.findByName(role.toUpperCase());
         user.setRoles(roles);
         user.setStatus(User.AccountStatus.PENDING);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(LocalDateTime.now());
-        EmailUtils.sendConfirmation(user.getEmail(),user.getName());
-        if(roles.get(0).getName().equalsIgnoreCase("HOST"))
+
+        EmailUtils.sendConfirmation(user.getEmail(), user.getName(), user.getId());
+
+        if (roles.get(0).getName().equalsIgnoreCase("HOST"))
             return userRepository.save(new Host(user));
         return userRepository.save(new Guest(user));
     }
-    public User findByEmail(String email){return userRepository.findUserByEmail(email);}
+
+    public User findByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
+
     public User update(User updated) {
         User user = userRepository.findUserById(updated.getId());
         user = updated;
         return userRepository.save(updated);
     }
+
     public void updatePassword(Long id, String oldPassword, String newPassword) throws Exception {
         User user = userRepository.findUserById(id);
         if (!oldPassword.equals(user.getPassword()))
@@ -90,20 +95,21 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void confirmEmail(String email){
-        User user = userRepository.findUserByEmail(email);
-        if(user == null) throw new IllegalArgumentException("Activation link has expired.");
+    public void confirmEmail(Long id) {
+        User user = userRepository.findUserById(id);
+        if (user == null || !user.getStatus().equals(User.AccountStatus.PENDING))
+            throw new IllegalArgumentException("Activation link has expired.");
         updateAccountStatus(user, User.AccountStatus.ACTIVE);
     }
 
-    public List<User> findByStatus(User.AccountStatus status){
+    public List<User> findByStatus(User.AccountStatus status) {
         return userRepository.findUsersByStatus(status);
     }
 
-    public void deleteExpiredAccounts(){
+    public void deleteExpiredAccounts() {
         List<User> users = findByStatus(User.AccountStatus.PENDING);
-        for (User u: users) {
-            if(!LocalDateTime.now().minusDays(1).isBefore(u.getCreated())){
+        for (User u : users) {
+            if (!LocalDateTime.now().minusDays(1).isBefore(u.getCreated())) {
                 userRepository.delete(u);
             }
         }
