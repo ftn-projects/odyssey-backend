@@ -10,10 +10,19 @@ import com.example.odyssey.repositories.ReservationRepository;
 import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
 import com.example.odyssey.util.EmailUtils;
+import com.example.odyssey.util.ImageUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +40,7 @@ public class UserService {
     private RoleRepository roleRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    private final String imagesDirPath = "src/main/resources/images/users/";
 
     public List<User> getAll() { return userRepository.findAll(); }
     public User find(Long id) { return userRepository.findUserById(id); }
@@ -97,5 +107,25 @@ public class UserService {
                 userRepository.delete(u);
             }
         }
+    }
+
+    public byte[] getImage(Long id, String imageName) throws IOException {
+        String imagePath = StringUtils.cleanPath(imagesDirPath + id + "/" + imageName);
+        File file = new File(imagePath);
+        return Files.readAllBytes(file.toPath());
+    }
+
+    public void uploadImage(Long id, MultipartFile image) throws IOException {
+        User user = userRepository.findUserById(id);
+
+        if (image.getOriginalFilename() == null)
+            throw new IOException("Image is non existing.");
+
+        String uploadDir = StringUtils.cleanPath(imagesDirPath + id);
+
+        ImageUploadUtil.saveImage(uploadDir, "profile.png", image);
+
+        user.setProfileImage("profile.png");
+        userRepository.save(user);
     }
 }

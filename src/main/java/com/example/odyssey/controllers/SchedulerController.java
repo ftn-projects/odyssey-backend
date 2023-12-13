@@ -16,8 +16,8 @@ public class SchedulerController {
 
     @Scheduled(initialDelayString = "0", fixedRateString = "5000")
     public void fixedRateJobWithInitialDelay() {
-        logger.info("> fixedRateJobWithInitialDelay");
+//        logger.info("> fixedRateJobWithInitialDelay");
         service.deleteExpiredAccounts();
-        logger.info("< fixedRateJobWithInitialDelay");
+//        logger.info("< fixedRateJobWithInitialDelay");
     }
 }
