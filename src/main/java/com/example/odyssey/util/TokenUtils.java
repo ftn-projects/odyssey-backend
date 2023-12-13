@@ -32,13 +32,14 @@ public class TokenUtils {
     private static final String AUDIENCE_WEB = "web";
     private final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
-    public String generateToken(String username, Collection<? extends GrantedAuthority> authorities) {
+    public String generateToken(Long id, String username, Collection<? extends GrantedAuthority> authorities) {
         Map<String,Object> claims = new HashMap<>();
+        claims.put("subId", id);
+        claims.put("sub", username);
         claims.put("role", authorities);
 
         return Jwts.builder()
                 .setIssuer(APP_NAME)
-                .setSubject(username)
                 .setClaims(claims)
                 .setAudience(generateAudience())
                 .setIssuedAt(new Date())

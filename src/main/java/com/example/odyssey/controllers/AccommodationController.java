@@ -9,6 +9,7 @@ import com.example.odyssey.services.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
@@ -50,6 +51,7 @@ public class AccommodationController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
         List<Accommodation> accommodations = new ArrayList<>();;
