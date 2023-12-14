@@ -134,4 +134,8 @@ public class AccommodationService {
         else
             return -1;
     }
+
+    public Accommodation create(Accommodation accommodation) {
+        return accommodationRepository.save(accommodation);
+    }
 }

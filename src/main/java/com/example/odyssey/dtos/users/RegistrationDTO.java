@@ -18,7 +18,7 @@ import java.util.Map;
 public class RegistrationDTO extends UserDTO {
     @NotBlank(message = "Password should not be blank.")
     private String password;
-    @Pattern(regexp = "guest|host", flags = Pattern.Flag.CASE_INSENSITIVE, message = "Role should be GUEST or HOST.")
+    @Pattern(regexp = "GUEST|HOST", message = "Role should be GUEST or HOST.")
     private String role;
 
     public RegistrationDTO(User user, String password, String role) {
