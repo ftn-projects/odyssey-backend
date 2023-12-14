@@ -1,4 +1,4 @@
-package com.example.odyssey.sacurity.auth;
+package com.example.odyssey.sacurity;
 
 import lombok.Getter;
 import lombok.Setter;

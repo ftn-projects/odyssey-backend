@@ -9,7 +9,7 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class ImageUploadUtil {
+public abstract class ImageUploadUtil {
 	public static void saveImage(String uploadDir, String fileName,
             MultipartFile multipartFile) throws IOException {
 		

@@ -1,11 +1,13 @@
 package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.users.*;
+import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
 import com.example.odyssey.services.UserService;
-import com.example.odyssey.util.EmailUtils;
-import com.example.odyssey.util.TokenUtils;
+import com.example.odyssey.util.TokenUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +31,7 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private TokenUtils tokenUtils;
+    private TokenUtil tokenUtil;
 
     @Autowired
     public UserController(UserService service) {
@@ -70,25 +72,39 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         User user = (User) authentication.getPrincipal();
-        String jwt = tokenUtils.generateToken(user.getId(), user.getUsername(), user.getAuthorities());
-        long expiresIn = tokenUtils.getExpiredIn();
+        String jwt = tokenUtil.generateToken(user.getId(), user.getUsername(), user.getAuthorities());
+        long expiresIn = tokenUtil.getExpiredIn();
 
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody UserDTO userDTO) {
-        User user = UserDTOMapper.fromDTOtoUser(userDTO);
-
-        user = service.update(user);
+    public ResponseEntity<?> update(@Valid @RequestBody UserDTO userDTO) {
+        User user = service.find(userDTO.getId());
         if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        user.setName(userDTO.getName());
+        user.setSurname(userDTO.getSurname());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+
+        Address address = new Address();
+        address.setStreet(userDTO.getAddress().getStreet());
+        address.setNumber(userDTO.getAddress().getNumber());
+        address.setCity(userDTO.getAddress().getCity());
+        address.setCountry(userDTO.getAddress().getCountry());
+        user.setAddress(address);
+
+        if (user instanceof Host) ((Host) user).setBio(userDTO.getBio());
+
+        service.save(user);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping("/password")
-    public ResponseEntity<?> updatePassword(@RequestBody PasswordDTO passwordDTO) {
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordDTO passwordDTO) {
         try {
             service.updatePassword(
                     passwordDTO.getUserId(),
@@ -129,7 +145,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegistrationDTO userDTO) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegistrationDTO userDTO) {
         User exists = this.service.findByEmail(userDTO.getEmail());
         if (exists != null) return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
 

@@ -1,6 +1,5 @@
 package com.example.odyssey.util;
 
-import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -12,11 +11,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @Component
-public class TokenUtils {
+public class TokenUtil {
 
     @Value("spring-security-example")
     private String APP_NAME;
