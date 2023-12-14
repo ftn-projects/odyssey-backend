@@ -10,9 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-
-public class EmailUtils {
+public abstract class EmailUtil {
     public static void sendConfirmation(String email, String name, Long id){
         RestTemplate restTemplate = new RestTemplate();
         JSONObject body = new JSONObject();

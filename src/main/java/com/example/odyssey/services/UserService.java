@@ -7,21 +7,17 @@ import com.example.odyssey.entity.users.User;
 import com.example.odyssey.repositories.ReservationRepository;
 import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
-import com.example.odyssey.util.EmailUtils;
+import com.example.odyssey.util.EmailUtil;
 import com.example.odyssey.util.ImageUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,8 +26,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private ReservationRepository reservationRepository;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
@@ -55,21 +49,17 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(LocalDateTime.now());
 
-        EmailUtils.sendConfirmation(user.getEmail(), user.getName(), user.getId());
-
+        User saved;
         if (roles.get(0).getName().equalsIgnoreCase("HOST"))
-            return userRepository.save(new Host(user));
-        return userRepository.save(new Guest(user));
+            saved = userRepository.save(new Host(user));
+        else saved = userRepository.save(new Guest(user));
+
+        EmailUtil.sendConfirmation(saved.getEmail(), saved.getName(), saved.getId());
+        return saved;
     }
 
     public User findByEmail(String email) {
         return userRepository.findUserByEmail(email);
-    }
-
-    public User update(User updated) {
-        User user = userRepository.findUserById(updated.getId());
-        user = updated;
-        return userRepository.save(updated);
     }
 
     public void updatePassword(Long id, String oldPassword, String newPassword) throws Exception {
@@ -121,8 +111,11 @@ public class UserService {
 
     public byte[] getImage(Long id, String imageName) throws IOException {
         String imagePath = StringUtils.cleanPath(imagesDirPath + id + "/" + imageName);
-        File file = new File(imagePath);
-        return Files.readAllBytes(file.toPath());
+        try {
+            return Files.readAllBytes(new File(imagePath).toPath());
+        } catch (IOException e) {
+            return Files.readAllBytes(new File(imagesDirPath + "deafult_image.png").toPath());
+        }
     }
 
     public void uploadImage(Long id, MultipartFile image) throws IOException {
@@ -136,6 +129,10 @@ public class UserService {
         ImageUploadUtil.saveImage(uploadDir, "profile.png", image);
 
         user.setProfileImage("profile.png");
+        userRepository.save(user);
+    }
+
+    public void save(User user) {
         userRepository.save(user);
     }
 }
