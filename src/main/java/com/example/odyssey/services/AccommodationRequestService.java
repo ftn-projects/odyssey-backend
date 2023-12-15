@@ -14,8 +14,6 @@ public class AccommodationRequestService {
     AccommodationRequestRepository repository;
     @Autowired
     AccommodationService service;
-    @Autowired
-    AccommodationRequestService requestService;
     public List<AccommodationRequest> findByStatus (AccommodationRequest.Status status) {return repository.findAccommodationRequestByStatus(status);}
     public AccommodationRequest findById (Long id) {return repository.findAccommodationRequestById(id);}
     public void editStatus(AccommodationRequest request, AccommodationRequest.Status status){

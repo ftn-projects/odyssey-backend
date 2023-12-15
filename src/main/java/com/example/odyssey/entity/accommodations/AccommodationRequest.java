@@ -53,7 +53,7 @@ public class AccommodationRequest {
         @ElementCollection
         private Set<AvailabilitySlot> newAvailableSlots = new HashSet<>();
         @ManyToMany(cascade = CascadeType.ALL)
-        @JoinTable(name = "accommodation_modification_has_amenity", joinColumns = @JoinColumn(name = "modification_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
+        @JoinTable(name = "accommodation_request_has_amenity", joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
         private Set<Amenity> newAmenities = new HashSet<>();
         private Integer newMinGuests;
         private Integer newMaxGuests;
