@@ -3,6 +3,7 @@ package com.example.odyssey.services;
 import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.accommodations.Accommodation;
+import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
@@ -133,6 +134,22 @@ public class AccommodationService {
                 return -1;
         else
             return -1;
+    }
+
+    public void editAccommodation(Long id, AccommodationRequest.ModificationDetails details){
+        Accommodation accommodation = getOne(id);
+        accommodation.setTitle(details.getNewTitle());
+        accommodation.setDescription(details.getNewDescription());
+        accommodation.setType(details.getNewAccommodationType());
+        accommodation.setAddress(details.getNewAddress());
+        accommodation.setDefaultPrice(details.getNewDefaultPrice());
+        accommodation.setAutomaticApproval(details.getNewAutomaticApproval());
+        accommodation.setCancellationDue(details.getNewCancellationDue());
+        accommodation.setAvailableSlots(details.getNewAvailableSlots());
+        accommodation.setAmenities(details.getNewAmenities());
+        accommodation.setMinGuests(details.getNewMinGuests());
+        accommodation.setMaxGuests(details.getNewMaxGuests());
+        save(accommodation);
     }
 
     public Accommodation create(Accommodation accommodation) {

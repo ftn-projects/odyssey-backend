@@ -1,6 +1,7 @@
 package com.example.odyssey.entity.accommodations;
 
 import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.users.Host;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +18,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "accommodation_modifications")
-public class AccommodationModification {
+@Table(name = "accommodation_requests")
+public class AccommodationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +29,8 @@ public class AccommodationModification {
     @Embedded
     private ModificationDetails details;
     @ManyToOne
-    private Accommodation accommodation;
+    private Host host;
+    private Long accommodationId;
 
     public enum Type {CREATE, UPDATE}
 
