@@ -57,11 +57,11 @@ public class Accommodation {
         defaultPrice = details.getNewDefaultPrice();
         automaticApproval = details.getNewAutomaticApproval();
         cancellationDue = details.getNewCancellationDue();
-        availableSlots = details.getNewAvailableSlots();
-        amenities = details.getNewAmenities();
+        availableSlots = new HashSet<>(details.getNewAvailableSlots());
+        amenities = new HashSet<>(details.getNewAmenities());
         minGuests = details.getNewMinGuests();
         maxGuests = details.getNewMaxGuests();
-        images = details.getNewImages();
+        images = new HashSet<>(details.getNewImages());
     }
     public Double getDatesPrice(LocalDate date){
         for(AvailabilitySlot x: availableSlots)

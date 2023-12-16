@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,20 +15,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AccommodationRequestDTO {
     private Long id;
-    private LocalDateTime submissionDate;
+    private LocalDate submissionDate;
     private AccommodationRequest.Type type;
     private String title;
-    private String hostName;
-    private String hostSurname;
+    private String host;
     private Long accommodationId;
 
     public AccommodationRequestDTO(AccommodationRequest accommodationRequest) {
         id = accommodationRequest.getId();
-        submissionDate = accommodationRequest.getSubmissionDate();
+        submissionDate = accommodationRequest.getSubmissionDate().toLocalDate();
         type = accommodationRequest.getType();
         title = accommodationRequest.getDetails().getNewTitle();
-        hostName = accommodationRequest.getHost().getName();
-        hostSurname = accommodationRequest.getHost().getSurname();
+        host= accommodationRequest.getHost().getName() + " " +accommodationRequest.getHost().getSurname();
         accommodationId = accommodationRequest.getId();
     }
 }

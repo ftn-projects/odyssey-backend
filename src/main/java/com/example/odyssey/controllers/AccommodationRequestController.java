@@ -8,6 +8,7 @@ import com.example.odyssey.services.AccommodationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,13 +19,15 @@ public class AccommodationRequestController {
     @Autowired
     private AccommodationRequestService service;
 
-    @GetMapping("/{status}")
-    public ResponseEntity<?> getByStatus(@PathVariable AccommodationRequest.Status status) {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> findByStatus(@RequestParam AccommodationRequest.Status status) {
         List<AccommodationRequest> requests = service.findByStatus(status);
         return new ResponseEntity<>(mapToDTO(requests), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam String status){
         AccommodationRequest request = service.findById(id);
         service.editStatus(request,AccommodationRequest.Status.valueOf(status));
