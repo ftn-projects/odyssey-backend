@@ -1,5 +1,6 @@
 package com.example.odyssey.mappers;
 
+import com.example.odyssey.dtos.accommodations.AccommodationCreationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDetailsDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationSearchDTO;
@@ -41,6 +42,10 @@ public class AccommodationDTOMapper {
     }
 
     public static Accommodation fromSearchDTOToAccommodation(AccommodationSearchDTO dto) {
+        return mapper.map(dto, Accommodation.class);
+    }
+
+    public static Accommodation fromCreationDTOToAccommodation(AccommodationCreationDTO dto) {
         return mapper.map(dto, Accommodation.class);
     }
 }
