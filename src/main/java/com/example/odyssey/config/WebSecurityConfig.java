@@ -80,6 +80,7 @@ public class WebSecurityConfig {
         http.securityContext((securityContext) -> securityContext
                 .securityContextRepository(new RequestAttributeSecurityContextRepository())
         );
+        http.cors(cors -> CORSConfigurer());
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session -> {
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -89,7 +90,7 @@ public class WebSecurityConfig {
         });
         http.authorizeHttpRequests(requests -> {
             requests
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/v1/users/login").permitAll()
                     .requestMatchers("/api/v1/users/register").permitAll()
                     .requestMatchers("/api/v1/users/confirmEmail/*").permitAll()
