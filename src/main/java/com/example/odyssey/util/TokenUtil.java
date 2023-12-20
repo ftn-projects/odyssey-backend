@@ -153,10 +153,7 @@ public class TokenUtil {
         if (tokenId == null)
             throw new ValidationException("Internal authentication error.");
 
-        if (!admin && !Objects.equals(id, tokenId))
-            throw new ValidationException("Unauthorized access.");
-
-        if (admin && !containsAuthority(token, "ADMIN"))
+        if (!(Objects.equals(id, tokenId) || (admin && containsAuthority(token, "ADMIN"))))
             throw new ValidationException("Unauthorized access.");
     }
 

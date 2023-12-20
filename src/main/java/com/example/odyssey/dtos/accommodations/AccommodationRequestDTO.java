@@ -1,5 +1,6 @@
 package com.example.odyssey.dtos.accommodations;
 
+import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,8 @@ public class AccommodationRequestDTO {
     private LocalDate submissionDate;
     private AccommodationRequest.Type type;
     private String title;
-    private String host;
+    private UserDTO host;
+    private AccommodationDTO details;
     private Long accommodationId;
 
     public AccommodationRequestDTO(AccommodationRequest accommodationRequest) {
@@ -26,7 +28,8 @@ public class AccommodationRequestDTO {
         submissionDate = accommodationRequest.getSubmissionDate().toLocalDate();
         type = accommodationRequest.getType();
         title = accommodationRequest.getDetails().getNewTitle();
-        host= accommodationRequest.getHost().getName() + " " +accommodationRequest.getHost().getSurname();
+        host = new UserDTO(accommodationRequest.getHost());
+        details = new AccommodationDTO(accommodationRequest.getDetails());
         accommodationId = accommodationRequest.getId();
     }
 }

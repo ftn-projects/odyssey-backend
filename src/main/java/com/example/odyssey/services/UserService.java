@@ -4,11 +4,10 @@ import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
-import com.example.odyssey.repositories.ReservationRepository;
 import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
 import com.example.odyssey.util.EmailUtil;
-import com.example.odyssey.util.ImageUploadUtil;
+import com.example.odyssey.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -126,7 +125,7 @@ public class UserService {
 
         String uploadDir = StringUtils.cleanPath(imagesDirPath + id);
 
-        ImageUploadUtil.saveImage(uploadDir, "profile.png", image);
+        ImageUtil.saveImage(uploadDir, "profile.png", image);
 
         user.setProfileImage("profile.png");
         userRepository.save(user);

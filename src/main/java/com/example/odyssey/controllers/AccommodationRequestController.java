@@ -13,6 +13,7 @@ import com.example.odyssey.util.TokenUtil;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/accommodationRequests")
 public class AccommodationRequestController {
     @Autowired
-    private AccommodationRequestService accommodationRequestService;
+    private AccommodationRequestService service;
     @Autowired
     private UserService userService;
     @Autowired
@@ -35,29 +36,50 @@ public class AccommodationRequestController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> findByStatus(@RequestParam AccommodationRequest.Status status) {
-        List<AccommodationRequest> requests = accommodationRequestService.findByStatus(status);
+        List<AccommodationRequest> requests = service.findByStatus(status);
         return new ResponseEntity<>(mapToDTO(requests), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        AccommodationRequest request = service.findById(id);
+        return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam AccommodationRequest.Status status) {
-        AccommodationRequest request = accommodationRequestService.findById(id);
-        accommodationRequestService.editStatus(request, status);
-        return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
+        try {
+            AccommodationRequest request = service.findById(id);
+            service.editStatus(request, status);
+            return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+    }
+
+    @GetMapping(value = "/{id}/images/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<?> getImage(@PathVariable Long id, @PathVariable String imageName) throws IOException {
+        return new ResponseEntity<>(service.getImage(id, imageName), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/images")
+    public ResponseEntity<?> getImages(@PathVariable Long id) throws IOException {
+        return new ResponseEntity<>(service.getImageNames(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('HOST')")
     @PostMapping(value = "/image/{id}")
     public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image, @RequestHeader("Authorization") String authToken) throws IOException {
         try {
-            AccommodationRequest request = accommodationRequestService.findById(id);
+            AccommodationRequest request = service.findById(id);
             tokenUtil.validateAccess(authToken, request.getHost().getId(), true);
         } catch (ValidationException ve) {
             return new ResponseEntity<>(ve.getMessage(), HttpStatus.OK);
         }
 
-        accommodationRequestService.uploadImage(id, image);
+        service.uploadImage(id, image);
         return new ResponseEntity<>("Image uploaded successfully.", HttpStatus.OK);
     }
 
@@ -68,7 +90,7 @@ public class AccommodationRequestController {
         details.setNewCancellationDue(Duration.ofDays(dto.getNewCancellationDue()));
 
         Host host = (Host) userService.find(dto.getHostId());
-        AccommodationRequest request = accommodationRequestService.create(dto.getRequestType(), details, host, dto.getAccommodationId());
+        AccommodationRequest request = service.create(dto.getRequestType(), details, host, dto.getAccommodationId());
         return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
     }
 
