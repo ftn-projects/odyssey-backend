@@ -105,6 +105,13 @@ public class AccommodationService {
         return amenityRepository.findAll();
     }
 
+    public double getPriceForDateRange(Long accommodationID, Long startDateLong, Long endDateLong) {
+        if (accommodationID == null || startDateLong == null || endDateLong == null)
+            return -1;
+        LocalDateTime startDate = new ReservationService().convertToDate(startDateLong);
+        LocalDateTime endDate = new ReservationService().convertToDate(endDateLong);
+        return accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate);
+    }
     public double calculateTotalPrice(Long accommodationID, Long startDateLong, Long endDateLong, Integer guestNumber) {
         if (accommodationID == null || startDateLong == null || endDateLong == null)
             return -1;
@@ -114,10 +121,10 @@ public class AccommodationService {
 
         long days = endDate.toLocalDate().toEpochDay() - startDate.toLocalDate().toEpochDay();
         if (accommodation.getPricing() == Accommodation.PricingType.PER_ACCOMMODATION)
-            return (days * accommodation.getDefaultPrice());
+            return (days * accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate));
         else if (accommodation.getPricing() == Accommodation.PricingType.PER_PERSON)
             if (guestNumber != null && guestNumber > 0)
-                return (days * accommodation.getDefaultPrice() * guestNumber);
+                return (days * accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate) * guestNumber);
             else
                 return -1;
         else

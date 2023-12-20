@@ -49,6 +49,18 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             @Param("endSlotPrice") Double endSlotPrice,
             @Param("location") String location);
 
+
+
     Accommodation findOneById(Long id);
     List<Accommodation> findAllByHost(Host host);
+
+    @Query("SELECT s.price " +
+            "FROM Accommodation a " +
+            "JOIN a.availableSlots s " +
+            "WHERE a.id = :accommodationId " +
+            "AND (cast(:startDate as localdatetime) IS NULL OR cast(:endDate as localdatetime) IS NULL OR (s.timeSlot.end >= :startDate AND s.timeSlot.start <= :endDate))")
+    Double findPriceForDateRange(
+            @Param("accommodationId") Long accommodationId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

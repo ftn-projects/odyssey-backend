@@ -37,6 +37,7 @@ public class AccommodationController {
         List<AccommodationDTO> AccommodationDTOs = mapToDTO(accommodations);
         for (AccommodationDTO accommodationDTO : AccommodationDTOs) {
             accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodationDTO.getId(), dateStart, dateEnd, guestNumber));
+            accommodationDTO.setDefaultPrice(service.getPriceForDateRange(accommodationDTO.getId(), dateStart, dateEnd));
         }
         return new ResponseEntity<>(AccommodationDTOs, HttpStatus.OK);
     }
