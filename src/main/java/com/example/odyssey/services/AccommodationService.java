@@ -3,6 +3,7 @@ package com.example.odyssey.services;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.Amenity;
+import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.repositories.AccommodationRepository;
 import com.example.odyssey.repositories.AmenityRepository;
@@ -14,9 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
-
-import com.example.odyssey.entity.accommodations.AvailabilitySlot;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class AccommodationService {
@@ -26,7 +27,8 @@ public class AccommodationService {
     @Autowired
     private AmenityRepository amenityRepository;
 
-    private static final String imagesDirPath = "src/main/resources/images/accommodations/";
+    public static final String imagesDirPath = "src/main/resources/images/accommodations/";
+
     public List<Accommodation> getAll(
             String location,
             Long dateStart,
@@ -36,7 +38,7 @@ public class AccommodationService {
             String type,
             Double priceStart,
             Double priceEnd
-    ){
+    ) {
 
         LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
         LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
@@ -46,19 +48,22 @@ public class AccommodationService {
         );
     }
 
-    public Accommodation getOne(Long id){
+    public Accommodation getOne(Long id) {
         return accommodationRepository.findOneById(id);
     }
 
-    public List<Accommodation> findByHost(Host host){
+    public List<Accommodation> findByHost(Host host) {
         return accommodationRepository.findAllByHost(host);
     }
 
-    public Accommodation save(Accommodation accommodation){return accommodationRepository.save(accommodation);}
+    public Accommodation save(Accommodation accommodation) {
+        return accommodationRepository.save(accommodation);
+    }
+
     public boolean slotsOverlap(Set<AvailabilitySlot> slots) {
-        for(AvailabilitySlot i:slots)
-            for(AvailabilitySlot j:slots)
-                if(i!=j && i.getTimeSlot().overlaps(j.getTimeSlot()))
+        for (AvailabilitySlot i : slots)
+            for (AvailabilitySlot j : slots)
+                if (i != j && i.getTimeSlot().overlaps(j.getTimeSlot()))
                     return true;
         return false;
     }
@@ -100,26 +105,26 @@ public class AccommodationService {
         return amenityRepository.findAll();
     }
 
-    public double calculateTotalPrice(Long accommodationID, Long startDateLong, Long endDateLong, Integer guestNumber){
-        if(accommodationID == null || startDateLong == null || endDateLong == null)
+    public double calculateTotalPrice(Long accommodationID, Long startDateLong, Long endDateLong, Integer guestNumber) {
+        if (accommodationID == null || startDateLong == null || endDateLong == null)
             return -1;
         LocalDateTime startDate = new ReservationService().convertToDate(startDateLong);
         LocalDateTime endDate = new ReservationService().convertToDate(endDateLong);
         Accommodation accommodation = getOne(accommodationID);
 
         long days = endDate.toLocalDate().toEpochDay() - startDate.toLocalDate().toEpochDay();
-        if(accommodation.getPricing()==Accommodation.PricingType.PER_ACCOMMODATION)
-            return (days *  accommodation.getDefaultPrice());
-        else if(accommodation.getPricing()==Accommodation.PricingType.PER_PERSON)
-            if(guestNumber != null && guestNumber > 0)
-                return (days *  accommodation.getDefaultPrice() * guestNumber);
+        if (accommodation.getPricing() == Accommodation.PricingType.PER_ACCOMMODATION)
+            return (days * accommodation.getDefaultPrice());
+        else if (accommodation.getPricing() == Accommodation.PricingType.PER_PERSON)
+            if (guestNumber != null && guestNumber > 0)
+                return (days * accommodation.getDefaultPrice() * guestNumber);
             else
                 return -1;
         else
             return -1;
     }
 
-    public void editAccommodation(Long id, AccommodationRequest.Details details){
+    public void editAccommodation(Long id, AccommodationRequest.Details details) {
         Accommodation accommodation = getOne(id);
         accommodation.setTitle(details.getNewTitle());
         accommodation.setDescription(details.getNewDescription());
@@ -128,10 +133,11 @@ public class AccommodationService {
         accommodation.setDefaultPrice(details.getNewDefaultPrice());
         accommodation.setAutomaticApproval(details.getNewAutomaticApproval());
         accommodation.setCancellationDue(details.getNewCancellationDue());
-        accommodation.setAvailableSlots(details.getNewAvailableSlots());
-        accommodation.setAmenities(details.getNewAmenities());
+        details.getNewAvailableSlots().forEach((s) -> accommodation.getAvailableSlots().add(s));
+        details.getNewAmenities().forEach((a) -> accommodation.getAmenities().add(a));
         accommodation.setMinGuests(details.getNewMinGuests());
         accommodation.setMaxGuests(details.getNewMaxGuests());
+        details.getNewImages().forEach((i) -> accommodation.getImages().add(i));
         save(accommodation);
     }
 }
