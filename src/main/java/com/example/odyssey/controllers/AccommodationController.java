@@ -1,13 +1,7 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.accommodations.AccommodationCreationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
-import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.accommodations.Amenity;
-import com.example.odyssey.entity.accommodations.AvailabilitySlot;
-import com.example.odyssey.entity.users.Host;
-import com.example.odyssey.mappers.AccommodationDTOMapper;
 import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -28,8 +20,6 @@ import java.util.List;
 public class AccommodationController {
     @Autowired
     private AccommodationService service;
-    @Autowired
-    private UserService userService;
 
     @GetMapping
     public ResponseEntity<?> getAll(
@@ -64,7 +54,7 @@ public class AccommodationController {
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
         List<Accommodation> accommodations = new ArrayList<>();
-        ;
+
 
         // accommodation = service.findByGuestFavorites(id);
 
@@ -84,41 +74,11 @@ public class AccommodationController {
     }
 
     @GetMapping(value = "/amenities")
-    public ResponseEntity<?> getAmenities() throws IOException {
+    public ResponseEntity<?> getAmenities() {
         return new ResponseEntity<>(service.getAmenities(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody AccommodationCreationDTO accommodationDTO) {
-        Accommodation accommodation = new Accommodation();
-
-        accommodation.setTitle(accommodationDTO.getTitle());
-        accommodation.setType(accommodationDTO.getType());
-        accommodation.setHost((Host) userService.find(accommodationDTO.getHost()));
-        accommodation.setPricing(accommodationDTO.getPricing());
-        accommodation.setAutomaticApproval(accommodationDTO.getAutomaticApproval());
-        accommodation.setCancellationDue(accommodationDTO.getCancellationDue());
-        accommodation.setMinGuests(accommodationDTO.getMinGuests());
-        accommodation.setMaxGuests(accommodationDTO.getMaxGuests());
-        accommodation.setDescription(accommodationDTO.getDescription());
-        accommodation.setDefaultPrice(accommodationDTO.getDefaultPrice());
-        accommodation.setAmenities(new HashSet<>(
-                accommodationDTO.getAmenities().stream().map((a) -> new Amenity(a.getId(), a.getTitle())).toList())
-        );
-        accommodation.setAvailableSlots(new HashSet<>(
-                accommodationDTO.getAvailableSlots().stream().map((s) -> new AvailabilitySlot(
-                        s.getPrice(), new TimeSlot(s.getTimeSlot().getStart(), s.getTimeSlot().getEnd()))
-                ).toList())
-        );
-
-
-        accommodation = service.create(accommodation);
-
-        return new ResponseEntity<>(accommodation, HttpStatus.OK);
-    }
-
     private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
-        return accommodations.stream().map((a) -> new AccommodationDTO(a)).toList();
+        return accommodations.stream().map(AccommodationDTO::new).toList();
     }
 }

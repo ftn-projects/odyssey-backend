@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,7 +28,7 @@ public class TimeSlot {
         return Duration.between(start, end);
     }
 
-    public boolean isOverlap(TimeSlot slot){
+    public boolean overlaps(TimeSlot slot){
         return (this.getStart().isBefore(slot.getEnd()) && this.getEnd().isAfter(slot.getStart()));
     }
     public boolean containsDay(LocalDate day){

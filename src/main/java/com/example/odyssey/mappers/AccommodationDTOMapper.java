@@ -1,7 +1,9 @@
 package com.example.odyssey.mappers;
 
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
+import com.example.odyssey.dtos.accommodations.AccommodationRequestCreationDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
+import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,5 +24,9 @@ public class AccommodationDTOMapper {
 
     public static Accommodation fromDTOToAccommodation(AccommodationDTO dto) {
         return mapper.map(dto, Accommodation.class);
+    }
+
+    public static AccommodationRequest.Details fromCreationDTOToAccommodationDetails(AccommodationRequestCreationDTO dto) {
+        return mapper.map(dto, AccommodationRequest.Details.class);
     }
 }

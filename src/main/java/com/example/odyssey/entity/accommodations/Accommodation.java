@@ -10,7 +10,6 @@ import lombok.Setter;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,6 +48,20 @@ public class Accommodation {
 
     public enum PricingType {PER_PERSON, PER_ACCOMMODATION}
 
+    public Accommodation(AccommodationRequest.Details details){
+        title = details.getNewTitle();
+        description =details.getNewDescription();
+        type = details.getNewAccommodationType();
+        address = details.getNewAddress();
+        defaultPrice = details.getNewDefaultPrice();
+        automaticApproval = details.getNewAutomaticApproval();
+        cancellationDue = details.getNewCancellationDue();
+        availableSlots = new HashSet<>(details.getNewAvailableSlots());
+        amenities = new HashSet<>(details.getNewAmenities());
+        minGuests = details.getNewMinGuests();
+        maxGuests = details.getNewMaxGuests();
+        images = new HashSet<>(details.getNewImages());
+    }
     public Double getDatesPrice(LocalDate date){
         for(AvailabilitySlot x: availableSlots)
             if(x.getTimeSlot().containsDay(date))
