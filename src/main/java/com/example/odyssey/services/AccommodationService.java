@@ -15,10 +15,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class AccommodationService {
@@ -62,10 +60,6 @@ public class AccommodationService {
                 if(i!=j && i.getTimeSlot().overlaps(j.getTimeSlot()))
                     return true;
         return false;
-    }
-
-    public void uploadProfileImage(Long id, MultipartFile image) throws IOException {
-
     }
 
     public byte[] getImage(Long id, String imageName) throws IOException {
@@ -124,7 +118,7 @@ public class AccommodationService {
             return -1;
     }
 
-    public void editAccommodation(Long id, AccommodationRequest.ModificationDetails details){
+    public void editAccommodation(Long id, AccommodationRequest.Details details){
         Accommodation accommodation = getOne(id);
         accommodation.setTitle(details.getNewTitle());
         accommodation.setDescription(details.getNewDescription());
@@ -138,11 +132,5 @@ public class AccommodationService {
         accommodation.setMinGuests(details.getNewMinGuests());
         accommodation.setMaxGuests(details.getNewMaxGuests());
         save(accommodation);
-    }
-
-    public Accommodation create(Accommodation accommodation, Collection<Long> amenityIds) {
-        accommodation.setAmenities(new HashSet<>(amenityIds.stream().map(
-                (a) -> amenityRepository.findAmenityById(a)).toList()));
-        return accommodationRepository.save(accommodation);
     }
 }

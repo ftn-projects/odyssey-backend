@@ -3,6 +3,7 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.users.*;
 import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
 import com.example.odyssey.services.UserService;
@@ -52,7 +53,12 @@ public class UserController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         User user = service.find(id);
         if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
+
+        UserDTO dto = UserDTOMapper.fromUserToDTO(user);
+
+        if (user.getRoles().get(0).getName().equals("HOST"))
+            dto.setBio(((Host) user).getBio());
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
