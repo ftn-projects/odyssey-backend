@@ -1,35 +1,23 @@
 package com.example.odyssey.services;
 
-import com.example.odyssey.entity.Address;
-import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.users.Host;
-import com.example.odyssey.entity.users.User;
 import com.example.odyssey.repositories.AccommodationRepository;
 import com.example.odyssey.repositories.AmenityRepository;
-import com.example.odyssey.util.ImageUploadUtil;
-import jakarta.annotation.PostConstruct;
-import org.modelmapper.internal.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -71,7 +59,7 @@ public class AccommodationService {
     public boolean slotsOverlap(Set<AvailabilitySlot> slots) {
         for(AvailabilitySlot i:slots)
             for(AvailabilitySlot j:slots)
-                if(i!=j && i.getTimeSlot().isOverlap(j.getTimeSlot()))
+                if(i!=j && i.getTimeSlot().overlaps(j.getTimeSlot()))
                     return true;
         return false;
     }
@@ -152,7 +140,9 @@ public class AccommodationService {
         save(accommodation);
     }
 
-    public Accommodation create(Accommodation accommodation) {
+    public Accommodation create(Accommodation accommodation, Collection<Long> amenityIds) {
+        accommodation.setAmenities(new HashSet<>(amenityIds.stream().map(
+                (a) -> amenityRepository.findAmenityById(a)).toList()));
         return accommodationRepository.save(accommodation);
     }
 }

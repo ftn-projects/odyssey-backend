@@ -1,18 +1,14 @@
 package com.example.odyssey.services;
 
 import com.example.odyssey.entity.TimeSlot;
-import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.repositories.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.TimeZone;
 
 @Service
@@ -42,7 +38,7 @@ public class ReservationService {
     public boolean overlapsReservation(Long accommodationId, TimeSlot slot){
         List<Reservation> reservations = findByAccommodation(accommodationId);
         for(Reservation i:reservations)
-            if (i.getTimeSlot().isOverlap(slot))
+            if (i.getTimeSlot().overlaps(slot))
                 return true;
         return false;
     }

@@ -24,7 +24,7 @@ public class AccommodationCreationDTO {
     private AddressDTO address;
     private Accommodation.PricingType pricing;
     private Set<AmenityDTO> amenities = new HashSet<>();
-    private Long host;
+    private Long hostId;
     private Double defaultPrice;
     private Boolean automaticApproval;
     private Duration cancellationDue;
