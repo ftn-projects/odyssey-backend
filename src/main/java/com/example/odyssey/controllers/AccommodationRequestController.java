@@ -28,8 +28,6 @@ public class AccommodationRequestController {
     private AccommodationRequestService service;
     @Autowired
     private UserService userService;
-    @Autowired
-    private AccommodationService accommodationService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping

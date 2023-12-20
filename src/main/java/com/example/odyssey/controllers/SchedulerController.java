@@ -9,15 +9,13 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class SchedulerController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+//    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private UserService service;
 
     @Scheduled(initialDelayString = "0", fixedRateString = "500000")
     public void fixedRateJobWithInitialDelay() {
-//        logger.info("> fixedRateJobWithInitialDelay");
         service.deleteExpiredAccounts();
-//        logger.info("< fixedRateJobWithInitialDelay");
     }
 }
