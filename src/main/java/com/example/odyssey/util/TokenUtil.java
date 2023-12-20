@@ -1,15 +1,16 @@
 package com.example.odyssey.util;
 
 import com.example.odyssey.entity.users.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.Claims;
 
 import java.util.*;
 
@@ -31,7 +32,7 @@ public class TokenUtil {
     private final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
     public String generateToken(Long id, String username, Collection<? extends GrantedAuthority> authorities) {
-        Map<String,Object> claims = new HashMap<>();
+        Map<String, Object> claims = new HashMap<>();
         claims.put("subId", id);
         claims.put("sub", username);
         claims.put("role", authorities);
@@ -44,12 +45,15 @@ public class TokenUtil {
                 .setExpiration(generateExpirationDate())
                 .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
     }
+
     private String generateAudience() {
         return AUDIENCE_WEB;
     }
+
     private Date generateExpirationDate() {
         return new Date(new Date().getTime() + EXPIRES_IN);
     }
+
     public String getToken(HttpServletRequest request) {
         String authHeader = getAuthHeaderFromHeader(request);
 
@@ -58,6 +62,7 @@ public class TokenUtil {
         }
         return null;
     }
+
     public String getUsernameFromToken(String token) {
         String username;
 
@@ -72,6 +77,7 @@ public class TokenUtil {
 
         return username;
     }
+
     public Date getIssuedAtDateFromToken(String token) {
         Date issueAt;
         try {
@@ -84,6 +90,7 @@ public class TokenUtil {
         }
         return issueAt;
     }
+
     public String getAudienceFromToken(String token) {
         String audience;
         try {
@@ -96,6 +103,7 @@ public class TokenUtil {
         }
         return audience;
     }
+
     public Date getExpirationDateFromToken(String token) {
         Date expiration;
         try {
@@ -109,6 +117,49 @@ public class TokenUtil {
 
         return expiration;
     }
+
+    public Long getIdFromToken(String token) {
+        Long id;
+
+        try {
+            final Claims claims = this.getAllClaimsFromToken(token);
+            id = ((Integer) claims.get("subId")).longValue();
+        } catch (ExpiredJwtException ex) {
+            throw ex;
+        } catch (Exception e) {
+            id = null;
+        }
+
+        return id;
+    }
+
+    public Boolean containsAuthority(String token, String authority) {
+        Claims claims = getAllClaimsFromToken(token);
+        Object roleClaim = claims.get("role");
+
+        if (!(roleClaim instanceof Collection))
+            return null;
+
+        var authorities = (ArrayList<LinkedHashMap<String, String>>) claims.get("role");
+        for (var a : authorities)
+            if (a.get("name").equals(authority)) return true;
+        return false;
+    }
+
+    public void validateAccess(String authToken, Long id, Boolean admin) {
+        String token = authToken.substring(7);
+
+        Long tokenId = getIdFromToken(token);
+        if (tokenId == null)
+            throw new ValidationException("Internal authentication error.");
+
+        if (!admin && !Objects.equals(id, tokenId))
+            throw new ValidationException("Unauthorized access.");
+
+        if (admin && !containsAuthority(token, "ADMIN"))
+            throw new ValidationException("Unauthorized access.");
+    }
+
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;
         try {
@@ -124,20 +175,23 @@ public class TokenUtil {
 
         return claims;
     }
+
     public Boolean validateToken(String token, UserDetails userDetails) {
         User user = (User) userDetails;
         final String username = getUsernameFromToken(token);
         final Date created = getIssuedAtDateFromToken(token);
 
-        return (username != null
-                && username.equals(userDetails.getUsername()));
+        return (username != null && username.equals(userDetails.getUsername()));
     }
+
     private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
         return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
+
     public int getExpiredIn() {
         return EXPIRES_IN;
     }
+
     public String getAuthHeaderFromHeader(HttpServletRequest request) {
         return request.getHeader(AUTH_HEADER);
     }

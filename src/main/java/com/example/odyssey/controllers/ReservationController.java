@@ -12,6 +12,7 @@ import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -32,6 +33,7 @@ public class ReservationController {
     private UserService userService;
 
     // GET method for getting all reservations
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         List<Reservation> reservations = service.getAll();
@@ -40,6 +42,7 @@ public class ReservationController {
     }
 
     // GET method for getting all reservations for accommodation
+    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getByAccommodationId(@PathVariable Long id) {
         List<Reservation> reservations = service.findByAccommodation(id);
@@ -48,6 +51,7 @@ public class ReservationController {
     }
 
     // GET method for getting all reservations for guest
+    @PreAuthorize("hasAuthority('GUEST')")
     @GetMapping("/guest/{id}")
     public ResponseEntity<?> getByGuestId(
             @PathVariable Long id,
@@ -64,6 +68,7 @@ public class ReservationController {
     }
 
     // GET method for getting all reservations for host
+    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getReservationsByHost(
             @PathVariable Long id,
@@ -80,6 +85,7 @@ public class ReservationController {
     }
 
     // POST method for creating a reservation
+    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ReservationRequestDTO requestDTO) {
         Reservation reservation;
@@ -98,6 +104,7 @@ public class ReservationController {
     }
 
     // PUT method for updating a reservation status
+    @PreAuthorize("hasAuthority('HOST')")
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,

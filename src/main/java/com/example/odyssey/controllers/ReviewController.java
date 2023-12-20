@@ -9,6 +9,7 @@ import com.example.odyssey.entity.reviews.Review;
 import com.example.odyssey.mappers.ReviewDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,14 +19,8 @@ import java.util.Objects;
 @RestController
 @RequestMapping(value = "/api/v1/reviews")
 public class ReviewController {
-//    @Autowired
-//    private ReviewService service;
-//
-//    @Autowired
-//    public ReviewController(ReviewService service) {
-//        this.service = service;
-//    }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews() {
         List<HostReview> reviews = new ArrayList<>();
@@ -34,6 +29,7 @@ public class ReviewController {
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/accommodation")
     public ResponseEntity<?> getAllAccommodationReviews() {
         List<AccommodationReview> reviews = new ArrayList<>();
@@ -43,6 +39,7 @@ public class ReviewController {
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getHostReviewById(@PathVariable Long id) {
         HostReview review = new HostReview();
@@ -52,6 +49,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getAccommodationReviewById(@PathVariable Long id) {
         AccommodationReview review =new AccommodationReview();
@@ -61,6 +59,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/host")
     public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO reviewDTO) {
         HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
@@ -70,6 +69,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/accommodation")
     public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO reviewDTO) {
         AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(reviewDTO);
@@ -79,6 +79,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         Review review = new HostReview();

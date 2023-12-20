@@ -9,20 +9,24 @@ import com.example.odyssey.mappers.UserDTOMapper;
 import com.example.odyssey.services.UserService;
 import com.example.odyssey.util.TokenUtil;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -50,7 +54,13 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<?> findById(@PathVariable Long id, @RequestHeader("Authorization") String authToken) {
+        try {
+            tokenUtil.validateAccess(authToken, id, true);
+        } catch (ValidationException ve) {
+            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+
         User user = service.find(id);
         if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
@@ -59,14 +69,6 @@ public class UserController {
         if (user.getRoles().get(0).getName().equals("HOST"))
             dto.setBio(((Host) user).getBio());
         return new ResponseEntity<>(dto, HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('USER')")
-    @GetMapping("/email/{email}")
-    public ResponseEntity<?> findByEmail(@PathVariable String email) {
-        User user = service.findByEmail(email);
-        if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -86,23 +88,29 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping
-    public ResponseEntity<?> update(@Valid @RequestBody UserDTO userDTO) {
-        User user = service.find(userDTO.getId());
+    public ResponseEntity<?> update(@Valid @RequestBody UserDTO dto, @RequestHeader("Authorization") String authToken) {
+        try {
+            tokenUtil.validateAccess(authToken, dto.getId(), true);
+        } catch (ValidationException ve) {
+            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+
+        User user = service.find(dto.getId());
         if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-        user.setName(userDTO.getName());
-        user.setSurname(userDTO.getSurname());
-        user.setEmail(userDTO.getEmail());
-        user.setPhone(userDTO.getPhone());
+        user.setName(dto.getName());
+        user.setSurname(dto.getSurname());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
 
         Address address = new Address();
-        address.setStreet(userDTO.getAddress().getStreet());
-        address.setNumber(userDTO.getAddress().getNumber());
-        address.setCity(userDTO.getAddress().getCity());
-        address.setCountry(userDTO.getAddress().getCountry());
+        address.setStreet(dto.getAddress().getStreet());
+        address.setNumber(dto.getAddress().getNumber());
+        address.setCity(dto.getAddress().getCity());
+        address.setCountry(dto.getAddress().getCountry());
         user.setAddress(address);
 
-        if (user instanceof Host) ((Host) user).setBio(userDTO.getBio());
+        if (user instanceof Host) ((Host) user).setBio(dto.getBio());
 
         service.save(user);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
@@ -110,12 +118,18 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping("/password")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordDTO passwordDTO) {
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordDTO dto, @RequestHeader("Authorization") String authToken) {
+        try {
+            tokenUtil.validateAccess(authToken, dto.getUserId(), true);
+        } catch (ValidationException ve) {
+            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+
         try {
             service.updatePassword(
-                    passwordDTO.getUserId(),
-                    passwordDTO.getOldPassword(),
-                    passwordDTO.getNewPassword());
+                    dto.getUserId(),
+                    dto.getOldPassword(),
+                    dto.getNewPassword());
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -134,7 +148,13 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping("/deactivate/{id}")
-    public ResponseEntity<?> deactivate(@PathVariable Long id) {
+    public ResponseEntity<?> deactivate(@PathVariable Long id, @RequestHeader("Authorization") String authToken) {
+        try {
+            tokenUtil.validateAccess(authToken, id, false);
+        } catch (ValidationException ve) {
+            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+
         try {
             service.deactivate(id);
         } catch (Exception e) {
@@ -162,14 +182,24 @@ public class UserController {
     }
 
     @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
-        User u = service.find(id);
-        return new ResponseEntity<>(service.getImage(id, u.getProfileImage()), HttpStatus.OK);
+    public ResponseEntity<?> getImage(@PathVariable Long id) {
+        try {
+            User u = service.find(id);
+            return new ResponseEntity<>(service.getImage(id, u.getProfileImage()), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping(value = "/image/{id}")
-    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile imageFile) throws IOException {
+    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestHeader("Authorization") String authToken) throws IOException {
+        try {
+            tokenUtil.validateAccess(authToken, id, true);
+        } catch (ValidationException ve) {
+            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
+
         service.uploadImage(id, imageFile);
         return new ResponseEntity<>("Image uploaded successfully.", HttpStatus.OK);
     }

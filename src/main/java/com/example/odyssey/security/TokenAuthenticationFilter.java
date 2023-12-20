@@ -1,4 +1,4 @@
-package com.example.odyssey.sacurity;
+package com.example.odyssey.security;
 
 import com.example.odyssey.util.TokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,10 +19,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private TokenUtil tokenUtil;
     private UserDetailsService userDetailsService;
     protected final Log LOGGER = LogFactory.getLog(getClass());
+
     public TokenAuthenticationFilter(TokenUtil tokenHelper, UserDetailsService userDetailsService) {
         this.tokenUtil = tokenHelper;
         this.userDetailsService = userDetailsService;
     }
+
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {

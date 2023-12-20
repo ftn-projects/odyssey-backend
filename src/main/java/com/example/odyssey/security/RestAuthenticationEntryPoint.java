@@ -1,4 +1,4 @@
-package com.example.odyssey.sacurity;
+package com.example.odyssey.security;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

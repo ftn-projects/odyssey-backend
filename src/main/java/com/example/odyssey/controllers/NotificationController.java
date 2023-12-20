@@ -6,6 +6,7 @@ import com.example.odyssey.mappers.NotificationDTOMapper;
 import com.example.odyssey.mappers.UserDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class NotificationController {
 //        this.service = service;
 //    }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         List<Notification> notifications = new ArrayList<>();
@@ -31,6 +33,7 @@ public class NotificationController {
         return new ResponseEntity<>(mapToDTO(notifications), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         Notification notification = new Notification();
@@ -40,6 +43,7 @@ public class NotificationController {
         return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/user/{id}")
     public ResponseEntity<?> findByUserId(@PathVariable Long id) {
         List<Notification> notifications = new ArrayList<>();
@@ -49,6 +53,7 @@ public class NotificationController {
         return new ResponseEntity<>(mapToDTO(notifications), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping
     public ResponseEntity<?> update(@RequestBody NotificationDTO notificationDTO) {
         Notification notification = NotificationDTOMapper.fromDTOtoNotification(notificationDTO);
@@ -56,6 +61,7 @@ public class NotificationController {
         return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> readNotification(@PathVariable Long id) {
         Notification notification = new Notification();

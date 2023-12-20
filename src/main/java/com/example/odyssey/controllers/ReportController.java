@@ -9,6 +9,7 @@ import com.example.odyssey.entity.reports.UserReport;
 import com.example.odyssey.mappers.ReportDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,15 +18,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/reports")
 public class ReportController {
-//    @Autowired
-//    private ReportService service;
-//
-//    @Autowired
-//    public ReportController(ReportService service) {
-//        this.service = service;
-//    }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/review")
     public ResponseEntity<?> getAllReviewReports() {
         List<ReviewReport> reports = new ArrayList<>();
@@ -35,6 +29,7 @@ public class ReportController {
         return new ResponseEntity<>(reports.stream().map(ReviewReportDTO::new).toList(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/user")
     public ResponseEntity<?> getAllUserReports() {
         List<UserReport> reports = new ArrayList<>();
@@ -44,6 +39,7 @@ public class ReportController {
         return new ResponseEntity<>(reports.stream().map(UserReportDTO::new).toList(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/review")
     public ResponseEntity<?> createReviewReport(@RequestBody ReviewReportDTO reportDTO) {
         ReviewReport report = ReportDTOMapper.fromDTOtoReviewReport(reportDTO);
@@ -53,6 +49,7 @@ public class ReportController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/user")
     public ResponseEntity<?> createUserReport(@RequestBody UserReportDTO reportDTO) {
         UserReport report = ReportDTOMapper.fromDTOtoUserReport(reportDTO);
@@ -62,6 +59,7 @@ public class ReportController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         boolean found = true;

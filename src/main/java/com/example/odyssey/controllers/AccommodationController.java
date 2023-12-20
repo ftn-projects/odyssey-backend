@@ -62,7 +62,6 @@ public class AccommodationController {
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
 
-
     @GetMapping(value = "/{id}/images/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> getImage(@PathVariable Long id, @PathVariable String imageName) throws IOException {
         return new ResponseEntity<>(service.getImage(id, imageName), HttpStatus.OK);

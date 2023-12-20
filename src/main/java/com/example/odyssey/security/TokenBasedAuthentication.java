@@ -1,4 +1,4 @@
-package com.example.odyssey.sacurity;
+package com.example.odyssey.security;
 
 import lombok.Getter;
 import lombok.Setter;
