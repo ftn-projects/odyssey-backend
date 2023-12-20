@@ -40,13 +40,13 @@ VALUES
     (7, 2), (7, 3), (7, 7), (7, 8),
     (8, 1), (8, 2), (8, 3), (8, 5), (8, 7), (8, 9);
 
-INSERT INTO accommodation_requests (type, status, submission_date, host_id, accommodation_id, new_accommodation_type, new_title, new_description, street, number, city, country, new_default_price, new_automatic_approval, new_cancellation_due, new_min_guests, new_max_guests)
+INSERT INTO accommodation_requests (type, status, submission_date, host_id, accommodation_id, new_accommodation_type, new_title, new_description, street, number, city, country, new_pricing, new_default_price, new_automatic_approval, new_cancellation_due, new_min_guests, new_max_guests)
 VALUES
-    (0, 2, '2023-11-4 12:00:00', 2, null, 1, 'Soba', '', 'Dušana Radovića', 40, 'Vrnjačka Banja', 'Serbia', 4500.0, true, 125, 1, 3),
-    (0, 0, '2023-11-6 12:00:00', 3, null, 0, 'Duplex apartman', 'Apartman na periferiji.', 'Bulevar Oslobođenja', 34, 'Novi Sad', 'Serbia', 6400.0, false, 1265, 1, 4),
-    (1, 2, '2023-11-8 12:00:00', 2, 2, 2, 'Neki apartman', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića', 14, 'Vrnjačka', '', 26000.0, false, 563, 2, 5),
-    (1, 1, '2023-11-10 12:00:00', 3, 4, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 9000.0, true, 2446, 1, 4),
-    (1, 0, '2023-11-12 12:00:00', 4, 6, 1, 'Soba sa velikim ležajem', 'Soba sa terasom i pogledom na Južni bulevar.', 'Južni bulevar', 89, 'Beograd', 'Serbia', 8100.0, true, 76, 1, 3);
+    (0, 2, '2023-11-4 12:00:00', 2, null, 1, 'Soba', '', 'Dušana Radovića', 40, 'Vrnjačka Banja', 'Serbia', 0, 4500.0, true, 125, 1, 3),
+    (0, 0, '2023-11-6 12:00:00', 3, null, 0, 'Duplex apartman', 'Apartman na periferiji.', 'Bulevar Oslobođenja', 34, 'Novi Sad', 'Serbia', 1, 6400.0, false, 1265, 1, 4),
+    (1, 2, '2023-11-8 12:00:00', 2, 2, 2, 'Neki apartman', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića', 14, 'Vrnjačka', '', 0, 26000.0, false, 563, 2, 5),
+    (1, 1, '2023-11-10 12:00:00', 3, 4, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 9000.0, true, 2446, 1, 4),
+    (1, 0, '2023-11-12 12:00:00', 4, 6, 1, 'Soba sa velikim ležajem', 'Soba sa terasom i pogledom na Južni bulevar.', 'Južni bulevar', 89, 'Beograd', 'Serbia', 1, 8100.0, true, 76, 1, 3);
 
 INSERT INTO accommodation_request_has_amenity (request_id, amenity_id)
 VALUES
