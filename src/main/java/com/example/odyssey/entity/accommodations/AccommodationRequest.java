@@ -1,6 +1,7 @@
 package com.example.odyssey.entity.accommodations;
 
 import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.users.Host;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +18,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "accommodation_modifications")
-public class AccommodationModification {
+@Table(name = "accommodation_requests")
+public class AccommodationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +29,8 @@ public class AccommodationModification {
     @Embedded
     private ModificationDetails details;
     @ManyToOne
-    private Accommodation accommodation;
+    private Host host;
+    private Long accommodationId;
 
     public enum Type {CREATE, UPDATE}
 
@@ -51,7 +53,7 @@ public class AccommodationModification {
         @ElementCollection
         private Set<AvailabilitySlot> newAvailableSlots = new HashSet<>();
         @ManyToMany(cascade = CascadeType.ALL)
-        @JoinTable(name = "accommodation_modification_has_amenity", joinColumns = @JoinColumn(name = "modification_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
+        @JoinTable(name = "accommodation_request_has_amenity", joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "amenity_id", referencedColumnName = "id"))
         private Set<Amenity> newAmenities = new HashSet<>();
         private Integer newMinGuests;
         private Integer newMaxGuests;
