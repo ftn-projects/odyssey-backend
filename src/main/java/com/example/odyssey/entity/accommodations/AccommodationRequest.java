@@ -27,7 +27,7 @@ public class AccommodationRequest {
     private Type type;
     private Status status;
     @Embedded
-    private ModificationDetails details;
+    private Details details;
     @ManyToOne
     private Host host;
     private Long accommodationId;
@@ -41,12 +41,13 @@ public class AccommodationRequest {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ModificationDetails {
+    public static class Details {
         private String newTitle;
         private String newDescription;
         private Accommodation.Type newAccommodationType;
         @Embedded
         private Address newAddress;
+        private Accommodation.PricingType newPricing;
         private Double newDefaultPrice;
         private Boolean newAutomaticApproval;
         private Duration newCancellationDue;

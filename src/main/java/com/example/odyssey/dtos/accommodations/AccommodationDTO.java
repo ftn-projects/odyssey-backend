@@ -27,7 +27,7 @@ public class AccommodationDTO {
     private UserDTO host;
     private Double defaultPrice;
     private Boolean automaticApproval;
-    private Duration cancellationDue;
+    private Long cancellationDue;
     private Set<AvailabilitySlotDTO> availableSlots = new HashSet<>();
     private Integer minGuests;
     private Integer maxGuests;
@@ -45,7 +45,7 @@ public class AccommodationDTO {
         host = new UserDTO(accommodation.getHost());
         defaultPrice = accommodation.getDefaultPrice();
         automaticApproval = accommodation.getAutomaticApproval();
-        cancellationDue = accommodation.getCancellationDue();
+        cancellationDue = accommodation.getCancellationDue().toDays();
         accommodation.getAvailableSlots().forEach((s) -> availableSlots.add(new AvailabilitySlotDTO(s)));
         minGuests = accommodation.getMinGuests();
         maxGuests = accommodation.getMaxGuests();

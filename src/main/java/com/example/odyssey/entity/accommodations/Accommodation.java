@@ -10,7 +10,6 @@ import lombok.Setter;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +48,7 @@ public class Accommodation {
 
     public enum PricingType {PER_PERSON, PER_ACCOMMODATION}
 
-    public Accommodation(AccommodationRequest.ModificationDetails details){
+    public Accommodation(AccommodationRequest.Details details){
         title = details.getNewTitle();
         description =details.getNewDescription();
         type = details.getNewAccommodationType();

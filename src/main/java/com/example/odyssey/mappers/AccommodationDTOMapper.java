@@ -1,15 +1,14 @@
 package com.example.odyssey.mappers;
 
-import com.example.odyssey.dtos.accommodations.AccommodationCreationDTO;
+import com.example.odyssey.dtos.accommodations.AccommodationRequestCreationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDetailsDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationSearchDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
+import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.security.PublicKey;
 
 @Component
 public class AccommodationDTOMapper {
@@ -45,7 +44,7 @@ public class AccommodationDTOMapper {
         return mapper.map(dto, Accommodation.class);
     }
 
-    public static Accommodation fromCreationDTOToAccommodation(AccommodationCreationDTO dto) {
-        return mapper.map(dto, Accommodation.class);
+    public static AccommodationRequest.Details fromCreationDTOToAccommodationDetails(AccommodationRequestCreationDTO dto) {
+        return mapper.map(dto, AccommodationRequest.Details.class);
     }
 }

@@ -1,18 +1,8 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.AddressDTO;
-import com.example.odyssey.dtos.accommodations.AccommodationCreationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDetailsDTO;
-import com.example.odyssey.dtos.accommodations.AmenityDTO;
-import com.example.odyssey.dtos.users.UserDTO;
-import com.example.odyssey.entity.Address;
-import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.accommodations.Amenity;
-import com.example.odyssey.entity.accommodations.AvailabilitySlot;
-import com.example.odyssey.entity.users.Host;
-import com.example.odyssey.mappers.AccommodationDTOMapper;
 import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/v1/accommodations")
@@ -100,18 +86,7 @@ public class AccommodationController {
         return new ResponseEntity<>(service.getAmenities(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody AccommodationCreationDTO dto) {
-        Accommodation accommodation = AccommodationDTOMapper.fromCreationDTOToAccommodation(dto);
-
-        accommodation.setHost((Host) userService.find(dto.getHostId()));
-        accommodation = service.create(accommodation, dto.getAmenities().stream().map(AmenityDTO::getId).toList());
-
-        return new ResponseEntity<>(AccommodationDTOMapper.fromAccommodationToDTO(accommodation), HttpStatus.OK);
-    }
-
     private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
-        return accommodations.stream().map((a) -> new AccommodationDTO(a)).toList();
+        return accommodations.stream().map(AccommodationDTO::new).toList();
     }
 }
