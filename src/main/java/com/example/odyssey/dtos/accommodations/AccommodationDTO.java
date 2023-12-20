@@ -3,6 +3,7 @@ package com.example.odyssey.dtos.accommodations;
 import com.example.odyssey.dtos.AddressDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
+import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,5 +50,20 @@ public class AccommodationDTO {
         accommodation.getAvailableSlots().forEach((s) -> availableSlots.add(new AvailabilitySlotDTO(s)));
         minGuests = accommodation.getMinGuests();
         maxGuests = accommodation.getMaxGuests();
+    }
+
+    public AccommodationDTO(AccommodationRequest.Details details) {
+        title = details.getNewTitle();
+        description = details.getNewDescription();
+        type = details.getNewAccommodationType();
+        address = new AddressDTO(details.getNewAddress());
+        pricing = details.getNewPricing();
+        details.getNewAmenities().forEach((a) -> amenities.add(new AmenityDTO(a)));
+        defaultPrice = details.getNewDefaultPrice();
+        automaticApproval = details.getNewAutomaticApproval();
+        cancellationDue = details.getNewCancellationDue().toDays();
+        details.getNewAvailableSlots().forEach((s) -> availableSlots.add(new AvailabilitySlotDTO(s)));
+        minGuests = details.getNewMinGuests();
+        maxGuests = details.getNewMaxGuests();
     }
 }
