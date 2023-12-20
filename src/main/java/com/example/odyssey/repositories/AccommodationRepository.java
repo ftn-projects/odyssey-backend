@@ -37,8 +37,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             "    FROM a.availableSlots s " +
             "    WHERE (" +
             "      (cast(:reservationStartDate as localdatetime) IS NULL AND cast(:reservationEndDate as localdatetime) IS NULL) " +
-            "      OR ((s.timeSlot.end >= :reservationStartDate OR s.timeSlot.start <= :reservationEndDate)" +
-            "    )" +
+            "      OR (s.timeSlot.end >= :reservationStartDate AND s.timeSlot.start <= :reservationEndDate)" +
             "    AND ((cast(:startSlotPrice as double ) IS NULL AND cast(:endSlotPrice as double) IS NULL ) OR s.price BETWEEN :startSlotPrice AND :endSlotPrice))))")
     List<Accommodation> findAllWithFilter(
             @Param("guestNumber") Integer guests,
