@@ -54,7 +54,6 @@ public class AccommodationService {
         LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
         LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
         Accommodation.Type accommodationType = (type != null) ? Accommodation.Type.valueOf(type) : null;
-        System.out.println("HERE: " + location);
         return accommodationRepository.findAllWithFilter(
                 guestNumber, accommodationType, amenities, startDate, endDate, priceStart, priceEnd, location
         );
