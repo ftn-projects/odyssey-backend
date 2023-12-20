@@ -2,7 +2,6 @@ package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.accommodations.AccommodationCreationDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
-import com.example.odyssey.dtos.accommodations.AccommodationDetailsDTO;
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.Amenity;
@@ -32,14 +31,9 @@ public class AccommodationController {
     @Autowired
     private UserService userService;
 
-
-//    @Autowired
-//    public AccommodationController(AccommodationService service) {
-//        this.service = service;
-//    }
-
     @GetMapping
     public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String location,
             @RequestParam(required = false) Long dateStart,
             @RequestParam(required = false) Long dateEnd,
             @RequestParam(required = false) Integer guestNumber,
@@ -49,7 +43,7 @@ public class AccommodationController {
             @RequestParam(required = false) Double priceEnd
     ) {
         List<Accommodation> accommodations;
-        accommodations = service.getAll(dateStart, dateEnd, guestNumber, amenities, type, priceStart, priceEnd);
+        accommodations = service.getAll(location, dateStart, dateEnd, guestNumber, amenities, type, priceStart, priceEnd);
         List<AccommodationDTO> AccommodationDTOs = mapToDTO(accommodations);
         for (AccommodationDTO accommodationDTO : AccommodationDTOs) {
             accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodationDTO.getId(), dateStart, dateEnd, guestNumber));
@@ -58,11 +52,11 @@ public class AccommodationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccommodationDetailsDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<AccommodationDTO> findById(@PathVariable Long id) {
         Accommodation accommodation = service.getOne(id);
 
         if (accommodation != null)
-            return new ResponseEntity<>(new AccommodationDetailsDTO(accommodation), HttpStatus.OK);
+            return new ResponseEntity<>(new AccommodationDTO(accommodation), HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
