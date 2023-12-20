@@ -4,11 +4,11 @@ INSERT INTO roles (name) VALUES
 INSERT INTO users (user_role, status, name, surname, email, password, phone, street, number, city, country, profile_image, bio, created) VALUES
     ('USER', 1, 'Marko', 'Marković', 'admin@gmail.com', '$2a$12$ojx4gaAU/odqpcwD7JTHMe0GUCITBrDKe/llCaUVIAmdkaJAr1KjO', '(+381)69423143', 'Bulevar cara Dušana', 34, 'Novi Sad', 'Serbia', 'profile.png', null, '2023-01-01 11:00:00'),
     ('HOST', 1, 'Petar', 'Petrović', 'petar@gmail.com', '$2a$12$xygRv8VL.sBMKEgrrioX7OS81Zn4V5gHrLNnVHJ1HLP6ISXzzZf2G', '(+381)63748021', 'Slobodana Jovanovića', 8, 'Kruševac', 'Serbia', 'profile.png', 'Živim u Kruševcu i izdajem 2 smeštaja.', '2023-02-10 12:00:00'),
-    ('HOST', 2, 'Nevena', 'Nevenić', 'nevena@gmail.com', '$2a$12$vA7WOGDUHdulgxXcSjUyf.ZcbWqFyeMLvGWPsD0.yUZ3dxvbHGoyi', '(+381)65900314', 'Jovana Ristića', 87, 'Niš', 'Serbia', 'profile.png', 'Iz Niš sam i izdajem 3 apartmana.', '2023-03-21 10:00:00'),
-    ('HOST', 1, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$c7B8GKMgOd3bhCznV07Qq.9I20RHUrJ2eoC9ba2ySopngikxJtlHW', '(+381)63984039', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00'),
-    ('GUEST', 1, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$3o.HIAcVhoE60mjT8cCtYuGXsHwlu.filb3tB77lKTVGWtuOOhzie', '(+381)69774829', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00'),
-    ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$x5kr/gYepaBqSumUrGKFP.MpG9sMO0PmmsG5zu5AdSSBPaFHWz3RC', '(+381)63756640', 'Stražilovska', 3, 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00'),
-    ('GUEST', 0, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$ltjGQndex32s0vfh9NGqauwuvdQuJ1a1fdgUYVbJKMnk7z1N9w7Wi', '(+381)651859940', 'Svetozara Radojčića', 17, 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00');
+    ('HOST', 1, 'Nevena', 'Nevenić', 'nevena@gmail.com', '$2a$12$AxVIzXc9jiBsVPppHOTTPesNsqUp4gvIl2sSK9FtXdDdlSbXMl1ea', '(+381)65900314', 'Jovana Ristića', 87, 'Niš', 'Serbia', 'profile.png', 'Iz Niš sam i izdajem 3 apartmana.', '2023-03-21 10:00:00'),
+    ('HOST', 0, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$b2qhCMoji6RCk0mGZxaNROJMDUHmC.0s4chAqIqiClMbpUcV/qjNq', '(+381)63984039', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00'),
+    ('GUEST', 2, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$KmFHBhd8NSsRcA7ThwY6eOMTru7w/RQqoCXoWFQmxpUvyrUu0pAWy', '(+381)69774829', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00'),
+    ('GUEST', 0, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska', 3, 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00'),
+    ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića', 17, 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00');
 
 INSERT INTO user_roles (user_id, role_id) VALUES
     (1, 1), (2, 2), (3, 2), (4, 2), (5, 3), (6, 3), (7, 3),
@@ -23,6 +23,16 @@ INSERT INTO accommodations (host_id, type, title, description, street, number, c
     (4, 1, 'Soba sa bračnim ležajem', 'Soba sa pogledom na Južni bulevar.', 'Južni bulevar', 89, 'Beograd', 'Serbia', 1, 630.0, true, 76, 1, 3),
     (4, 1, 'Soba sa 3 ležaja', 'Soba sa pogledom sa 3 ležaja.', 'Južni bulevar', 40, 'Beograd', 'Serbia', 1, 9700.0, true, 450, 2, 5),
     (4, 0, 'Veliki apartman', 'Apartman blizu Kalemegdana sa pogledom na ušće.', 'Karađorđeva', 92, 'Beograd', 'Serbia', 1, 10000.0, true, 4155, 3, 7);
+
+INSERT INTO accommodation_images (accommodation_id, images) VALUES
+    (1, 'tropical1.webp'), (1, 'tropical2.webp'), (1, 'tropical3.webp'), (1, 'tropical4.webp'), (1, 'tropical5.webp'), (1, 'tropical6.webp'),
+    (2, '1.webp'), (2, '2.webp'), (2, '3.webp'), (2, '4.webp'), (2, '5.webp'), (2, '6.webp'),
+    (3, '1.webp'), (3, '2.webp'), (3, '3.webp'), (3, '4.webp'), (3, '5.webp'), (3, '6.webp'),
+    (4, '1.webp'), (4, '2.webp'), (4, '3.webp'), (4, '4.webp'), (4, '5.webp'), (4, '6.webp'),
+    (5, '1.webp'), (5, '2.webp'), (5, '3.webp'), (5, '4.webp'), (5, '5.webp'), (5, '6.webp'),
+    (6, '1.webp'), (6, '2.webp'), (6, '3.webp'), (6, '4.webp'), (6, '5.webp'), (6, '6.webp'),
+    (7, '1.webp'), (7, '2.webp'), (7, '3.webp'), (7, '4.webp'), (7, '5.webp'), (7, '6.webp'),
+    (8, '1.webp'), (8, '2.webp'), (8, '3.webp'), (8, '4.webp'), (8, '5.webp'), (8, '6.webp');
 
 INSERT INTO amenities (title) VALUES
     ('TV'), ('WiFi'), ('Kitchen'), ('Free parking'), ('Beach access'), ('Washer'), ('Spa'), ('Air conditioning'), ('King bed'), ('Smoking room');

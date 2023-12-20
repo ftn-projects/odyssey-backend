@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -69,7 +70,7 @@ public class AccommodationService {
     }
 
     public byte[] getImage(Long id, String imageName) throws IOException {
-        String accommodationDirPath = imagesDirPath + "accommodation" + id;
+        String accommodationDirPath = imagesDirPath + id;
 
         Path imageFilePath = Paths.get(accommodationDirPath, imageName);
 
@@ -81,7 +82,7 @@ public class AccommodationService {
     }
 
     public List<String> getImageNames(Long id) throws IOException {
-        String accommodationDirPath = imagesDirPath + "accommodation" + id;
+        String accommodationDirPath = imagesDirPath + id;
 
         Path accommodationDir = Paths.get(accommodationDirPath);
 
@@ -98,7 +99,7 @@ public class AccommodationService {
                     });
         }
 
-        return imageNames;
+        return imageNames.stream().sorted().toList();
     }
 
     public List<Amenity> getAmenities() {
