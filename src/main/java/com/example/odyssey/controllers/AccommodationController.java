@@ -43,8 +43,11 @@ public class AccommodationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccommodationDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<AccommodationDTO> findById(
+            @PathVariable Long id
+    ) {
         Accommodation accommodation = service.getOne(id);
+        AccommodationDTO accommodationDTO = new AccommodationDTO(accommodation);
 
         if (accommodation != null)
             return new ResponseEntity<>(new AccommodationDTO(accommodation), HttpStatus.OK);
