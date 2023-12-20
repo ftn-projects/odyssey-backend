@@ -46,7 +46,7 @@ public class Accommodation {
 
     public enum Type {APARTMENT, ROOM, HOUSE} // ako je usko vezana uz klasu najbolje da bude u njoj
 
-    public enum PricingType {PER_PERSON, PER_ACCOMMODATION}
+    public enum PricingType {PER_PERSON, PER_NIGHT}
 
     public Accommodation(AccommodationRequest.Details details){
         title = details.getNewTitle();

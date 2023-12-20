@@ -120,8 +120,9 @@ public class AccommodationService {
         Accommodation accommodation = getOne(accommodationID);
 
         long days = endDate.toLocalDate().toEpochDay() - startDate.toLocalDate().toEpochDay();
-        if (accommodation.getPricing() == Accommodation.PricingType.PER_ACCOMMODATION)
-            return (days * accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate));
+
+        if (accommodation.getPricing() == Accommodation.PricingType.PER_NIGHT)
+            return (days * accommodation.getDefaultPrice());
         else if (accommodation.getPricing() == Accommodation.PricingType.PER_PERSON)
             if (guestNumber != null && guestNumber > 0)
                 return (days * accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate) * guestNumber);
