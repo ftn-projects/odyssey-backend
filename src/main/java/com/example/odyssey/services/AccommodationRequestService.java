@@ -50,7 +50,7 @@ public class AccommodationRequestService {
 
             ImageUtil.copyImages(
                     imagesDirPath + request.getId(),
-                    AccommodationService.imagesDirPath + "accommodation" + id);
+                    AccommodationService.imagesDirPath + id);
         }
         request.setStatus(status);
         repository.save(request);

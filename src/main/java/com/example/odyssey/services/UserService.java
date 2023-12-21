@@ -8,7 +8,9 @@ import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
 import com.example.odyssey.util.EmailUtil;
 import com.example.odyssey.util.ImageUtil;
+import com.example.odyssey.util.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,6 +31,9 @@ public class UserService {
     private RoleRepository roleRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private TokenUtil tokenUtil;
+
     private final String imagesDirPath = "src/main/resources/images/users/";
 
     public List<User> getAll() {
@@ -63,11 +68,14 @@ public class UserService {
     }
 
     public void updatePassword(Long id, String oldPassword, String newPassword) throws Exception {
+        var encoder = new BCryptPasswordEncoder();
+
         User user = userRepository.findUserById(id);
-        if (!oldPassword.equals(user.getPassword()))
+
+        if (!encoder.matches(oldPassword, user.getPassword()))
             throw new Exception("Current password is incorrect.");
 
-        user.setPassword(newPassword);
+        user.setPassword(encoder.encode(newPassword));
         userRepository.save(user);
     }
 
