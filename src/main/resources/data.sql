@@ -8,7 +8,8 @@ INSERT INTO users (user_role, status, name, surname, email, password, phone, str
     ('HOST', 2, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$b2qhCMoji6RCk0mGZxaNROJMDUHmC.0s4chAqIqiClMbpUcV/qjNq', '(+381)63984039', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00'),
     ('GUEST', 2, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$KmFHBhd8NSsRcA7ThwY6eOMTru7w/RQqoCXoWFQmxpUvyrUu0pAWy', '(+381)69774829', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00'),
     ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska', 3, 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00'),
-    ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića', 17, 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00');
+    ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića', 17, 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00'),
+    ('GUEST', 0, 'Novi', 'Nalog', 'novi@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)0000000', 'Neka Ulica', 99, 'Beograd', 'Serbia', 'profile.png', null, '2023-12-21 08:00:00');;
 
 INSERT INTO user_roles (user_id, role_id) VALUES
     (1, 1), (2, 2), (3, 2), (4, 2), (5, 3), (6, 3), (7, 3),

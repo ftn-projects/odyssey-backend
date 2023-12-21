@@ -86,8 +86,8 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers(HttpMethod.POST,
-                        "/api/v1/users/register",
                         "/api/v1/users/login",
+                        "/api/v1/users/register",
                         "/api/v1/users/confirmEmail/*").permitAll()
                 .requestMatchers(HttpMethod.GET,
                         "/api/v1/users/image/*",
@@ -95,6 +95,7 @@ public class WebSecurityConfig {
                         "/api/v1/accommodations/*",
                         "/api/v1/accommodations/*/images",
                         "/api/v1/accommodations/*/images/*",
+                        "/api/v1/accommodations/stats/*",
                         "/api/v1/accommodationRequests/*/images",
                         "/api/v1/accommodationRequests/*/images/*").permitAll()
                 .anyRequest().authenticated());

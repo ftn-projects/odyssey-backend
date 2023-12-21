@@ -1,6 +1,8 @@
 package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
+import com.example.odyssey.dtos.statistics.AccommodationStatDTO;
+import com.example.odyssey.dtos.statistics.HostStatDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.UserService;
@@ -79,6 +81,20 @@ public class AccommodationController {
     @GetMapping(value = "/amenities")
     public ResponseEntity<?> getAmenities() {
         return new ResponseEntity<>(service.getAmenities(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/stats/period")
+    public ResponseEntity<?> getPeriodStats(@RequestParam Long startDate, @RequestParam Long endDate) {
+        List<HostStatDTO> statistics = new ArrayList<>();
+        statistics.add(new HostStatDTO());
+        return new ResponseEntity<>(statistics, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/stats/{id}")
+    public ResponseEntity<?> getAccommodationStats(@PathVariable Long id, @RequestParam(required = false) Long year) {
+        List<AccommodationStatDTO> statistics = new ArrayList<>();
+        statistics.add(new AccommodationStatDTO());
+        return new ResponseEntity<>(statistics, HttpStatus.OK);
     }
 
     private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
