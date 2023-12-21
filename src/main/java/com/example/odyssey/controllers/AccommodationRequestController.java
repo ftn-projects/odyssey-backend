@@ -10,6 +10,7 @@ import com.example.odyssey.mappers.AccommodationRequestDTOMapper;
 import com.example.odyssey.services.AccommodationRequestService;
 import com.example.odyssey.services.UserService;
 import com.example.odyssey.util.TokenUtil;
+import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,7 +86,7 @@ public class AccommodationRequestController {
 
     @PreAuthorize("hasAuthority('HOST')")
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody AccommodationRequestCreationDTO dto) {
+    public ResponseEntity<?> create(@Valid @RequestBody AccommodationRequestCreationDTO dto) {
         AccommodationRequest.Details details = AccommodationDTOMapper.fromCreationDTOToAccommodationDetails(dto);
         details.setNewCancellationDue(Duration.ofDays(dto.getNewCancellationDue()));
 

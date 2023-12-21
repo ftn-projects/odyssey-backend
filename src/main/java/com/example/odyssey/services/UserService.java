@@ -9,11 +9,15 @@ import com.example.odyssey.repositories.UserRepository;
 import com.example.odyssey.util.EmailUtil;
 import com.example.odyssey.util.ImageUtil;
 import com.example.odyssey.util.TokenUtil;
+import com.example.odyssey.validation.FieldValidationException;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -67,13 +71,13 @@ public class UserService {
         return userRepository.findUserByEmail(email);
     }
 
-    public void updatePassword(Long id, String oldPassword, String newPassword) throws Exception {
+    public void updatePassword(Long id, String oldPassword, String newPassword) {
         var encoder = new BCryptPasswordEncoder();
 
         User user = userRepository.findUserById(id);
 
         if (!encoder.matches(oldPassword, user.getPassword()))
-            throw new Exception("Current password is incorrect.");
+            throw new FieldValidationException("Current password is incorrect.", "Old password");
 
         user.setPassword(encoder.encode(newPassword));
         userRepository.save(user);

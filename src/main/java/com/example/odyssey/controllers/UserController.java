@@ -126,14 +126,7 @@ public class UserController {
             return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
         }
 
-        try {
-            service.updatePassword(
-                    dto.getUserId(),
-                    dto.getOldPassword(),
-                    dto.getNewPassword());
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        service.updatePassword( dto.getUserId(), dto.getOldPassword(), dto.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
