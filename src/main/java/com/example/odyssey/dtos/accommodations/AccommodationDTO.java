@@ -4,10 +4,11 @@ import com.example.odyssey.dtos.AddressDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.time.Duration;
 import java.util.HashSet;
@@ -19,18 +20,29 @@ import java.util.Set;
 @AllArgsConstructor
 public class AccommodationDTO {
     private Long id;
+    @NotBlank(message = "Title should not be blank.")
     private String title;
+    @NotBlank
+    @Size(max = 800, message = "Description should be shorter than 800 characters.")
     private String description;
     private Accommodation.Type type;
+    @NotNull
     private AddressDTO address;
+    @NotNull
     private Accommodation.PricingType pricing;
     private Set<AmenityDTO> amenities = new HashSet<>();
+    @NotNull
     private UserDTO host;
     private Double defaultPrice;
+    @NotNull
     private Boolean automaticApproval;
+    @NotNull
+    @Positive
     private Long cancellationDue;
     private Set<AvailabilitySlotDTO> availableSlots = new HashSet<>();
+    @Positive
     private Integer minGuests;
+    @Positive
     private Integer maxGuests;
     private Double totalPrice;
     private Double averageRating;

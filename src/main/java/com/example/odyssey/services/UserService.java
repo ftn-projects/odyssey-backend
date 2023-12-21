@@ -43,6 +43,7 @@ public class UserService {
         if (role.equalsIgnoreCase("ADMIN"))
             throw new IllegalArgumentException("Registering a new Admin is forbidden");
         List<Role> roles = roleRepository.findByName(role.toUpperCase());
+        roles.add(roleRepository.findByName("USER").get(0));
         user.setRoles(roles);
         user.setStatus(User.AccountStatus.PENDING);
         user.setPassword(passwordEncoder.encode(user.getPassword()));

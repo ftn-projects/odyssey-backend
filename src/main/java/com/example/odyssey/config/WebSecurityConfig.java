@@ -86,8 +86,8 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers(HttpMethod.POST,
-                        "/api/v1/users/login",
                         "/api/v1/users/register",
+                        "/api/v1/users/login",
                         "/api/v1/users/confirmEmail/*").permitAll()
                 .requestMatchers(HttpMethod.GET,
                         "/api/v1/users/image/*",
@@ -108,6 +108,7 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico", "/*/*.html", "/*/*.css", "/*/*.js");
+                .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico", "/*/*.html", "/*/*.css", "/*/*.js")
+                .requestMatchers(HttpMethod.POST, "/api/v1/users/register");
     }
 }
