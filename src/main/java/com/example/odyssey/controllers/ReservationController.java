@@ -96,7 +96,6 @@ public class ReservationController {
             reservation.setGuest((Guest) userService.find(requestDTO.getGuestId()));
             reservation = service.save(reservation);
             dto = ReservationDTOMapper.fromReservationToDTO(reservation);
-
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

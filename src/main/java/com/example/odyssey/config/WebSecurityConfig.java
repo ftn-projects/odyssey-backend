@@ -95,7 +95,11 @@ public class WebSecurityConfig {
                         "/api/v1/accommodations/*",
                         "/api/v1/accommodations/*/images",
                         "/api/v1/accommodations/*/images/*",
+<<<<<<< HEAD
                         "/api/v1/accommodations/*/totalPrice",
+=======
+                        "/api/v1/accommodations/stats/*",
+>>>>>>> 4e3c7bfaf0151a8d0e34a636892580b4910c5199
                         "/api/v1/accommodationRequests/*/images",
                         "/api/v1/accommodationRequests/*/images/*").permitAll()
                 .anyRequest().authenticated());

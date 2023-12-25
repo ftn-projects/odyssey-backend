@@ -2,6 +2,9 @@ package com.example.odyssey.dtos.accommodations;
 
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,10 +19,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AccommodationRequestDTO {
     private Long id;
+    @NotNull
     private LocalDate submissionDate;
+    @NotNull
     private AccommodationRequest.Type type;
+    @NotBlank(message = "Title should not be blank.")
     private String title;
+    @NotNull
     private UserDTO host;
+    @NotNull
     private AccommodationDTO details;
     private Long accommodationId;
 

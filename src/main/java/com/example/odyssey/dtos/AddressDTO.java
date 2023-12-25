@@ -15,17 +15,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDTO {
-    @NotBlank
+    @NotBlank(message = "Street should not be blank.")
     @Size(min = 2, message = "Street should not be shorter than two characters.")
     @Pattern(regexp = "^[\\p{L}\\p{Zs}]+( )[\\p{L}\\p{N}\\p{Zs}]+$", message = "Street should only have letters and numbers.")
     private String street;
-    @Positive
+    @Positive(message = "Number should be positive.")
     private Integer number;
-    @NotBlank
+    @NotBlank(message = "City should not be blank.")
     @Size(min = 2, message = "City should not be shorter than two characters.")
     @Pattern(regexp = "^[\\p{L}\\p{Zs}]+$", message = "City should only have letters.")
     private String city;
-    @NotBlank
+    @NotBlank(message = "Country should not be blank.")
     @Size(min = 2, message = "Country should not be shorter than two characters.")
     @Pattern(regexp = "^[\\p{L}\\p{Zs}]+$", message = "Country should only have letters.")
     private String country;

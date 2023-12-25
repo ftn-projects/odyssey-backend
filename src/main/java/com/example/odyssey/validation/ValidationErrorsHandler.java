@@ -30,4 +30,13 @@ public class ValidationErrorsHandler {
 
         return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler({FieldValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<Map<String, String>> handleConstraintViolationException(FieldValidationException e) {
+        Map<String, String> errorMessages = new HashMap<>() {{
+            put(e.getField(), e.getMessage());
+        }};
+        return new ResponseEntity<>(errorMessages, HttpStatus.BAD_REQUEST);
+    }
 }

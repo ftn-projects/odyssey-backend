@@ -4,10 +4,12 @@ import com.example.odyssey.dtos.AddressDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.example.odyssey.validation.AccommodationConstraint;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.time.Duration;
 import java.util.HashSet;
@@ -19,18 +21,29 @@ import java.util.Set;
 @AllArgsConstructor
 public class AccommodationDTO {
     private Long id;
+    @NotBlank(message = "Title should not be blank.")
     private String title;
+    @NotBlank(message = "Request type must not be blank.")
+    @Size(max = 800, message = "Description should be shorter than 800 characters.")
     private String description;
     private Accommodation.Type type;
+    @NotNull(message = "Address must be set.")
     private AddressDTO address;
+    @NotNull(message = "Pricing type must be set.")
     private Accommodation.PricingType pricing;
     private Set<AmenityDTO> amenities = new HashSet<>();
+    @NotNull(message = "Host must be set.")
     private UserDTO host;
     private Double defaultPrice;
+    @NotNull(message = "Automatic approval must be set.")
     private Boolean automaticApproval;
+    @NotNull(message = "Cancellation due must be set.")
+    @Positive(message = "Cancellation due must be a positive integer.")
     private Long cancellationDue;
     private Set<AvailabilitySlotDTO> availableSlots = new HashSet<>();
+    @Positive(message = "Min guests must be positive.")
     private Integer minGuests;
+    @Positive(message = "Max guests must be positive.")
     private Integer maxGuests;
     private Double totalPrice;
     private Double averageRating;

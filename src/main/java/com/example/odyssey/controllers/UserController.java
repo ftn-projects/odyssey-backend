@@ -20,6 +20,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -125,14 +126,7 @@ public class UserController {
             return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
         }
 
-        try {
-            service.updatePassword(
-                    dto.getUserId(),
-                    dto.getOldPassword(),
-                    dto.getNewPassword());
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        service.updatePassword( dto.getUserId(), dto.getOldPassword(), dto.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
