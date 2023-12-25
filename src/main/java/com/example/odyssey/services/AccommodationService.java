@@ -106,31 +106,37 @@ public class AccommodationService {
         return amenityRepository.findAll();
     }
 
-    public double getPriceForDateRange(Long accommodationID, Long startDateLong, Long endDateLong) {
+    public Double getPriceForDateRange(Long accommodationID, Long startDateLong, Long endDateLong) {
         if (accommodationID == null || startDateLong == null || endDateLong == null)
-            return -1;
+            return (double) -1;
         LocalDateTime startDate = new ReservationService().convertToDate(startDateLong);
         LocalDateTime endDate = new ReservationService().convertToDate(endDateLong);
         return accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate);
     }
-    public double calculateTotalPrice(Long accommodationID, Long startDateLong, Long endDateLong, Integer guestNumber) {
+    public Double calculateTotalPrice(Long accommodationID, Long startDateLong, Long endDateLong, Integer guestNumber) {
         if (accommodationID == null || startDateLong == null || endDateLong == null)
-            return -1;
+            return (double) -1;
         LocalDateTime startDate = new ReservationService().convertToDate(startDateLong);
         LocalDateTime endDate = new ReservationService().convertToDate(endDateLong);
         Accommodation accommodation = getOne(accommodationID);
 
-        long days = endDate.toLocalDate().toEpochDay() - startDate.toLocalDate().toEpochDay();
-
-        if (accommodation.getPricing() == Accommodation.PricingType.PER_NIGHT)
-            return (days * accommodation.getDefaultPrice());
+        long days = endDate.toLocalDate().toEpochDay() - startDate.toLocalDate().toEpochDay() + 1;
+        Double priceForRange = accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate);
+        if(priceForRange==null){
+            return (double) -1;
+        }
+        if (accommodation.getPricing() == Accommodation.PricingType.PER_NIGHT) {
+            System.out.println("Per night price for range: " + priceForRange);
+            return (days * accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate));
+        }
         else if (accommodation.getPricing() == Accommodation.PricingType.PER_PERSON)
-            if (guestNumber != null && guestNumber > 0)
-                return (days * accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate) * guestNumber);
+            if (guestNumber != null && guestNumber > 0) {
+                return (days * priceForRange * guestNumber);
+            }
             else
-                return -1;
+                return (double) -1;
         else
-            return -1;
+            return (double) -1;
     }
 
     public void editAccommodation(Long id, AccommodationRequest.Details details) {
