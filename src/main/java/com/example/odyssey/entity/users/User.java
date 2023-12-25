@@ -47,6 +47,10 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
+    public boolean hasRole(String roleName) {
+        return roles.stream().anyMatch(r -> r.getName().equals(roleName));
+    }
+
     public enum AccountStatus {PENDING, ACTIVE, BLOCKED, DEACTIVATED}
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

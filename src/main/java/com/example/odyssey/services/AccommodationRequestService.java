@@ -48,7 +48,7 @@ public class AccommodationRequestService {
                 id = request.getAccommodationId();
             }
 
-            ImageUtil.copyImages(
+            ImageUtil.copyFiles(
                     imagesDirPath + request.getId(),
                     AccommodationService.imagesDirPath + id);
         }

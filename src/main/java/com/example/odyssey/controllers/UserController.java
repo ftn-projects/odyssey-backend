@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @RestController
@@ -47,29 +48,14 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
-        List<User> users = service.getAll();
-
-        if (users.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(mapToDTO(users), HttpStatus.OK);
+        return new ResponseEntity<>(mapToDTO(service.getAll()), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id, @RequestHeader("Authorization") String authToken) {
-        try {
-            tokenUtil.validateAccess(authToken, id, true);
-        } catch (ValidationException ve) {
-            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
-
-        User user = service.find(id);
-        if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-
-        UserDTO dto = UserDTOMapper.fromUserToDTO(user);
-
-        if (user.getRoles().get(0).getName().equals("HOST"))
-            dto.setBio(((Host) user).getBio());
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        User user = service.findById(id);
+        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -89,15 +75,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping
-    public ResponseEntity<?> update(@Valid @RequestBody UserDTO dto, @RequestHeader("Authorization") String authToken) {
-        try {
-            tokenUtil.validateAccess(authToken, dto.getId(), true);
-        } catch (ValidationException ve) {
-            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
-
-        User user = service.find(dto.getId());
-        if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> update(@Valid @RequestBody UserDTO dto) {
+        User user = service.findById(dto.getId());
 
         user.setName(dto.getName());
         user.setSurname(dto.getSurname());
@@ -113,47 +92,28 @@ public class UserController {
 
         if (user instanceof Host) ((Host) user).setBio(dto.getBio());
 
-        service.save(user);
+        user = service.save(user);
+
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping("/password")
-    public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordDTO dto, @RequestHeader("Authorization") String authToken) {
-        try {
-            tokenUtil.validateAccess(authToken, dto.getUserId(), true);
-        } catch (ValidationException ve) {
-            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
-
-        service.updatePassword( dto.getUserId(), dto.getOldPassword(), dto.getNewPassword());
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordDTO dto) {
+        service.updatePassword(dto.getUserId(), dto.getOldPassword(), dto.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/confirmEmail/{id}")
     public ResponseEntity<String> confirmEmail(@PathVariable Long id) {
-        try {
-            service.confirmEmail(id);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
-        }
+        service.confirmEmail(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping("/deactivate/{id}")
-    public ResponseEntity<?> deactivate(@PathVariable Long id, @RequestHeader("Authorization") String authToken) {
-        try {
-            tokenUtil.validateAccess(authToken, id, false);
-        } catch (ValidationException ve) {
-            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
-
-        try {
-            service.deactivate(id);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> deactivate(@PathVariable Long id) {
+        service.deactivate(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -176,26 +136,15 @@ public class UserController {
     }
 
     @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> getImage(@PathVariable Long id) {
-        try {
-            User u = service.find(id);
-            return new ResponseEntity<>(service.getImage(id, u.getProfileImage()), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
+        return new ResponseEntity<>(service.getImage(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping(value = "/image/{id}")
-    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile imageFile, @RequestHeader("Authorization") String authToken) throws IOException {
-        try {
-            tokenUtil.validateAccess(authToken, id, true);
-        } catch (ValidationException ve) {
-            return new ResponseEntity<>(ve.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
-
+    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile imageFile) throws IOException {
         service.uploadImage(id, imageFile);
-        return new ResponseEntity<>("Image uploaded successfully.", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     private static List<UserDTO> mapToDTO(List<User> users) {
