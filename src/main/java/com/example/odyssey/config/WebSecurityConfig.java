@@ -96,6 +96,7 @@ public class WebSecurityConfig {
                         "/api/v1/accommodations/*",
                         "/api/v1/accommodations/*/images",
                         "/api/v1/accommodations/*/images/*",
+                        "/api/v1/accommodations/*/totalPrice",
                         "/api/v1/accommodations/stats/*",
                         "/api/v1/accommodationRequests/*/images",
                         "/api/v1/accommodationRequests/*/images/*").permitAll()

@@ -90,7 +90,7 @@ public class AccommodationRequestController {
         AccommodationRequest.Details details = AccommodationDTOMapper.fromCreationDTOToAccommodationDetails(dto);
         details.setNewCancellationDue(Duration.ofDays(dto.getNewCancellationDue()));
 
-        Host host = (Host) userService.find(dto.getHostId());
+        Host host = (Host) userService.findById(dto.getHostId());
         AccommodationRequest request = service.create(dto.getRequestType(), details, host, dto.getAccommodationId());
         return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
     }

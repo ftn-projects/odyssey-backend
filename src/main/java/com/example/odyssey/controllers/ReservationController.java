@@ -93,7 +93,7 @@ public class ReservationController {
         try {
             reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
             reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
-            reservation.setGuest((Guest) userService.find(requestDTO.getGuestId()));
+            reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
             reservation = service.save(reservation);
             dto = ReservationDTOMapper.fromReservationToDTO(reservation);
         } catch (Exception e) {

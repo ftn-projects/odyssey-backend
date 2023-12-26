@@ -56,6 +56,25 @@ public class AccommodationController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{id}/totalPrice")
+    public ResponseEntity<AccommodationDTO> findByDateAndGuests(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long dateStart,
+            @RequestParam(required = false) Long dateEnd,
+            @RequestParam(required = false) Integer guestNumber
+    ){
+        Accommodation accommodation = service.getOne(id);
+        AccommodationDTO accommodationDTO = new AccommodationDTO(accommodation);
+
+        if (accommodation != null) {
+            accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodation.getId(), dateStart, dateEnd, guestNumber));
+            accommodationDTO.setDefaultPrice(service.getPriceForDateRange(accommodation.getId(), dateStart, dateEnd));
+
+            return new ResponseEntity<>(accommodationDTO, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @PreAuthorize("hasAuthority('GUEST')")
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {

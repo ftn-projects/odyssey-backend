@@ -7,12 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @NonNull Page<User> findAll(@NonNull Pageable pageable);
-    User findUserById(Long id);
-    User findUserByEmail(String name);
+    Optional<User> findUserByEmail(String email);
     List<User> findUsersByStatus(User.AccountStatus status);
 }

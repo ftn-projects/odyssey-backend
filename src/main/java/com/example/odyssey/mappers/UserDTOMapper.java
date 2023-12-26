@@ -2,6 +2,7 @@ package com.example.odyssey.mappers;
 
 import com.example.odyssey.dtos.users.RegistrationDTO;
 import com.example.odyssey.dtos.users.UserDTO;
+import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class UserDTOMapper {
     }
 
     public static UserDTO fromUserToDTO(User user) {
+        if (user.getRoles().get(0).getName().equals("HOST"))
+            return new UserDTO((Host) user);
         return new UserDTO(user);
     }
 }
