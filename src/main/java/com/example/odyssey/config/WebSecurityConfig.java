@@ -36,7 +36,7 @@ public class WebSecurityConfig {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200")
+                        .allowedOrigins("*")
                         .allowedHeaders("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
                         .allowCredentials(false);
@@ -85,6 +85,7 @@ public class WebSecurityConfig {
         http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint));
 
         http.authorizeHttpRequests(requests -> requests
+                .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.POST,
                         "/api/v1/users/login",
                         "/api/v1/users/register",
