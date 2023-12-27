@@ -101,7 +101,13 @@ VALUES
     (4, 1), (4, 2), (4, 3), (4, 4), (4, 6), (4, 7), (4, 9),
     (5, 2), (5, 4), (5, 5), (5, 7), (5, 8), (5, 9);
 
+-- --------------------------- RESERVATIONS ---------------------------- --
 
--- INSERT INTO reservations (id, status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
--- VALUES
---     ();
+INSERT INTO reservations (status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
+VALUES
+    (0, 1, 7, 2, 520.0 * 2 * 2, '2023-12-22', null, '2024-01-02', '2024-01-04'),
+    (0, 2, 7, 2, 430.0 * 4 * 2, '2023-12-22', null, '2024-01-26', '2024-01-30'),
+    (1, 2, 7, 3, 300.0 * 5 * 3, '2023-12-24', '2023-12-26', '2024-01-13', '2024-01-18'),
+    (2, 5, 7, 2, 150.0 * 6, '2023-12-25', null, '2024-01-14', '2024-01-20'),
+    (3, 1, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
+    (4, 1, 7, 1, 430.0 * 3 * 1, '2023-12-20', '2023-12-26', '2024-02-01', '2024-02-04');

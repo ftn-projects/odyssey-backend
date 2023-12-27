@@ -4,6 +4,8 @@ import com.example.odyssey.entity.reservations.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
@@ -19,4 +21,20 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findReservationsByStatus(Reservation.Status status);
     List<Reservation> findReservationsByTimeSlot_Start(LocalDateTime start);
     List<Reservation> findReservationsByTimeSlot_End(LocalDateTime end);
+
+    @Query("SELECT DISTINCT r " +
+            "FROM Reservation  r " +
+            "LEFT JOIN FETCH r.guest g " +
+            "LEFT JOIN FETCH  r.accommodation a " +
+            "WHERE (r.accommodation.host.id = :hostId) " +
+            "AND (:status IS NULL OR r.status IN :status) " +
+            "AND (:title IS NULL OR r.accommodation.title LIKE %:title%) " +
+            "AND ((cast(:reservationStartDate as localdatetime) IS NULL OR cast(:reservationEndDate as localdatetime) IS NULL) " +
+            "OR (r.timeSlot.end <= :reservationEndDate AND r.timeSlot.start >= :reservationStartDate))")
+    List<Reservation> findAllWithFilter(
+            @Param("hostId") Long hostId,
+            @Param("status") List<Reservation.Status> status,
+            @Param("title") String title,
+            @Param("reservationStartDate") LocalDateTime reservationStartDate,
+            @Param("reservationEndDate") LocalDateTime reservationEndDate);
 }

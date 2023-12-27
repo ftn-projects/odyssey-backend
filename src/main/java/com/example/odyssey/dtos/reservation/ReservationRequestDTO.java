@@ -2,6 +2,7 @@ package com.example.odyssey.dtos.reservation;
 
 import com.example.odyssey.dtos.TimeSlotDTO;
 import com.example.odyssey.entity.reservations.Reservation;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,12 +16,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ReservationRequestDTO {
     private Long id;
+    @NotNull
     private Double price;
+    @NotNull
     private Integer guestNumber;
+    @NotNull
     private Reservation.Status status;
+    @NotNull
     private LocalDateTime requestDate;
+    @NotNull
     private TimeSlotDTO timeSlot;
+    @NotNull
     private Long accommodationId;
+    @NotNull
     private Long guestId;
 
     public ReservationRequestDTO(Reservation reservation) {
