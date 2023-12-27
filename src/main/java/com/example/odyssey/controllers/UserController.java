@@ -3,32 +3,25 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.users.*;
 import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.users.Host;
-import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
 import com.example.odyssey.services.UserService;
 import com.example.odyssey.util.TokenUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
-import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")

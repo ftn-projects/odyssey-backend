@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class AccommodationRequestService {
@@ -32,7 +33,8 @@ public class AccommodationRequestService {
     }
 
     public AccommodationRequest findById(Long id) {
-        return repository.findAccommodationRequestById(id);
+        return repository.findById(id).orElseThrow(() ->
+                new NoSuchElementException(String.format("Accommodation request with id '%d' does not exist.", id)));
     }
 
     public void editStatus(AccommodationRequest request, AccommodationRequest.Status status) throws IOException {
@@ -98,6 +100,9 @@ public class AccommodationRequestService {
     public void uploadImage(Long id, MultipartFile image) throws IOException {
         if (image.getOriginalFilename() == null)
             throw new IOException("Image is non existing.");
+
+        findById(id); // id validation
+
         String uploadDir = StringUtils.cleanPath(imagesDirPath + id);
         ImageUtil.saveImage(uploadDir, image.getOriginalFilename(), image);
     }

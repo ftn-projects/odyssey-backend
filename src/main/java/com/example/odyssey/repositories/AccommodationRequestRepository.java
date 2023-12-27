@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface AccommodationRequestRepository extends JpaRepository<AccommodationRequest, Long> {
     List<AccommodationRequest> findAccommodationRequestByStatus(AccommodationRequest.Status status);
-    AccommodationRequest findAccommodationRequestById(Long id);
 }

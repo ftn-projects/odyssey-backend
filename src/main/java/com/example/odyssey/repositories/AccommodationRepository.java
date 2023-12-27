@@ -1,20 +1,14 @@
 package com.example.odyssey.repositories;
 
 import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.accommodations.Amenity;
-import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
 
@@ -49,9 +43,6 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             @Param("endSlotPrice") Double endSlotPrice,
             @Param("location") String location);
 
-
-
-    Accommodation findOneById(Long id);
     List<Accommodation> findAllByHost(Host host);
 
     @Query("SELECT s.price " +
