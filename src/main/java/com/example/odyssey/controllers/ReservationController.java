@@ -16,11 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -94,7 +90,7 @@ public class ReservationController {
             reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
             reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
             reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
-            reservation = service.save(reservation);
+            reservation = service.create(reservation);
             dto = ReservationDTOMapper.fromReservationToDTO(reservation);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -104,7 +100,7 @@ public class ReservationController {
 
     // PUT method for updating a reservation status
     @PreAuthorize("hasAuthority('HOST')")
-    @PutMapping("/{id}/status")
+    @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status
@@ -112,6 +108,7 @@ public class ReservationController {
         Reservation reservation = service.find(id);
         reservation.setStatus(Reservation.Status.valueOf(status));
         reservation = service.save(reservation);
+        service.cancelOverlapping(reservation.getAccommodation().getId(), reservation);
 
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }

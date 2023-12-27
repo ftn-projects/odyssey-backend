@@ -39,13 +39,17 @@ public class ReservationService {
         return reservationRepository.findReservationsByAccommodation_Host_Id(id);
     }
 
-    public Reservation save(Reservation reservation) {
+    public Reservation create(Reservation reservation) {
         if (reservation.getGuestNumber() < reservation.getAccommodation().getMinGuests() ||
                 reservation.getGuestNumber() > reservation.getAccommodation().getMaxGuests())
             throw new ValidationException("Reservation cannot be made.");
 
         if (overlapsReservation(reservation.getAccommodation().getId(), reservation.getTimeSlot()))
             throw new ValidationException("Reservation cannot be made.");
+        return reservationRepository.save(reservation);
+    }
+
+    public Reservation save(Reservation reservation) {
         return reservationRepository.save(reservation);
     }
 
@@ -83,8 +87,19 @@ public class ReservationService {
     public boolean overlapsReservation(Long accommodationId, TimeSlot slot) {
         List<Reservation> reservations = findByAccommodation(accommodationId);
         for (Reservation i : reservations)
-            if (i.getTimeSlot().overlaps(slot))
+            if (i.getTimeSlot().overlaps(slot) && i.getStatus().equals(Reservation.Status.ACCEPTED))
                 return true;
         return false;
+    }
+
+    public void cancelOverlapping(Long accommodationId, Reservation reservation){
+        if(!reservation.getStatus().equals(Reservation.Status.ACCEPTED)) return;
+        List<Reservation> reservations = findByAccommodation(accommodationId);
+        for(Reservation i:reservations){
+            if (i.getTimeSlot().overlaps(reservation.getTimeSlot()) && i.getStatus().equals(Reservation.Status.REQUESTED)){
+                i.setStatus(Reservation.Status.DECLINED);
+                save(i);
+            }
+        }
     }
 }
