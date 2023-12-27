@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -56,6 +57,23 @@ public class ReservationService {
         if (end != null) reservations.retainAll(reservationRepository.findReservationsByTimeSlot_End(end));
 
         return reservations;
+    }
+
+    public List<Reservation> getFiltered(
+            Long hostId,
+            List<String> status,
+            String title,
+            Long dateStart,
+            Long dateEnd
+    ){
+        LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
+        LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
+        List<Reservation.Status> statuses = new ArrayList<>();
+        if(status != null && !status.isEmpty()){
+            for(String s:status) statuses.add(Reservation.Status.valueOf(s));
+            return reservationRepository.findAllWithFilter(hostId, statuses,title,startDate,endDate);
+        }
+        return reservationRepository.findAllWithFilter(hostId, null,title,startDate,endDate);
     }
 
     public LocalDateTime convertToDate(Long date) {
