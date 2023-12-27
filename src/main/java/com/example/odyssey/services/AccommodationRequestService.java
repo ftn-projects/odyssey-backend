@@ -38,24 +38,28 @@ public class AccommodationRequestService {
     }
 
     public void editStatus(AccommodationRequest request, AccommodationRequest.Status status) throws IOException {
-        Accommodation accommodation;
-        if (status.equals(AccommodationRequest.Status.ACCEPTED)) {
-            Long id;
-            if (request.getType().equals(AccommodationRequest.Type.CREATE)) {
-                accommodation = new Accommodation(request.getDetails());
-                accommodation.setHost(request.getHost());
-                id = accommodationService.save(accommodation).getId();
-            } else {
-                accommodationService.editAccommodation(request.getAccommodationId(), request.getDetails());
-                id = request.getAccommodationId();
-            }
+        if (status.equals(AccommodationRequest.Status.ACCEPTED))
+            acceptRequest(request);
 
-            ImageUtil.copyFiles(
-                    imagesDirPath + request.getId(),
-                    AccommodationService.imagesDirPath + id);
-        }
         request.setStatus(status);
         repository.save(request);
+    }
+
+    public void acceptRequest(AccommodationRequest request) throws IOException {
+        Accommodation accommodation;
+
+        if (request.getType().equals(AccommodationRequest.Type.CREATE)) {
+            accommodation = new Accommodation(request.getDetails());
+            accommodation.setHost(request.getHost());
+        } else {
+            accommodation = accommodationService.getOne(request.getAccommodationId());
+            accommodation.updateWithDetails(request.getDetails());
+        }
+
+        Long id = accommodationService.save(accommodation).getId();
+        ImageUtil.copyFiles(
+                imagesDirPath + request.getId(),
+                AccommodationService.imagesDirPath + id);
     }
 
     public AccommodationRequest create(AccommodationRequest.Type type, AccommodationRequest.Details details, Host host, Long accommodationId) {

@@ -19,4 +19,10 @@ public class Address {
     private String city;
     @Column(name = "address_country")
     private String country;
+
+    public Address(Address address) {
+        this.street = address.getStreet();
+        this.city = address.getCity();
+        this.country = address.getCountry();
+    }
 }

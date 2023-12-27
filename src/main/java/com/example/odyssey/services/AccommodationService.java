@@ -146,21 +146,4 @@ public class AccommodationService {
         else
             return (double) -1;
     }
-
-    public void editAccommodation(Long id, AccommodationRequest.Details details) {
-        Accommodation accommodation = getOne(id);
-        accommodation.setTitle(details.getNewTitle());
-        accommodation.setDescription(details.getNewDescription());
-        accommodation.setType(details.getNewAccommodationType());
-        accommodation.setAddress(details.getNewAddress());
-        accommodation.setDefaultPrice(details.getNewDefaultPrice());
-        accommodation.setAutomaticApproval(details.getNewAutomaticApproval());
-        accommodation.setCancellationDue(details.getNewCancellationDue());
-        details.getNewAvailableSlots().forEach((s) -> accommodation.getAvailableSlots().add(s));
-        details.getNewAmenities().forEach((a) -> accommodation.getAmenities().add(a));
-        accommodation.setMinGuests(details.getNewMinGuests());
-        accommodation.setMaxGuests(details.getNewMaxGuests());
-        details.getNewImages().forEach((i) -> accommodation.getImages().add(i));
-        save(accommodation);
-    }
 }
