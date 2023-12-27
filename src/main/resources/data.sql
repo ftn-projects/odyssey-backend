@@ -3,16 +3,16 @@
 INSERT INTO roles (name)
 VALUES ('ADMIN'), ('HOST'), ('GUEST'), ('USER');
 
-INSERT INTO users (user_role, status, name, surname, email, password, phone, street, number, city, country, profile_image, bio, created)
+INSERT INTO users (user_role, status, name, surname, email, password, phone, address_street, address_city, address_country, profile_image, bio, created)
 VALUES
-    ('USER', 1, 'Marko', 'Marković', 'admin@gmail.com', '$2a$12$ojx4gaAU/odqpcwD7JTHMe0GUCITBrDKe/llCaUVIAmdkaJAr1KjO', '(+381)69423143', 'Bulevar cara Dušana', 34, 'Novi Sad', 'Serbia', 'profile.png', null, '2023-01-01 11:00:00'),
-    ('HOST', 1, 'Petar', 'Petrović', 'petar@gmail.com', '$2a$12$xygRv8VL.sBMKEgrrioX7OS81Zn4V5gHrLNnVHJ1HLP6ISXzzZf2G', '(+381)63748021', 'Slobodana Jovanovića', 8, 'Kruševac', 'Serbia', 'profile.png', 'Živim u Kruševcu i izdajem 2 smeštaja.', '2023-02-10 12:00:00'),
-    ('HOST', 1, 'Nevena', 'Nevenić', 'nevena@gmail.com', '$2a$12$AxVIzXc9jiBsVPppHOTTPesNsqUp4gvIl2sSK9FtXdDdlSbXMl1ea', '(+381)65900314', 'Jovana Ristića', 87, 'Niš', 'Serbia', 'profile.png', 'Iz Niš sam i izdajem 3 apartmana.', '2023-03-21 10:00:00'),
-    ('HOST', 2, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$b2qhCMoji6RCk0mGZxaNROJMDUHmC.0s4chAqIqiClMbpUcV/qjNq', '(+381)63984039', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00'),
-    ('GUEST', 2, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$KmFHBhd8NSsRcA7ThwY6eOMTru7w/RQqoCXoWFQmxpUvyrUu0pAWy', '(+381)69774829', 'Bulevar vojvode Mišića', 74, 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00'),
-    ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska', 3, 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00'),
-    ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića', 17, 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00'),
-    ('GUEST', 0, 'Novi', 'Nalog', 'novi@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)0000000', 'Neka Ulica', 99, 'Beograd', 'Serbia', 'profile.png', null, '2023-12-21 08:00:00');;
+    ('USER', 1, 'Marko', 'Marković', 'admin@gmail.com', '$2a$12$ojx4gaAU/odqpcwD7JTHMe0GUCITBrDKe/llCaUVIAmdkaJAr1KjO', '(+381)69423143', 'Bulevar cara Dušana 34', 'Novi Sad', 'Serbia', 'profile.png', null, '2023-01-01 11:00:00'),
+    ('HOST', 1, 'Petar', 'Petrović', 'petar@gmail.com', '$2a$12$xygRv8VL.sBMKEgrrioX7OS81Zn4V5gHrLNnVHJ1HLP6ISXzzZf2G', '(+381)63748021', 'Slobodana Jovanovića 8', 'Kruševac', 'Serbia', 'profile.png', 'Živim u Kruševcu i izdajem 2 smeštaja.', '2023-02-10 12:00:00'),
+    ('HOST', 1, 'Nevena', 'Nevenić', 'nevena@gmail.com', '$2a$12$AxVIzXc9jiBsVPppHOTTPesNsqUp4gvIl2sSK9FtXdDdlSbXMl1ea', '(+381)65900314', 'Jovana Ristića 87', 'Niš', 'Serbia', 'profile.png', 'Iz Niš sam i izdajem 3 apartmana.', '2023-03-21 10:00:00'),
+    ('HOST', 2, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$b2qhCMoji6RCk0mGZxaNROJMDUHmC.0s4chAqIqiClMbpUcV/qjNq', '(+381)63984039', 'Bulevar vojvode Mišića 74', 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00'),
+    ('GUEST', 2, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$KmFHBhd8NSsRcA7ThwY6eOMTru7w/RQqoCXoWFQmxpUvyrUu0pAWy', '(+381)69774829', 'Bulevar vojvode Mišića 64', 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00'),
+    ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska 3', 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00'),
+    ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića 17', 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00'),
+    ('GUEST', 0, 'Novi', 'Nalog', 'novi@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)0000000', 'Neka Ulica 99', 'Beograd', 'Serbia', 'profile.png', null, '2023-12-21 08:00:00');;
 
 INSERT INTO user_roles (user_id, role_id)
 VALUES
@@ -21,16 +21,16 @@ VALUES
 
 -- ------------------------- ACCOMMODATIONS ------------------------- --
 
-INSERT INTO accommodations (host_id, type, title, description, street, number, city, country, pricing, default_price, automatic_approval, cancellation_due, min_guests, max_guests)
+INSERT INTO accommodations (host_id, type, title, description, address_street, address_city, address_country, pricing, default_price, automatic_approval, cancellation_due, min_guests, max_guests)
 VALUES
-    (2, 1, 'Soba sa 3 kreveta', 'Soba sa pogledom na šetalište.', 'Rujanska', 23, 'Zlatibor', 'Serbia', 0, 410.0, false, 364, 1, 4),
-    (2, 2, 'Kuća na brdu', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića', 14, 'Vrnjačka Banja', 'Serbia', 0, 260.0, false, 563, 2, 5),
-    (3, 0, 'Mali apartman', 'Mali apartman u strogom centru grada.', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 450.0, true, 1265, 1, 2),
-    (3, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 900.0, true, 2446, 1, 4),
-    (3, 0, 'Delux apartman', 'Apartman u strogom centru grada.', 'Bulevar Nemanjića', 45, 'Niš', 'Serbia', 1, 130.0, false, 125, 1, 2),
-    (4, 1, 'Soba sa bračnim ležajem', 'Soba sa pogledom na Južni bulevar.', 'Južni bulevar', 89, 'Beograd', 'Serbia', 1, 630.0, true, 76, 1, 3),
-    (4, 1, 'Soba sa 3 ležaja', 'Soba sa pogledom sa 3 ležaja.', 'Južni bulevar', 40, 'Beograd', 'Serbia', 1, 9700.0, true, 450, 2, 5),
-    (4, 0, 'Veliki apartman', 'Apartman blizu Kalemegdana sa pogledom na ušće.', 'Karađorđeva', 92, 'Beograd', 'Serbia', 1, 10000.0, true, 4155, 3, 7);
+    (2, 1, 'Soba sa 3 kreveta', 'Soba sa pogledom na šetalište.', 'Rujanska 23', 'Zlatibor', 'Serbia', 0, 410.0, false, 364, 1, 4),
+    (2, 2, 'Kuća na brdu', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića 14', 'Vrnjačka Banja', 'Serbia', 0, 260.0, false, 563, 2, 5),
+    (3, 0, 'Mali apartman', 'Mali apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 450.0, true, 1265, 1, 2),
+    (3, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 900.0, true, 2446, 1, 4),
+    (3, 0, 'Delux apartman', 'Apartman u strogom centru grada.', 'Bulevar Nemanjića 45', 'Niš', 'Serbia', 1, 130.0, false, 125, 1, 2),
+    (4, 1, 'Soba sa bračnim ležajem', 'Soba sa pogledom na Južni bulevar.', 'Južni bulevar 89', 'Beograd', 'Serbia', 1, 630.0, true, 76, 1, 3),
+    (4, 1, 'Soba sa 3 ležaja', 'Soba sa pogledom sa 3 ležaja.', 'Južni bulevar 40', 'Beograd', 'Serbia', 1, 9700.0, true, 450, 2, 5),
+    (4, 0, 'Veliki apartman', 'Apartman blizu Kalemegdana sa pogledom na ušće.', 'Karađorđeva 92', 'Beograd', 'Serbia', 1, 10000.0, true, 4155, 3, 7);
 
 INSERT INTO accommodation_available_slots (accommodation_id, price, start_date, end_date)
 VALUES
@@ -56,13 +56,13 @@ VALUES
 
 -- --------------------- ACCOMMODATION REQUESTS --------------------- --
 
-INSERT INTO accommodation_requests (type, status, submission_date, host_id, accommodation_id, new_accommodation_type, new_title, new_description, street, number, city, country, new_pricing, new_default_price, new_automatic_approval, new_cancellation_due, new_min_guests, new_max_guests)
+INSERT INTO accommodation_requests (type, status, submission_date, host_id, accommodation_id, new_accommodation_type, new_title, new_description, address_street, address_city, address_country, new_pricing, new_default_price, new_automatic_approval, new_cancellation_due, new_min_guests, new_max_guests)
 VALUES
-    (0, 2, '2023-11-4 12:00:00', 2, null, 1, 'Soba', '', 'Dušana Radovića', 40, 'Vrnjačka Banja', 'Serbia', 0, 4500.0, true, 125, 1, 3),
-    (0, 0, '2023-11-6 12:00:00', 3, null, 0, 'Duplex apartman', 'Apartman na periferiji.', 'Bulevar Oslobođenja', 34, 'Novi Sad', 'Serbia', 1, 6400.0, false, 1265, 1, 4),
-    (1, 2, '2023-11-8 12:00:00', 2, 2, 2, 'Neki apartman', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića', 14, 'Vrnjačka', '', 0, 26000.0, false, 563, 2, 5),
-    (1, 1, '2023-11-10 12:00:00', 3, 4, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića', 44, 'Niš', 'Serbia', 0, 9000.0, true, 2446, 1, 4),
-    (1, 0, '2023-11-12 12:00:00', 4, 6, 1, 'Soba sa velikim ležajem', 'Soba sa terasom i pogledom na Južni bulevar.', 'Južni bulevar', 89, 'Beograd', 'Serbia', 1, 8100.0, true, 76, 1, 3);
+    (0, 2, '2023-11-4 12:00:00', 2, null, 1, 'Soba', '', 'Dušana Radovića 40', 'Vrnjačka Banja', 'Serbia', 0, 4500.0, true, 125, 1, 3),
+    (0, 0, '2023-11-6 12:00:00', 3, null, 0, 'Duplex apartman', 'Apartman na periferiji.', 'Bulevar Oslobođenja 34', 'Novi Sad', 'Serbia', 1, 6400.0, false, 1265, 1, 4),
+    (1, 2, '2023-11-8 12:00:00', 2, 2, 2, 'Neki apartman', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića 14', 'Vrnjačka', '', 0, 26000.0, false, 563, 2, 5),
+    (1, 1, '2023-11-10 12:00:00', 3, 4, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 9000.0, true, 2446, 1, 4),
+    (1, 0, '2023-11-12 12:00:00', 4, 6, 1, 'Soba sa velikim ležajem', 'Soba sa terasom i pogledom na Južni bulevar.', 'Južni bulevar 89', 'Beograd', 'Serbia', 1, 8100.0, true, 76, 1, 3);
 
 INSERT INTO accommodation_request_new_available_slots (accommodation_request_id, price, start_date, end_date)
 VALUES
