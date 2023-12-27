@@ -42,10 +42,10 @@ public class ReservationService {
     public Reservation create(Reservation reservation) {
         if (reservation.getGuestNumber() < reservation.getAccommodation().getMinGuests() ||
                 reservation.getGuestNumber() > reservation.getAccommodation().getMaxGuests())
-            throw new ValidationException("Reservation cannot be made.");
+            throw new ValidationException("Reservation guest number is invalid.");
 
         if (overlapsReservation(reservation.getAccommodation().getId(), reservation.getTimeSlot()))
-            throw new ValidationException("Reservation cannot be made.");
+            throw new ValidationException("Accommodation is not available for selected period.");
         return reservationRepository.save(reservation);
     }
 

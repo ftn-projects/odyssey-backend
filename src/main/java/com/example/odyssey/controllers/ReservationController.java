@@ -88,6 +88,7 @@ public class ReservationController {
         ReservationDTO dto;
         try {
             reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
+            reservation.setStatus(Reservation.Status.REQUESTED);
             reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
             reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
             reservation = service.create(reservation);
