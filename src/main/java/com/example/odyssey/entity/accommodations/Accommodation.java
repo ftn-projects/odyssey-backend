@@ -48,23 +48,30 @@ public class Accommodation {
 
     public enum PricingType {PER_PERSON, PER_NIGHT}
 
-    public Accommodation(AccommodationRequest.Details details){
+    public Accommodation(AccommodationRequest.Details details) {
+        this();
+        updateWithDetails(details);
+    }
+
+    public void updateWithDetails(AccommodationRequest.Details details) {
         title = details.getNewTitle();
-        description =details.getNewDescription();
+        description = details.getNewDescription();
         type = details.getNewAccommodationType();
-        address = details.getNewAddress();
+        address = new Address(details.getNewAddress());
         defaultPrice = details.getNewDefaultPrice();
         automaticApproval = details.getNewAutomaticApproval();
         cancellationDue = details.getNewCancellationDue();
-        availableSlots = new HashSet<>(details.getNewAvailableSlots());
-        amenities = new HashSet<>(details.getNewAmenities());
         minGuests = details.getNewMinGuests();
         maxGuests = details.getNewMaxGuests();
+
+        availableSlots = new HashSet<>(details.getNewAvailableSlots());
+        amenities = new HashSet<>(details.getNewAmenities());
         images = new HashSet<>(details.getNewImages());
     }
-    public Double getDatesPrice(LocalDate date){
-        for(AvailabilitySlot x: availableSlots)
-            if(x.getTimeSlot().containsDay(date))
+
+    public Double getDatesPrice(LocalDate date) {
+        for (AvailabilitySlot x : availableSlots)
+            if (x.getTimeSlot().containsDay(date))
                 return x.getPrice();
         return null;
     }

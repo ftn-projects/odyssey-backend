@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimeSlot {
-    @Column(name = "startDate")
+    @Column(name = "start_date")
     private LocalDateTime start;
-    @Column(name = "endDate")
+    @Column(name = "end_date")
     private LocalDateTime end;
 
     public Duration getDuration() {

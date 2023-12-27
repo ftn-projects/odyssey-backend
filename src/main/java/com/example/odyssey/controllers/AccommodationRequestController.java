@@ -9,9 +9,7 @@ import com.example.odyssey.mappers.AccommodationDTOMapper;
 import com.example.odyssey.mappers.AccommodationRequestDTOMapper;
 import com.example.odyssey.services.AccommodationRequestService;
 import com.example.odyssey.services.UserService;
-import com.example.odyssey.util.TokenUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +29,6 @@ public class AccommodationRequestController {
     private AccommodationRequestService service;
     @Autowired
     private UserService userService;
-    @Autowired
-    private TokenUtil tokenUtil;
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
@@ -50,14 +46,10 @@ public class AccommodationRequestController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/status/{id}")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam AccommodationRequest.Status status) {
-        try {
-            AccommodationRequest request = service.findById(id);
-            service.editStatus(request, status);
-            return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
-        }
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam AccommodationRequest.Status status) throws IOException {
+        AccommodationRequest request = service.findById(id);
+        service.editStatus(request, status);
+        return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/images/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
@@ -72,16 +64,9 @@ public class AccommodationRequestController {
 
     @PreAuthorize("hasAuthority('HOST')")
     @PostMapping(value = "/image/{id}")
-    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image, @RequestHeader("Authorization") String authToken) throws IOException {
-        try {
-            AccommodationRequest request = service.findById(id);
-            tokenUtil.validateAccess(authToken, request.getHost().getId(), true);
-        } catch (ValidationException ve) {
-            return new ResponseEntity<>(ve.getMessage(), HttpStatus.OK);
-        }
-
+    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
         service.uploadImage(id, image);
-        return new ResponseEntity<>("Image uploaded successfully.", HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('HOST')")
@@ -92,7 +77,7 @@ public class AccommodationRequestController {
 
         Host host = (Host) userService.findById(dto.getHostId());
         AccommodationRequest request = service.create(dto.getRequestType(), details, host, dto.getAccommodationId());
-        return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
+        return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.CREATED);
     }
 
     private static List<AccommodationRequestDTO> mapToDTO(List<AccommodationRequest> requests) {

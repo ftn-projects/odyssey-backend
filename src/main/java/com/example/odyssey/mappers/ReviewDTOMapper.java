@@ -1,10 +1,8 @@
 package com.example.odyssey.mappers;
 
-import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.HostReviewDTO;
 import com.example.odyssey.dtos.reviews.ReviewDTO;
-import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;

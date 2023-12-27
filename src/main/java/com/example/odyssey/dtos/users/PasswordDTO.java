@@ -1,7 +1,5 @@
 package com.example.odyssey.dtos.users;
 
-import com.example.odyssey.entity.users.Host;
-import com.example.odyssey.entity.users.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

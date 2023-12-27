@@ -4,18 +4,17 @@ import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.exceptions.InputValidationException;
 import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
 import com.example.odyssey.util.EmailUtil;
 import com.example.odyssey.util.ImageUtil;
-import com.example.odyssey.exceptions.InputValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.naming.OperationNotSupportedException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,7 +43,7 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException(String.format("User with the id '%d' does not exist.", id)));
+                new NoSuchElementException(String.format("User with id '%d' does not exist.", id)));
     }
 
     public User register(User user, String role) {

@@ -2,7 +2,9 @@ package com.example.odyssey.entity.reports;
 
 import com.example.odyssey.entity.reviews.Review;
 import com.example.odyssey.entity.users.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

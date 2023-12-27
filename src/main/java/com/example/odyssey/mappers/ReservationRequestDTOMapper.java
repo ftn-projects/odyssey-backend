@@ -1,6 +1,5 @@
 package com.example.odyssey.mappers;
 
-import com.example.odyssey.dtos.reservation.ReservationDTO;
 import com.example.odyssey.dtos.reservation.ReservationRequestDTO;
 import com.example.odyssey.entity.reservations.Reservation;
 import org.modelmapper.ModelMapper;

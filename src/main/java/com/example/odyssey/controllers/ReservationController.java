@@ -2,6 +2,7 @@ package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.reservation.ReservationDTO;
 import com.example.odyssey.dtos.reservation.ReservationRequestDTO;
+import com.example.odyssey.dtos.reservation.ReservationsAccreditDTO;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReservationDTOMapper;
@@ -15,11 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -72,16 +69,15 @@ public class ReservationController {
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getReservationsByHost(
             @PathVariable Long id,
-            @RequestParam(required = false) Long accommodationId,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate) {
-        List<Reservation> reservations = service.findByHost(id);
+        List<Reservation> reservations;
 
-        reservations = service.filter(reservations, accommodationId, Reservation.Status.valueOf(status),
-                service.convertToDate(startDate), service.convertToDate(endDate));
+        reservations = service.getFiltered(id, status, title, startDate, endDate);
 
-        return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
+        return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
     // POST method for creating a reservation
@@ -92,9 +88,10 @@ public class ReservationController {
         ReservationDTO dto;
         try {
             reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
+            reservation.setStatus(Reservation.Status.REQUESTED);
             reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
             reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
-            reservation = service.save(reservation);
+            reservation = service.create(reservation);
             dto = ReservationDTOMapper.fromReservationToDTO(reservation);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -104,7 +101,7 @@ public class ReservationController {
 
     // PUT method for updating a reservation status
     @PreAuthorize("hasAuthority('HOST')")
-    @PutMapping("/{id}/status")
+    @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status
@@ -112,11 +109,16 @@ public class ReservationController {
         Reservation reservation = service.find(id);
         reservation.setStatus(Reservation.Status.valueOf(status));
         reservation = service.save(reservation);
+        service.cancelOverlapping(reservation.getAccommodation().getId(), reservation);
 
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }
 
     private static List<ReservationDTO> mapToDTO(List<Reservation> reservations) {
         return reservations.stream().map(ReservationDTO::new).toList();
+    }
+
+    private static List<ReservationsAccreditDTO> mapToAccreditDTO(List<Reservation> reservations){
+        return reservations.stream().map(ReservationsAccreditDTO::new).toList();
     }
 }

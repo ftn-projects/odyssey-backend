@@ -1,9 +1,7 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.reports.ReportDTO;
 import com.example.odyssey.dtos.reports.ReviewReportDTO;
 import com.example.odyssey.dtos.reports.UserReportDTO;
-import com.example.odyssey.entity.reports.Report;
 import com.example.odyssey.entity.reports.ReviewReport;
 import com.example.odyssey.entity.reports.UserReport;
 import com.example.odyssey.mappers.ReportDTOMapper;

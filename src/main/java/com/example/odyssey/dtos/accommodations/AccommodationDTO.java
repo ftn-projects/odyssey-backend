@@ -4,14 +4,15 @@ import com.example.odyssey.dtos.AddressDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
-import com.example.odyssey.validation.AccommodationConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 

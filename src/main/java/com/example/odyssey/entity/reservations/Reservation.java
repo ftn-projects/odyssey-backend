@@ -34,7 +34,7 @@ public class Reservation {
     @ManyToOne
     private Guest guest;
 
-    public enum Status {REQUESTED, DECLINED, CANCELLED_REQUEST, CANCELLED_RESERVATION, ACCEPTED}
+    public enum Status {REQUESTED, ACCEPTED, DECLINED, CANCELLED_REQUEST, CANCELLED_RESERVATION}
 
     public boolean checkPrice() {
         Double total = 0.0;

@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class AccommodationRequestService {
@@ -32,28 +33,33 @@ public class AccommodationRequestService {
     }
 
     public AccommodationRequest findById(Long id) {
-        return repository.findAccommodationRequestById(id);
+        return repository.findById(id).orElseThrow(() ->
+                new NoSuchElementException(String.format("Accommodation request with id '%d' does not exist.", id)));
     }
 
     public void editStatus(AccommodationRequest request, AccommodationRequest.Status status) throws IOException {
-        Accommodation accommodation;
-        if (status.equals(AccommodationRequest.Status.ACCEPTED)) {
-            Long id;
-            if (request.getType().equals(AccommodationRequest.Type.CREATE)) {
-                accommodation = new Accommodation(request.getDetails());
-                accommodation.setHost(request.getHost());
-                id = accommodationService.save(accommodation).getId();
-            } else {
-                accommodationService.editAccommodation(request.getAccommodationId(), request.getDetails());
-                id = request.getAccommodationId();
-            }
+        if (status.equals(AccommodationRequest.Status.ACCEPTED))
+            acceptRequest(request);
 
-            ImageUtil.copyFiles(
-                    imagesDirPath + request.getId(),
-                    AccommodationService.imagesDirPath + id);
-        }
         request.setStatus(status);
         repository.save(request);
+    }
+
+    public void acceptRequest(AccommodationRequest request) throws IOException {
+        Accommodation accommodation;
+
+        if (request.getType().equals(AccommodationRequest.Type.CREATE)) {
+            accommodation = new Accommodation(request.getDetails());
+            accommodation.setHost(request.getHost());
+        } else {
+            accommodation = accommodationService.getOne(request.getAccommodationId());
+            accommodation.updateWithDetails(request.getDetails());
+        }
+
+        Long id = accommodationService.save(accommodation).getId();
+        ImageUtil.copyFiles(
+                imagesDirPath + request.getId(),
+                AccommodationService.imagesDirPath + id);
     }
 
     public AccommodationRequest create(AccommodationRequest.Type type, AccommodationRequest.Details details, Host host, Long accommodationId) {
@@ -98,6 +104,9 @@ public class AccommodationRequestService {
     public void uploadImage(Long id, MultipartFile image) throws IOException {
         if (image.getOriginalFilename() == null)
             throw new IOException("Image is non existing.");
+
+        findById(id); // id validation
+
         String uploadDir = StringUtils.cleanPath(imagesDirPath + id);
         ImageUtil.saveImage(uploadDir, image.getOriginalFilename(), image);
     }

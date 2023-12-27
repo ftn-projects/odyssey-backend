@@ -3,7 +3,6 @@ package com.example.odyssey.entity.notifications;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.users.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
