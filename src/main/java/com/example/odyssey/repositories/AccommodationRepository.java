@@ -58,7 +58,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             "FROM Accommodation a " +
             "JOIN a.availableSlots s " +
             "WHERE a.id = :accommodationId " +
-            "AND (cast(:startDate as localdatetime) IS NOT NULL AND cast(:endDate as localdatetime) IS NOT NULL AND (s.timeSlot.start <= :startDate AND s.timeSlot.end >= :endDate))")
+            "AND (cast(:startDate as localdatetime) IS NOT NULL AND cast(:endDate as localdatetime) IS NOT NULL AND (s.timeSlot.start >= :startDate AND s.timeSlot.end <= :endDate))")
     Double findPriceForDateRange(
             @Param("accommodationId") Long accommodationId,
             @Param("startDate") LocalDateTime startDate,

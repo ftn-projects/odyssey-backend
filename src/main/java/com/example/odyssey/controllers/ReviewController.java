@@ -3,10 +3,14 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.HostReviewDTO;
 import com.example.odyssey.dtos.reviews.ReviewDTO;
+import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
+import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.ReviewDTOMapper;
+import com.example.odyssey.services.ReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,21 +24,33 @@ import java.util.Objects;
 @RequestMapping(value = "/api/v1/reviews")
 public class ReviewController {
 
+    @Autowired
+    private ReviewService service;
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
-    public ResponseEntity<?> getAllHostReviews() {
+    public ResponseEntity<?> getAllHostReviews(
+            @RequestParam(required = false) Long hostId,
+            @RequestParam(required = false) Long submitterId,
+            @RequestParam(required = false) List<HostReview.Status> listTypes
+    ) {
         List<HostReview> reviews = new ArrayList<>();
-//        reviews = service.getAllHostReviews(id);
+        reviews = service.getAllHostReviewsFiltered(hostId, submitterId, listTypes);
         if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/accommodation")
-    public ResponseEntity<?> getAllAccommodationReviews() {
+    @GetMapping("/accommodation"
+    )
+    public ResponseEntity<?> getAllAccommodationReviews(
+            @RequestParam(required = false) Long accommodationId,
+            @RequestParam(required = false) Long submitterId,
+            @RequestParam(required = false) List<AccommodationReview.Status> listTypes
+    ) {
         List<AccommodationReview> reviews = new ArrayList<>();
 
-//        reviews = service.getAllAccommodationReviews(id);
+        reviews = service.getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes);
         if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
@@ -43,8 +59,7 @@ public class ReviewController {
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getHostReviewById(@PathVariable Long id) {
         HostReview review = new HostReview();
-
-//        review = service.findHostReviewById(id);
+        review = service.findHostReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
     }
@@ -53,8 +68,7 @@ public class ReviewController {
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getAccommodationReviewById(@PathVariable Long id) {
         AccommodationReview review =new AccommodationReview();
-
-//        review = service.findAccommodationReviewById(id);
+        review = service.findAccommodationReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
     }
@@ -64,7 +78,7 @@ public class ReviewController {
     public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO reviewDTO) {
         HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
 
-//        review = service.createHostReview(review);
+        review = service.saveHostReview(review);
 
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
@@ -74,7 +88,7 @@ public class ReviewController {
     public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO reviewDTO) {
         AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(reviewDTO);
 
-//        review = service.createAccommodationReview(review);
+        review = service.saveAccommodationReview(review);
 
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }
@@ -87,5 +101,13 @@ public class ReviewController {
 //        review = service.delete(id);
 
         return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    private static List<AccommodationReviewDTO> mapAccommodationReviewToDTO(List<AccommodationReview> users) {
+        return users.stream().map(AccommodationReviewDTO::new).toList();
+    }
+
+    private static List<HostReviewDTO> mapHostReviewToDTO(List<HostReview> users) {
+        return users.stream().map(HostReviewDTO::new).toList();
     }
 }
