@@ -1,16 +1,12 @@
 package com.example.odyssey.dtos.users;
 
-import com.example.odyssey.dtos.AddressDTO;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Map;
 
 @Getter
 @Setter

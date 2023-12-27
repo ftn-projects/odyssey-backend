@@ -2,7 +2,6 @@ package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.HostReviewDTO;
-import com.example.odyssey.dtos.reviews.ReviewDTO;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/api/v1/reviews")

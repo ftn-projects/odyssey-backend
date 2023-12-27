@@ -5,7 +5,6 @@ import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
-import com.example.odyssey.validation.AccommodationConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -15,7 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -5,7 +5,6 @@ import com.example.odyssey.dtos.statistics.AccommodationStatDTO;
 import com.example.odyssey.dtos.statistics.HostStatDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.services.AccommodationService;
-import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

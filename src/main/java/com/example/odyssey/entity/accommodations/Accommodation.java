@@ -50,7 +50,7 @@ public class Accommodation {
 
     public Accommodation(AccommodationRequest.Details details){
         title = details.getNewTitle();
-        description =details.getNewDescription();
+        description = details.getNewDescription();
         type = details.getNewAccommodationType();
         address = details.getNewAddress();
         defaultPrice = details.getNewDefaultPrice();

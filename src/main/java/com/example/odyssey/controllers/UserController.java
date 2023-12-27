@@ -78,7 +78,6 @@ public class UserController {
 
         Address address = new Address();
         address.setStreet(dto.getAddress().getStreet());
-        address.setNumber(dto.getAddress().getNumber());
         address.setCity(dto.getAddress().getCity());
         address.setCountry(dto.getAddress().getCountry());
         user.setAddress(address);

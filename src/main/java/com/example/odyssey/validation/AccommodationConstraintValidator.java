@@ -1,6 +1,5 @@
 package com.example.odyssey.validation;
 
-import com.example.odyssey.dtos.TimeSlotDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

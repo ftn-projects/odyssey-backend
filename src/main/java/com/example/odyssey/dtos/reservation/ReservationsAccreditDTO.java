@@ -1,17 +1,14 @@
 package com.example.odyssey.dtos.reservation;
 
-import com.example.odyssey.dtos.TimeSlotDTO;
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.reservations.Reservation;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

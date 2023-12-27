@@ -1,6 +1,5 @@
 package com.example.odyssey.dtos;
 
-import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.validation.TimeSlotConstraint;
 import lombok.AllArgsConstructor;

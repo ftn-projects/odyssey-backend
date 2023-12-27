@@ -3,7 +3,6 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.notifications.NotificationDTO;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.mappers.NotificationDTOMapper;
-import com.example.odyssey.mappers.UserDTOMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,11 +16,6 @@ import java.util.List;
 public class NotificationController {
 //    @Autowired
 //    private NotificationService service;
-//
-//    @Autowired
-//    public NotificationController(NotificationService service) {
-//        this.service = service;
-//    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
