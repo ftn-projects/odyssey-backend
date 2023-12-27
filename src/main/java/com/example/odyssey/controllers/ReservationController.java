@@ -2,6 +2,7 @@ package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.reservation.ReservationDTO;
 import com.example.odyssey.dtos.reservation.ReservationRequestDTO;
+import com.example.odyssey.dtos.reservation.ReservationsAccreditDTO;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReservationDTOMapper;
@@ -72,16 +73,15 @@ public class ReservationController {
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getReservationsByHost(
             @PathVariable Long id,
-            @RequestParam(required = false) Long accommodationId,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate) {
-        List<Reservation> reservations = service.findByHost(id);
+        List<Reservation> reservations;
 
-        reservations = service.filter(reservations, accommodationId, Reservation.Status.valueOf(status),
-                service.convertToDate(startDate), service.convertToDate(endDate));
+        reservations = service.getFiltered(id, status, title, startDate, endDate);
 
-        return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
+        return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
     // POST method for creating a reservation
@@ -118,5 +118,9 @@ public class ReservationController {
 
     private static List<ReservationDTO> mapToDTO(List<Reservation> reservations) {
         return reservations.stream().map(ReservationDTO::new).toList();
+    }
+
+    private static List<ReservationsAccreditDTO> mapToAccreditDTO(List<Reservation> reservations){
+        return reservations.stream().map(ReservationsAccreditDTO::new).toList();
     }
 }

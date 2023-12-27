@@ -10,37 +10,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationRequestDTO {
+public class ReservationsAccreditDTO {
     private Long id;
-    @NotNull
     private Double price;
-    @NotNull
     private Integer guestNumber;
-    @NotNull
     private Reservation.Status status;
-    @NotNull
-    private LocalDateTime requestDate;
-    @NotNull
-    private TimeSlotDTO timeSlot;
-    @NotNull
-    private Long accommodationId;
-    @NotNull
-    private Long guestId;
+    private LocalDate requestDate;
+    private LocalDate start;
+    private LocalDate end;
+    private AccommodationDTO accommodation;
+    private UserDTO guest;
 
-    public ReservationRequestDTO(Reservation reservation) {
+    public ReservationsAccreditDTO(Reservation reservation) {
         id = reservation.getId();
         price = reservation.getPrice();
         guestNumber = reservation.getGuestNumber();
         status = reservation.getStatus();
-        requestDate = reservation.getRequestDate();
-        timeSlot = new TimeSlotDTO(reservation.getTimeSlot());
-        accommodationId = reservation.getAccommodation().getId();
-        guestId = reservation.getGuest().getId();
+        requestDate = reservation.getRequestDate().toLocalDate();
+        start = reservation.getTimeSlot().getStart().toLocalDate();
+        end = reservation.getTimeSlot().getEnd().toLocalDate();
+        accommodation = new AccommodationDTO(reservation.getAccommodation());
+        guest = new UserDTO(reservation.getGuest());
     }
 }
