@@ -15,15 +15,22 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "accommodation_reviews")
 public class AccommodationReview extends Review {
     @ManyToOne
     private Accommodation accommodation;
 
-    public AccommodationReview(Long id, Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter, Accommodation reviewedAccommodation) {
-        super(id, rating, comment, status, submissionDate, submitter);
-        this.accommodation = reviewedAccommodation;
+    public AccommodationReview(Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter, Accommodation reviewedAccommodation) {
+        super();
+        this.setRating(rating);
+        this.setComment(comment);
+        this.setStatus(status);
+        this.setSubmissionDate(submissionDate);
+        this.setSubmitter(submitter);
+        this.setAccommodation(reviewedAccommodation);
+    }
+
+    public AccommodationReview() {
+
     }
 }

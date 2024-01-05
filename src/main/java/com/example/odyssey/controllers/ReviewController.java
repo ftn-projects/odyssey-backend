@@ -57,7 +57,7 @@ public class ReviewController {
     @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getHostReviewById(@PathVariable Long id) {
-        HostReview review = new HostReview();
+        HostReview review;
         review = service.findHostReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
@@ -66,7 +66,7 @@ public class ReviewController {
     @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getAccommodationReviewById(@PathVariable Long id) {
-        AccommodationReview review =new AccommodationReview();
+        AccommodationReview review;
         review = service.findAccommodationReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
@@ -95,7 +95,7 @@ public class ReviewController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        Review review = new HostReview();
+       // Review review = new HostReview();
 
 //        review = service.delete(id);
 
