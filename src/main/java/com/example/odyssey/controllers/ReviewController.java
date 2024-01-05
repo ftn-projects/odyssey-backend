@@ -31,9 +31,9 @@ public class ReviewController {
     public ResponseEntity<?> getAllHostReviews(
             @RequestParam(required = false) Long hostId,
             @RequestParam(required = false) Long submitterId,
-            @RequestParam(required = false) List<HostReview.Status> listTypes
+            @RequestParam(required = false) List<Review.Status> listTypes
     ) {
-        List<HostReview> reviews = new ArrayList<>();
+        List<HostReview> reviews;
         reviews = service.getAllHostReviewsFiltered(hostId, submitterId, listTypes);
         if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
@@ -45,7 +45,7 @@ public class ReviewController {
     public ResponseEntity<?> getAllAccommodationReviews(
             @RequestParam(required = false) Long accommodationId,
             @RequestParam(required = false) Long submitterId,
-            @RequestParam(required = false) List<AccommodationReview.Status> listTypes
+            @RequestParam(required = false) List<Review.Status> listTypes
     ) {
         List<AccommodationReview> reviews = new ArrayList<>();
 
