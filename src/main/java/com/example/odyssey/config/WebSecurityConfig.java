@@ -99,6 +99,7 @@ public class WebSecurityConfig {
                         "/api/v1/accommodations/*/totalPrice",
                         "/api/v1/accommodations/stats/*",
                         "/api/v1/accommodationRequests/*/images",
+                        "/api/v1/reviews/*",
                         "/api/v1/accommodationRequests/*/images/*").permitAll()
                 .anyRequest().authenticated());
         http.addFilterBefore(new TokenAuthenticationFilter(tokenUtil, userDetailsService()), UsernamePasswordAuthenticationFilter.class);

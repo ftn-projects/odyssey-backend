@@ -2,24 +2,21 @@ package com.example.odyssey.entity.reviews;
 
 import com.example.odyssey.entity.users.Guest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
-import static jakarta.persistence.InheritanceType.TABLE_PER_CLASS;
 
 @Entity
 @Getter
 @Setter
-@Inheritance(strategy = TABLE_PER_CLASS)
-public abstract class Review {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "reviews")
+public class Review {
     @Id
-    @SequenceGenerator(name = "reviewIDGenerator", sequenceName = "reviewSeq", initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reviewIDGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    @Column(columnDefinition = "serial")
     private Long id;
     private Double rating;
     private String comment;
