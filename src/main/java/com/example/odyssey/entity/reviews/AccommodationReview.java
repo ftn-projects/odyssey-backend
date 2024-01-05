@@ -21,13 +21,8 @@ public class AccommodationReview extends Review {
     private Accommodation accommodation;
 
     public AccommodationReview(Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter, Accommodation reviewedAccommodation) {
-        super();
-        this.setRating(rating);
-        this.setComment(comment);
-        this.setStatus(status);
-        this.setSubmissionDate(submissionDate);
-        this.setSubmitter(submitter);
-        this.setAccommodation(reviewedAccommodation);
+       super(rating, comment, status, submissionDate, submitter);
+         this.accommodation = reviewedAccommodation;
     }
 
     public AccommodationReview() {

@@ -31,7 +31,7 @@ public class ReviewController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews(
             @RequestParam(required = false) Long hostId,
@@ -44,6 +44,7 @@ public class ReviewController {
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
     }
 
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/accommodation")
     public ResponseEntity<?> getAllAccommodationReviews(
             @RequestParam(required = false) Long accommodationId,
@@ -58,7 +59,7 @@ public class ReviewController {
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
+//    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getHostReviewById(@PathVariable Long id) {
         HostReview review;
