@@ -115,24 +115,25 @@ VALUES
 -- --------------------------- REVIEWS ---------------------------- --
 
 
-INSERT INTO accommodation_reviews (accommodation_id, submitter_id, rating, comment, submission_date, status)
-VALUES
-    (1, 7, 5, 'Soba je odlična, sve je bilo super.', '2024-01-05', 0),
-    (2, 7, 4, 'Kuća je odlična, sve je bilo super.', '2024-01-20', 0),
-    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-25', 1),
-    (4, 7, 2, 'Apartman je odličan, sve je bilo super.', '2024-02-10', 0),
-    (5, 7, 1, 'Soba je odlična, sve je bilo super.', '2024-01-05', 0),
-    (6, 7, 5, 'Kuća je odlična, sve je bilo super.', '2024-01-20', 0),
-    (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-25', 0),
-    (8, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-02-10', 0);
 
-INSERT INTO host_reviews (host_id, submitter_id, rating, comment, submission_date, status)
+INSERT INTO reviews (accommodation_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
-    (2, 7, 5, 'Soba je odlična, sve je bilo super.', '2024-01-05', 0),
-    (3, 7, 4, 'Vlasnik veoma kulturan.', '2024-01-20', 0),
-    (4, 7, 3, 'Uzas Bozji, majko mila kakva budala od vlasnika.', '2024-01-25', 1),
-    (2, 7, 2, 'Amazing. Totally wasnt paid to write this', '2024-02-10', 0),
-    (3, 7, 1, 'Soba je odlična, sve je bilo super.', '2024-01-05', 0),
-    (4, 7, 5, 'Kuća je odlična, sve je bilo super.', '2024-01-20', 0),
-    (2, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-25', 0),
-    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-02-10', 0);
+    (1, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'AR'),
+    (2, 7, 4, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 0, 'AR'),
+    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-01 20:00:00', 1, 'AR'),
+    (4, 7, 2, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 0, 'AR'),
+    (5, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'AR'),
+    (6, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 0, 'AR'),
+    (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 0, 'AR'),
+    (8, 7, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 0, 'AR');
+
+INSERT INTO reviews (host_id, submitter_id, rating, comment, submission_date, status, type)
+VALUES
+    (2, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'HR'),
+    (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 0, 'HR'),
+    (4, 7, 3, 'Uzas Bozji, majko mila kakva budala od vlasnika.', '2024-01-24 20:00:00', 1, 'HR'),
+    (2, 7, 2, 'Amazing. Totally wasnt paid to write this', '2023-02-10 20:00:00', 0, 'HR'),
+    (3, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'HR'),
+    (4, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 0, 'HR'),
+    (2, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-4 20:00:00', 0, 'HR'),
+    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-3 20:00:00', 0, 'HR');

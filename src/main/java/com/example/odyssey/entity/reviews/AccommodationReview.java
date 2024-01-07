@@ -2,9 +2,7 @@ package com.example.odyssey.entity.reviews;
 
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.users.Guest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "accommodation_reviews")
+@DiscriminatorValue("AR")
 public class AccommodationReview extends Review {
     @ManyToOne
     private Accommodation accommodation;
