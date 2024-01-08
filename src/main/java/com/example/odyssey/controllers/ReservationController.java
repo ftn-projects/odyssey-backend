@@ -99,17 +99,14 @@ public class ReservationController {
     }
 
     // PUT method for updating a reservation status
-    @PreAuthorize("hasAuthority('HOST')")
+    @PreAuthorize("hasAuthority('HOST') || hasAuthority('GUEST')")
     @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status
     ) {
         Reservation reservation = service.find(id);
-        reservation.setStatus(Reservation.Status.valueOf(status));
-        reservation = service.save(reservation);
-        service.cancelOverlapping(reservation.getAccommodation().getId(), reservation);
-
+        service.updateStatus(reservation, status);
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }
 

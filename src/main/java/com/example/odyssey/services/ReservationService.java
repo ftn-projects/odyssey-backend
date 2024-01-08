@@ -53,16 +53,6 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    public List<Reservation> filter(List<Reservation> reservations, Long accommodationId, Reservation.Status status, LocalDateTime start, LocalDateTime end) {
-        if (accommodationId != null)
-            reservations.retainAll(reservationRepository.findReservationsByAccommodation_Id(accommodationId));
-        if (status != null) reservations.retainAll(reservationRepository.findReservationsByStatus(status));
-        if (start != null) reservations.retainAll(reservationRepository.findReservationsByTimeSlot_Start(start));
-        if (end != null) reservations.retainAll(reservationRepository.findReservationsByTimeSlot_End(end));
-
-        return reservations;
-    }
-
     public List<Reservation> getFilteredByHost(
             Long hostId,
             List<String> status,
@@ -104,6 +94,18 @@ public class ReservationService {
 
     public LocalDateTime convertToDate(Long date) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(date), TimeZone.getDefault().toZoneId());
+    }
+
+    public void updateStatus(Reservation reservation, String status){
+        if(status.equals("CANCELLED_REQUEST") || status.equals("CANCELLED_RESERVATION")){
+            if(reservation.getTimeSlot().getStart().isAfter(
+                    reservation.getTimeSlot().getStart().minusDays(
+                            reservation.getAccommodation().getCancellationDue().toDays())))
+              throw new UnsupportedOperationException("Cancellation due date for this reservation has already passed.");
+        }
+        reservation.setStatus(Reservation.Status.valueOf(status));
+        reservation =save(reservation);
+        cancelOverlapping(reservation.getAccommodation().getId(), reservation);
     }
 
     public boolean overlapsReservation(Long accommodationId, TimeSlot slot) {
