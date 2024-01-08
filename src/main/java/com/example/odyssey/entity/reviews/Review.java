@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @DiscriminatorValue("R")
-@Table(name = "reviews")
+@Table(name = "reviews", uniqueConstraints = {@UniqueConstraint(columnNames = {"submitter_id", "accommodation_id"}, name = "unique_submitter_accommodation"),
+        @UniqueConstraint(columnNames = {"submitter_id", "host_id"}, name = "unique_submitter_host")})
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
