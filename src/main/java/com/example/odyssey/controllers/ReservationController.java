@@ -52,16 +52,15 @@ public class ReservationController {
     @GetMapping("/guest/{id}")
     public ResponseEntity<?> getByGuestId(
             @PathVariable Long id,
-            @RequestParam(required = false) Long accommodationId,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate) {
-        List<Reservation> reservations =  service.findByGuest(id);
+        List<Reservation> reservations;
 
-        reservations = service.filter(reservations, accommodationId, Reservation.Status.valueOf(status),
-                service.convertToDate(startDate), service.convertToDate(endDate));
+        reservations = service.getFilteredByGuest(id, status, title, startDate, endDate);
 
-        return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
+        return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
     // GET method for getting all reservations for host
@@ -75,7 +74,7 @@ public class ReservationController {
             @RequestParam(required = false) Long endDate) {
         List<Reservation> reservations;
 
-        reservations = service.getFiltered(id, status, title, startDate, endDate);
+        reservations = service.getFilteredByHost(id, status, title, startDate, endDate);
 
         return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }

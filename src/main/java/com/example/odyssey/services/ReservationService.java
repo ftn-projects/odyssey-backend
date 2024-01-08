@@ -63,7 +63,7 @@ public class ReservationService {
         return reservations;
     }
 
-    public List<Reservation> getFiltered(
+    public List<Reservation> getFilteredByHost(
             Long hostId,
             List<String> status,
             String title,
@@ -73,12 +73,34 @@ public class ReservationService {
         LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
         LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
         List<Reservation.Status> statuses = new ArrayList<>();
+        if(title != null) title = title.toUpperCase();
+
         if(status != null && !status.isEmpty()){
             for(String s:status) statuses.add(Reservation.Status.valueOf(s));
             return reservationRepository.findAllWithFilter(hostId, statuses,title,startDate,endDate);
         }
         return reservationRepository.findAllWithFilter(hostId, null,title,startDate,endDate);
     }
+
+    public List<Reservation> getFilteredByGuest(
+            Long guestId,
+            List<String> status,
+            String title,
+            Long dateStart,
+            Long dateEnd
+    ){
+        LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
+        LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
+        List<Reservation.Status> statuses = new ArrayList<>();
+        if(title != null) title = title.toUpperCase();
+
+        if(status != null && !status.isEmpty()){
+            for(String s:status) statuses.add(Reservation.Status.valueOf(s));
+            return reservationRepository.findAllWithGuestFilter(guestId, statuses,title,startDate,endDate);
+        }
+        return reservationRepository.findAllWithGuestFilter(guestId, null,title,startDate,endDate);
+    }
+
 
     public LocalDateTime convertToDate(Long date) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(date), TimeZone.getDefault().toZoneId());
