@@ -134,4 +134,13 @@ public class ReservationService {
             }
         }
     }
+
+    public void declineExpiredReservations(){
+        for(Reservation r: getAll()){
+            if(r.getStatus().equals(Reservation.Status.REQUESTED) && !r.getTimeSlot().getStart().isBefore(LocalDateTime.now())){
+                r.setStatus(Reservation.Status.DECLINED);
+                save(r);
+            }
+        }
+    }
 }
