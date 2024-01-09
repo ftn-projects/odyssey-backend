@@ -114,8 +114,6 @@ VALUES
 
 -- --------------------------- REVIEWS ---------------------------- --
 
-
-
 INSERT INTO reviews (accommodation_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
     (1, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'AR'),
@@ -126,7 +124,8 @@ VALUES
     (6, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 0, 'AR'),
     (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 0, 'AR'),
     (8, 7, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 0, 'AR');
---
+
+-- --------------------------- HOST REVIEWS ---------------------------- --
 INSERT INTO reviews (host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
     (2, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'HR'),

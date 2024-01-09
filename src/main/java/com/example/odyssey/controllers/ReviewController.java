@@ -97,9 +97,38 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('HOST')")
+    @PutMapping("/host/report/{id}")
+    public ResponseEntity<?> reportHostReview(@PathVariable Long id, @RequestBody HostReviewDTO reviewDTO) {
+        HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
+
+        review = service.reportHostReview(review.getId());
+
+        return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
+    }
+
+//    @PreAuthorize("hasAuthority('HOST')")
+    @PutMapping("/accommodation/report/{id}")
+    public ResponseEntity<?> reportAccommodationReview(@PathVariable Long id) {
+        AccommodationReview review = service.reportAccommodationReview(id);
+        if(review!=null)
+            return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+
+    @DeleteMapping("/host/{id}")
+    public ResponseEntity<?> deleteHostReview(@PathVariable Long id) {
+        Review review = new HostReview();
+
+//        review = service.delete(id);
+
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/accommodation/{id}")
+    public ResponseEntity<?> deleteAccommodationReview(@PathVariable Long id) {
         Review review = new HostReview();
 
 //        review = service.delete(id);
