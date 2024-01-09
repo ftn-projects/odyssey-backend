@@ -116,6 +116,14 @@ public class ReservationService {
         return false;
     }
 
+    public int getCancellationNumber(Long guestId){
+        int cancels = 0;
+        for(Reservation r: findByGuest(guestId)){
+            if(r.getStatus().equals(Reservation.Status.CANCELLED_RESERVATION))  cancels+=1;
+        }
+        return cancels;
+    }
+
     public void cancelOverlapping(Long accommodationId, Reservation reservation){
         if(!reservation.getStatus().equals(Reservation.Status.ACCEPTED)) return;
         List<Reservation> reservations = findByAccommodation(accommodationId);
