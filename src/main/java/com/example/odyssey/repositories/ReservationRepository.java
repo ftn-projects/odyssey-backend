@@ -51,7 +51,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllWithFilterButCooler(
             @Param("hostId") Long hostId,
             @Param("status") List<Reservation.Status> status,
-            @Param("title") Long accommodationId,
+            @Param("accommodationId") Long accommodationId,
             @Param("reservationStartDate") LocalDateTime reservationStartDate,
             @Param("reservationEndDate") LocalDateTime reservationEndDate);
 

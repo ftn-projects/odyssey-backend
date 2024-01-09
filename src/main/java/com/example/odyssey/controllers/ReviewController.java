@@ -28,8 +28,6 @@ public class ReviewController {
     @Autowired
     private ReviewService service;
 
-    @Autowired
-    private UserService userService;
 
 //    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
