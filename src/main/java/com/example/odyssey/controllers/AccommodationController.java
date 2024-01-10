@@ -6,6 +6,7 @@ import com.example.odyssey.dtos.statistics.AccommodationStatDTO;
 import com.example.odyssey.dtos.statistics.HostStatDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.services.AccommodationService;
+import com.example.odyssey.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +23,9 @@ import java.util.List;
 public class AccommodationController {
     @Autowired
     private AccommodationService service;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @GetMapping
     public ResponseEntity<?> getAll(
@@ -40,6 +44,7 @@ public class AccommodationController {
         for (AccommodationDTO accommodationDTO : AccommodationDTOs) {
             accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodationDTO.getId(), dateStart, dateEnd, guestNumber));
             accommodationDTO.setDefaultPrice(service.getPriceForDateRange(accommodationDTO.getId(), dateStart, dateEnd));
+            accommodationDTO.setAverageRating(reviewService.getTotalRatingByAccommodation(accommodationDTO.getId()));
         }
         return new ResponseEntity<>(AccommodationDTOs, HttpStatus.OK);
     }

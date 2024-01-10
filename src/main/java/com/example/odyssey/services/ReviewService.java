@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Service
@@ -155,6 +155,58 @@ public class ReviewService {
 
         return null;
     }
+
+    public Double getTotalRatingByAccommodation(Long id) {
+        List<Review.Status> statuses = Arrays.asList(
+                Review.Status.ACCEPTED
+        );
+        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(id, null, statuses);
+        if (reviews == null || reviews.isEmpty()) return 0.0;
+        return reviews.stream().mapToDouble(AccommodationReview::getRating).sum()/reviews.size();
+    }
+
+    public Double getTotalRatingByHost(Long id) {
+        List<Review.Status> statuses = Arrays.asList(
+                Review.Status.ACCEPTED
+        );
+        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(id, null, statuses);
+        if (reviews == null || reviews.isEmpty()) return 0.0;
+        return reviews.stream().mapToDouble(HostReview::getRating).sum()/reviews.size();
+    }
+
+    public List<Integer> getRatingsByAccommodation(Long id) {
+        List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
+        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(id, null, statuses);
+
+        // Count occurrences of each rating using Java streams
+        Map<Double, Long> ratingCounts = reviews.stream()
+                .collect(Collectors.groupingBy(AccommodationReview::getRating, Collectors.counting()));
+
+        List<Integer> ratingCountsList = IntStream.range(1, 6)
+                .mapToObj(i -> ratingCounts.getOrDefault((double) i, 0L))
+                .map(Long::intValue)
+                .collect(Collectors.toList());
+
+        return ratingCountsList;
+    }
+
+    public List<Integer> getRatingsByHost(Long id) {
+        List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
+        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(id, null, statuses);
+
+        // Count occurrences of each rating using Java streams
+        Map<Double, Long> ratingCounts = reviews.stream()
+                .collect(Collectors.groupingBy(HostReview::getRating, Collectors.counting()));
+
+        List<Integer> ratingCountsList = IntStream.range(1, 6)
+                .mapToObj(i -> ratingCounts.getOrDefault((double) i, 0L))
+                .map(Long::intValue)
+                .collect(Collectors.toList());
+
+        return ratingCountsList;
+    }
+
+
     public void deleteAccommodationReview(Long id) {
         accommodationReviewRepository.deleteById(id);
     }

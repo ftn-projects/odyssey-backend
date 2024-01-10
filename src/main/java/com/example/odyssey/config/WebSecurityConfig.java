@@ -86,6 +86,8 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/error").permitAll()
+                .requestMatchers(HttpMethod.DELETE,
+                        "api/v1/reviews/accommodation/*").permitAll()
                 .requestMatchers(HttpMethod.PUT,
                         "/api/v1/reviews/accommodation/report/*").permitAll()
                 .requestMatchers(HttpMethod.POST,
@@ -107,7 +109,9 @@ public class WebSecurityConfig {
                         "/api/v1/reviews/*",
                         "/api/v1/accommodationRequests/*/images/*",
                         "/api/v1/reviews/accommodation/report/*",
-                        "/api/v1/reviews/accommodation/*"
+                        "/api/v1/reviews/accommodation/*",
+                        "/api/v1/reviews/host/rating/*",
+                        "/api/v1/reviews/accommodation/rating/*"
                 ).permitAll()
                 .anyRequest().authenticated());
         http.addFilterBefore(new TokenAuthenticationFilter(tokenUtil, userDetailsService()), UsernamePasswordAuthenticationFilter.class);

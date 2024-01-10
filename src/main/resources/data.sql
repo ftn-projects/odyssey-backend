@@ -116,19 +116,19 @@ VALUES
 
 INSERT INTO reviews (accommodation_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
-    (1, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'AR'),
-    (2, 7, 4, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 0, 'AR'),
-    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-01 20:00:00', 1, 'AR'),
-    (4, 7, 2, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 0, 'AR'),
-    (5, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'AR'),
-    (6, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 0, 'AR'),
-    (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 0, 'AR'),
-    (8, 7, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 0, 'AR');
+    (1, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
+    (2, 7, 4, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
+    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-01 20:00:00', 2, 'AR'),
+    (4, 7, 2, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
+    (5, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
+    (6, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
+    (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
+    (7, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR');
 
 -- --------------------------- HOST REVIEWS ---------------------------- --
 INSERT INTO reviews (host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
-    (2, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 0, 'HR'),
+    (2, 7, 5, 'Host odlican.', '2023-01-05 20:00:00', 0, 'HR'),
     (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 0, 'HR'),
     (4, 6, 3, 'Uzas Bozji, majko mila kakva budala od vlasnika.', '2024-01-24 20:00:00', 1, 'HR'),
     (2, 5, 2, 'Amazing. Totally wasnt paid to write this', '2023-02-10 20:00:00', 0, 'HR');

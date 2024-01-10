@@ -75,6 +75,18 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
     }
 
+    @GetMapping("/accommodation/rating/{id}")
+    public ResponseEntity<?> getAccommodationRatings(@PathVariable Long id) {
+        List<Integer> ratings = service.getRatingsByAccommodation(id);
+        return new ResponseEntity<>(ratings, HttpStatus.OK);
+    }
+
+    @GetMapping("/host/rating/{id}")
+    public ResponseEntity<?> getHostRatings(@PathVariable Long id) {
+        List<Integer> ratings = service.getRatingsByHost(id);
+        return new ResponseEntity<>(ratings, HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/host")
     public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO reviewDTO) {
@@ -120,16 +132,14 @@ public class ReviewController {
     public ResponseEntity<?> deleteHostReview(@PathVariable Long id) {
         Review review = new HostReview();
 
-//        review = service.delete(id);
+        service.deleteHostReview(id);
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @DeleteMapping("/accommodation/{id}")
     public ResponseEntity<?> deleteAccommodationReview(@PathVariable Long id) {
-        Review review = new HostReview();
-
-//        review = service.delete(id);
+        service.deleteAccommodationReview(id);
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
