@@ -60,7 +60,8 @@ public class AccommodationDTO {
         host = new UserDTO(accommodation.getHost());
         defaultPrice = accommodation.getDefaultPrice();
         automaticApproval = accommodation.getAutomaticApproval();
-        cancellationDue = accommodation.getCancellationDue().toDays();
+        if(cancellationDue != null)
+            cancellationDue = accommodation.getCancellationDue().toDays();
         accommodation.getAvailableSlots().forEach((s) -> availableSlots.add(new AvailabilitySlotDTO(s)));
         minGuests = accommodation.getMinGuests();
         maxGuests = accommodation.getMaxGuests();

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -52,16 +53,15 @@ public class ReservationController {
     @GetMapping("/guest/{id}")
     public ResponseEntity<?> getByGuestId(
             @PathVariable Long id,
-            @RequestParam(required = false) Long accommodationId,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate) {
-        List<Reservation> reservations =  service.findByGuest(id);
+        List<Reservation> reservations;
 
-        reservations = service.filter(reservations, accommodationId, Reservation.Status.valueOf(status),
-                service.convertToDate(startDate), service.convertToDate(endDate));
+        reservations = service.getFilteredByGuest(id, status, title, startDate, endDate);
 
-        return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
+        return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
     // GET method for getting all reservations for host
@@ -75,7 +75,7 @@ public class ReservationController {
             @RequestParam(required = false) Long endDate) {
         List<Reservation> reservations;
 
-        reservations = service.getFiltered(id, status, title, startDate, endDate);
+        reservations = service.getFilteredByHost(id, status, title, startDate, endDate);
 
         return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
@@ -92,6 +92,7 @@ public class ReservationController {
             reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
             reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
             reservation = service.create(reservation);
+            service.automaticApproval(reservation);
             dto = ReservationDTOMapper.fromReservationToDTO(reservation);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -100,17 +101,14 @@ public class ReservationController {
     }
 
     // PUT method for updating a reservation status
-    @PreAuthorize("hasAuthority('HOST')")
+    @PreAuthorize("hasAuthority('HOST') || hasAuthority('GUEST')")
     @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status
     ) {
         Reservation reservation = service.find(id);
-        reservation.setStatus(Reservation.Status.valueOf(status));
-        reservation = service.save(reservation);
-        service.cancelOverlapping(reservation.getAccommodation().getId(), reservation);
-
+        service.updateStatus(reservation, status);
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }
 
@@ -118,7 +116,7 @@ public class ReservationController {
         return reservations.stream().map(ReservationDTO::new).toList();
     }
 
-    private static List<ReservationsAccreditDTO> mapToAccreditDTO(List<Reservation> reservations){
-        return reservations.stream().map(ReservationsAccreditDTO::new).toList();
+    private List<ReservationsAccreditDTO> mapToAccreditDTO(List<Reservation> reservations){
+        return reservations.stream().map(r->new ReservationsAccreditDTO(r, service.getCancellationNumber(r.getGuest().getId()))).toList();
     }
 }
