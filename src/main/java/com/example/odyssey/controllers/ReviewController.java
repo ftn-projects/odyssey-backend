@@ -7,9 +7,11 @@ import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
+import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.ReviewDTOMapper;
 import com.example.odyssey.services.ReviewService;
+import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,50 +28,63 @@ public class ReviewController {
     @Autowired
     private ReviewService service;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews(
             @RequestParam(required = false) Long hostId,
             @RequestParam(required = false) Long submitterId,
-            @RequestParam(required = false) List<HostReview.Status> listTypes
+            @RequestParam(required = false) List<Review.Status> listTypes
     ) {
-        List<HostReview> reviews = new ArrayList<>();
+        List<HostReview> reviews;
         reviews = service.getAllHostReviewsFiltered(hostId, submitterId, listTypes);
         if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/accommodation"
-    )
+//    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/accommodation")
     public ResponseEntity<?> getAllAccommodationReviews(
             @RequestParam(required = false) Long accommodationId,
             @RequestParam(required = false) Long submitterId,
-            @RequestParam(required = false) List<AccommodationReview.Status> listTypes
+            @RequestParam(required = false) List<Review.Status> listTypes
     ) {
         List<AccommodationReview> reviews = new ArrayList<>();
 
+        AccommodationReview review1 = new AccommodationReview();
         reviews = service.getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes);
         if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
+//    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getHostReviewById(@PathVariable Long id) {
-        HostReview review = new HostReview();
+        HostReview review;
         review = service.findHostReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
+//    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getAccommodationReviewById(@PathVariable Long id) {
-        AccommodationReview review =new AccommodationReview();
+        AccommodationReview review;
         review = service.findAccommodationReviewById(id);
         if (review == null) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
+    }
+
+    @GetMapping("/accommodation/rating/{id}")
+    public ResponseEntity<?> getAccommodationRatings(@PathVariable Long id) {
+        List<Integer> ratings = service.getRatingsByAccommodation(id);
+        return new ResponseEntity<>(ratings, HttpStatus.OK);
+    }
+
+    @GetMapping("/host/rating/{id}")
+    public ResponseEntity<?> getHostRatings(@PathVariable Long id) {
+        List<Integer> ratings = service.getRatingsByHost(id);
+        return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('GUEST')")
@@ -82,7 +97,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('GUEST')")
+//    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/accommodation")
     public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO reviewDTO) {
         AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(reviewDTO);
@@ -92,12 +107,39 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    @PreAuthorize("hasAuthority('HOST')")
+    @PutMapping("/host/report/{id}")
+    public ResponseEntity<?> reportHostReview(@PathVariable Long id, @RequestBody HostReviewDTO reviewDTO) {
+        HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
+
+        review = service.reportHostReview(review.getId());
+
+        return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
+    }
+
+//    @PreAuthorize("hasAuthority('HOST')")
+    @PutMapping("/accommodation/report/{id}")
+    public ResponseEntity<?> reportAccommodationReview(@PathVariable Long id) {
+        AccommodationReview review = service.reportAccommodationReview(id);
+        if(review!=null)
+            return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+
+    @DeleteMapping("/host/{id}")
+    public ResponseEntity<?> deleteHostReview(@PathVariable Long id) {
         Review review = new HostReview();
 
-//        review = service.delete(id);
+        service.deleteHostReview(id);
+
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/accommodation/{id}")
+    public ResponseEntity<?> deleteAccommodationReview(@PathVariable Long id) {
+        service.deleteAccommodationReview(id);
 
         return new ResponseEntity<>(null, HttpStatus.OK);
     }

@@ -38,21 +38,19 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("reservationStartDate") LocalDateTime reservationStartDate,
             @Param("reservationEndDate") LocalDateTime reservationEndDate);
 
+
     @Query("SELECT DISTINCT r " +
             "FROM Reservation  r " +
             "LEFT JOIN FETCH r.guest g " +
             "LEFT JOIN FETCH  r.accommodation a " +
-            "WHERE (r.guest.id = :guestId) " +
+            "WHERE (r.accommodation.host.id = :hostId) " +
             "AND (:status IS NULL OR r.status IN :status) " +
-            "AND (:title IS NULL OR UPPER(r.accommodation.title) LIKE %:title%) " +
-            "AND ((cast(:reservationStartDate as localdatetime) IS NULL OR cast(:reservationEndDate as localdatetime) IS NULL) " +
-            "OR (r.timeSlot.end <= :reservationEndDate AND r.timeSlot.start >= :reservationStartDate))")
-    List<Reservation> findAllWithGuestFilter(
-            @Param("guestId") Long guestId,
+            "AND (:accommodationId IS NULL OR r.accommodation.id = :accommodationId) " +
+            "AND (cast(:reservationEndDate as localdatetime) IS NULL) " +
+            "OR (r.timeSlot.start <= :reservationEndDate AND r.timeSlot.end >= :reservationEndDate)")
+    List<Reservation> findAllWithFilterButCooler(
+            @Param("hostId") Long hostId,
             @Param("status") List<Reservation.Status> status,
-            @Param("title") String title,
-            @Param("reservationStartDate") LocalDateTime reservationStartDate,
-            @Param("reservationEndDate") LocalDateTime reservationEndDate
-    );
-
+            @Param("accommodationId") Long accommodationId,
+            @Param("reservationEndDate") LocalDateTime reservationEndDate);
 }

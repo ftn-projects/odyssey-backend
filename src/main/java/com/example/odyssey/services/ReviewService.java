@@ -1,13 +1,23 @@
 package com.example.odyssey.services;
 
+import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
+import com.example.odyssey.entity.reviews.Review;
+import com.example.odyssey.exceptions.CoolerReviewException;
+import com.example.odyssey.exceptions.ReviewException;
 import com.example.odyssey.repositories.AccommodationReviewRepository;
 import com.example.odyssey.repositories.HostReviewRepository;
+import com.example.odyssey.repositories.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Service
 public class ReviewService {
@@ -15,7 +25,13 @@ public class ReviewService {
     private AccommodationReviewRepository accommodationReviewRepository;
 
     @Autowired
+    private ReservationService reservationService;
+
+    @Autowired
     private HostReviewRepository hostReviewRepository;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     public List<AccommodationReview> getAllAccommodationReviews() {
         return accommodationReviewRepository.findAll();
@@ -49,12 +65,153 @@ public class ReviewService {
     }
 
     public AccommodationReview saveAccommodationReview(AccommodationReview review) {
+        review.setStatus(Review.Status.REQUESTED);
+        LocalDateTime endDate = LocalDateTime.now().minusMinutes(10080);
+
+        List<Review.Status> reviewStatuses = Arrays.asList(
+                Review.Status.REQUESTED,
+                Review.Status.REPORTED,
+                Review.Status.ACCEPTED
+        );
+
+        List<Reservation.Status> reservationStatuses = List.of(
+                Reservation.Status.ACCEPTED
+        );
+
+        List<Reservation> reservations = reservationRepository.findAllWithFilterButCooler(
+                null,
+                reservationStatuses,
+                review.getAccommodation().getId(),
+                endDate
+        );
+
+        // Pass list of string values of enums
+        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(
+                review.getAccommodation().getId(),
+                review.getSubmitter().getId(),
+                reviewStatuses
+        );
+
+        if(reservations.isEmpty()){
+            throw new CoolerReviewException("You don't have a reservation for this accommodation");
+        }
+
+        if(reviews != null && !reviews.isEmpty()){
+            throw new ReviewException("You have already reviewed this accommodation");
+        }
+
         return accommodationReviewRepository.save(review);
     }
 
+    public AccommodationReview reportAccommodationReview(Long id) {
+        AccommodationReview review = accommodationReviewRepository.findById(id).orElse(null);
+        if (review != null) {
+            review.setStatus(Review.Status.REPORTED);
+            return accommodationReviewRepository.save(review);
+        }
+        return null;
+    }
+
+    public HostReview reportHostReview(Long id) {
+        HostReview review = hostReviewRepository.findById(id).orElse(null);
+        if (review != null) {
+            review.setStatus(Review.Status.REPORTED);
+            return hostReviewRepository.save(review);
+        }
+        return null;
+    }
     public HostReview saveHostReview(HostReview review) {
-        return hostReviewRepository.save(review);
+        LocalDateTime startDate = LocalDateTime.now().minusMinutes(14400);
+        LocalDateTime endDate = LocalDateTime.now();
+
+        List<Review.Status> reviewStatuses = Arrays.asList(
+                Review.Status.REQUESTED,
+                Review.Status.REPORTED,
+                Review.Status.ACCEPTED
+        );
+
+        List<String> reservationStatuses = Arrays.asList(
+                Reservation.Status.ACCEPTED.toString()
+        );
+
+        List<Reservation> reservations = reservationService.getFiltered(
+                review.getHost().getId(),
+                reservationStatuses,
+                null,
+                startDate.toEpochSecond(ZoneOffset.UTC),
+                endDate.toEpochSecond(ZoneOffset.UTC)
+        );
+
+        // Pass list of string values of enums
+        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(
+                review.getHost().getId(),
+                review.getSubmitter().getId(),
+                reviewStatuses
+        );
+
+        if ((reviews == null || reviews.isEmpty()) && !reservations.isEmpty()) {
+            return hostReviewRepository.save(review);
+        }
+
+        return null;
+    }
+
+    public Double getTotalRatingByAccommodation(Long id) {
+        List<Review.Status> statuses = Arrays.asList(
+                Review.Status.ACCEPTED
+        );
+        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(id, null, statuses);
+        if (reviews == null || reviews.isEmpty()) return 0.0;
+        return reviews.stream().mapToDouble(AccommodationReview::getRating).sum()/reviews.size();
+    }
+
+    public Double getTotalRatingByHost(Long id) {
+        List<Review.Status> statuses = Arrays.asList(
+                Review.Status.ACCEPTED
+        );
+        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(id, null, statuses);
+        if (reviews == null || reviews.isEmpty()) return 0.0;
+        return reviews.stream().mapToDouble(HostReview::getRating).sum()/reviews.size();
+    }
+
+    public List<Integer> getRatingsByAccommodation(Long id) {
+        List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
+        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(id, null, statuses);
+
+        // Count occurrences of each rating using Java streams
+        Map<Double, Long> ratingCounts = reviews.stream()
+                .collect(Collectors.groupingBy(AccommodationReview::getRating, Collectors.counting()));
+
+        List<Integer> ratingCountsList = IntStream.range(1, 6)
+                .mapToObj(i -> ratingCounts.getOrDefault((double) i, 0L))
+                .map(Long::intValue)
+                .collect(Collectors.toList());
+
+        return ratingCountsList;
+    }
+
+    public List<Integer> getRatingsByHost(Long id) {
+        List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
+        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(id, null, statuses);
+
+        // Count occurrences of each rating using Java streams
+        Map<Double, Long> ratingCounts = reviews.stream()
+                .collect(Collectors.groupingBy(HostReview::getRating, Collectors.counting()));
+
+        List<Integer> ratingCountsList = IntStream.range(1, 6)
+                .mapToObj(i -> ratingCounts.getOrDefault((double) i, 0L))
+                .map(Long::intValue)
+                .collect(Collectors.toList());
+
+        return ratingCountsList;
     }
 
 
+    public void deleteAccommodationReview(Long id) {
+        accommodationReviewRepository.deleteById(id);
+    }
+
+    public void deleteHostReview(Long id) {
+        hostReviewRepository.deleteById(id);
+    }
 }

@@ -1,27 +1,28 @@
 package com.example.odyssey.entity.reviews;
 
 import com.example.odyssey.entity.users.Guest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
-import static jakarta.persistence.InheritanceType.TABLE_PER_CLASS;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Inheritance(strategy = TABLE_PER_CLASS)
-public abstract class Review {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type")
+@DiscriminatorValue("R")
+@SQLDelete(sql = "UPDATE table_product SET deleted = true WHERE id=?")
+@Table(name = "reviews", uniqueConstraints = {@UniqueConstraint(columnNames = {"submitter_id", "accommodation_id"}, name = "unique_submitter_accommodation"),
+        @UniqueConstraint(columnNames = {"submitter_id", "host_id"}, name = "unique_submitter_host")})
+public class Review {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double rating;
     private String comment;
@@ -29,6 +30,15 @@ public abstract class Review {
     private LocalDateTime submissionDate;
     @ManyToOne
     private Guest submitter;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean deleted = false;
+    public enum Status {REQUESTED, DECLINED, ACCEPTED, REPORTED}
 
-    public enum Status {REQUESTED, DECLINED, ACCEPTED}
+    public Review(Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter) {
+        this.rating = rating;
+        this.comment = comment;
+        this.status = status;
+        this.submissionDate = submissionDate;
+        this.submitter = submitter;
+    }
 }
