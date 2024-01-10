@@ -2,6 +2,9 @@ package com.example.odyssey.services;
 
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.entity.users.Guest;
+import com.example.odyssey.mappers.ReservationDTOMapper;
+import com.example.odyssey.mappers.ReservationRequestDTOMapper;
 import com.example.odyssey.repositories.ReservationRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,10 +140,18 @@ public class ReservationService {
 
     public void declineExpiredReservations(){
         for(Reservation r: getAll()){
-            if(r.getStatus().equals(Reservation.Status.REQUESTED) && !r.getTimeSlot().getStart().isBefore(LocalDateTime.now())){
+            if(r.getStatus().equals(Reservation.Status.REQUESTED) && !r.getTimeSlot().getStart().isAfter(LocalDateTime.now())){
                 r.setStatus(Reservation.Status.DECLINED);
                 save(r);
             }
         }
     }
+    public void automaticApproval(Reservation r){
+        if(r.getAccommodation().getAutomaticApproval()){
+            r.setStatus(Reservation.Status.ACCEPTED);
+            save(r);
+            cancelOverlapping(r.getAccommodation().getId(), r);
+        }
+    }
+
 }
