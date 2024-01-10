@@ -2,6 +2,7 @@ package com.example.odyssey.dtos.reviews;
 
 import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.reviews.HostReview;
+import com.example.odyssey.entity.reviews.Review;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
 public class HostReviewDTO extends ReviewDTO {
     private UserDTO host;
 
-    public HostReviewDTO(Long id, Double rating, String comment, LocalDateTime submissionDate, UserDTO submitter, UserDTO host) {
-        super(id, rating, comment, submissionDate, submitter);
+    public HostReviewDTO(Long id, Double rating, String comment, LocalDateTime submissionDate, Review.Status status, UserDTO submitter, UserDTO host) {
+        super(id, rating, comment, submissionDate, status, submitter);
         this.host = host;
     }
 

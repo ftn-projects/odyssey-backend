@@ -27,15 +27,25 @@ public class ReviewController {
     private ReviewService service;
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<HostReview.Status> statuses,
+            @RequestParam(required = false) List<String> types
+    ) {
+        List<Review> reviews = service.getAllFiltered(search.toLowerCase(), statuses, types);
+        return new ResponseEntity<>(reviews.stream().map(this::mapReviewToDTO).toList(), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews(
             @RequestParam(required = false) Long hostId,
             @RequestParam(required = false) Long submitterId,
             @RequestParam(required = false) List<HostReview.Status> listTypes
     ) {
-        List<HostReview> reviews = new ArrayList<>();
-        reviews = service.getAllHostReviewsFiltered(hostId, submitterId, listTypes);
-        if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        List<HostReview> reviews = service
+                .getAllHostReviewsFiltered(hostId, submitterId, listTypes);
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
     }
 
@@ -47,10 +57,8 @@ public class ReviewController {
             @RequestParam(required = false) Long submitterId,
             @RequestParam(required = false) List<AccommodationReview.Status> listTypes
     ) {
-        List<AccommodationReview> reviews = new ArrayList<>();
-
-        reviews = service.getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes);
-        if (reviews.isEmpty()) return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+        List<AccommodationReview> reviews = service
+                .getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes);
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
@@ -102,11 +110,31 @@ public class ReviewController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/accept/{id}")
+    public ResponseEntity<?> accept(@PathVariable Long id) {
+        service.accept(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/decline/{id}")
+    public ResponseEntity<?> decline(@PathVariable Long id) {
+        service.decline(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     private static List<AccommodationReviewDTO> mapAccommodationReviewToDTO(List<AccommodationReview> users) {
         return users.stream().map(AccommodationReviewDTO::new).toList();
     }
 
     private static List<HostReviewDTO> mapHostReviewToDTO(List<HostReview> users) {
         return users.stream().map(HostReviewDTO::new).toList();
+    }
+
+    private ReviewDTO mapReviewToDTO(Review review) {
+        if (review instanceof AccommodationReview)
+            return new AccommodationReviewDTO((AccommodationReview) review);
+        return new HostReviewDTO((HostReview) review);
     }
 }
