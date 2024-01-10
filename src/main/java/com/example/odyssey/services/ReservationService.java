@@ -2,6 +2,9 @@ package com.example.odyssey.services;
 
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.entity.users.Guest;
+import com.example.odyssey.mappers.ReservationDTOMapper;
+import com.example.odyssey.mappers.ReservationRequestDTOMapper;
 import com.example.odyssey.repositories.ReservationRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,17 +56,7 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    public List<Reservation> filter(List<Reservation> reservations, Long accommodationId, Reservation.Status status, LocalDateTime start, LocalDateTime end) {
-        if (accommodationId != null)
-            reservations.retainAll(reservationRepository.findReservationsByAccommodation_Id(accommodationId));
-        if (status != null) reservations.retainAll(reservationRepository.findReservationsByStatus(status));
-        if (start != null) reservations.retainAll(reservationRepository.findReservationsByTimeSlot_Start(start));
-        if (end != null) reservations.retainAll(reservationRepository.findReservationsByTimeSlot_End(end));
-
-        return reservations;
-    }
-
-    public List<Reservation> getFiltered(
+    public List<Reservation> getFilteredByHost(
             Long hostId,
             List<String> status,
             String title,
@@ -73,6 +66,8 @@ public class ReservationService {
         LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
         LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
         List<Reservation.Status> statuses = new ArrayList<>();
+        if(title != null) title = title.toUpperCase();
+
         if(status != null && !status.isEmpty()){
             for(String s:status) statuses.add(Reservation.Status.valueOf(s));
             return reservationRepository.findAllWithFilter(hostId, statuses,title,startDate,endDate);
@@ -80,8 +75,40 @@ public class ReservationService {
         return reservationRepository.findAllWithFilter(hostId, null,title,startDate,endDate);
     }
 
+    public List<Reservation> getFilteredByGuest(
+            Long guestId,
+            List<String> status,
+            String title,
+            Long dateStart,
+            Long dateEnd
+    ){
+        LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
+        LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
+        List<Reservation.Status> statuses = new ArrayList<>();
+        if(title != null) title = title.toUpperCase();
+
+        if(status != null && !status.isEmpty()){
+            for(String s:status) statuses.add(Reservation.Status.valueOf(s));
+            return reservationRepository.findAllWithGuestFilter(guestId, statuses,title,startDate,endDate);
+        }
+        return reservationRepository.findAllWithGuestFilter(guestId, null,title,startDate,endDate);
+    }
+
+
     public LocalDateTime convertToDate(Long date) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(date), TimeZone.getDefault().toZoneId());
+    }
+
+    public void updateStatus(Reservation reservation, String status){
+        if(status.equals("CANCELLED_REQUEST") || status.equals("CANCELLED_RESERVATION")){
+            if(reservation.getTimeSlot().getStart().isAfter(
+                    reservation.getTimeSlot().getStart().minusDays(
+                            reservation.getAccommodation().getCancellationDue().toDays())))
+              throw new UnsupportedOperationException("Cancellation due date for this reservation has already passed.");
+        }
+        reservation.setStatus(Reservation.Status.valueOf(status));
+        reservation =save(reservation);
+        cancelOverlapping(reservation.getAccommodation().getId(), reservation);
     }
 
     public boolean overlapsReservation(Long accommodationId, TimeSlot slot) {
@@ -90,6 +117,14 @@ public class ReservationService {
             if (i.getTimeSlot().overlaps(slot) && i.getStatus().equals(Reservation.Status.ACCEPTED))
                 return true;
         return false;
+    }
+
+    public int getCancellationNumber(Long guestId){
+        int cancels = 0;
+        for(Reservation r: findByGuest(guestId)){
+            if(r.getStatus().equals(Reservation.Status.CANCELLED_RESERVATION))  cancels+=1;
+        }
+        return cancels;
     }
 
     public void cancelOverlapping(Long accommodationId, Reservation reservation){
@@ -102,4 +137,21 @@ public class ReservationService {
             }
         }
     }
+
+    public void declineExpiredReservations(){
+        for(Reservation r: getAll()){
+            if(r.getStatus().equals(Reservation.Status.REQUESTED) && !r.getTimeSlot().getStart().isAfter(LocalDateTime.now())){
+                r.setStatus(Reservation.Status.DECLINED);
+                save(r);
+            }
+        }
+    }
+    public void automaticApproval(Reservation r){
+        if(r.getAccommodation().getAutomaticApproval()){
+            r.setStatus(Reservation.Status.ACCEPTED);
+            save(r);
+            cancelOverlapping(r.getAccommodation().getId(), r);
+        }
+    }
+
 }

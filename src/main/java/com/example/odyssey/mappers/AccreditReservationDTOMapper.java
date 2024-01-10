@@ -17,7 +17,7 @@ public class AccreditReservationDTOMapper {
         return mapper.map(dto, Reservation.class);
     }
 
-    public static ReservationsAccreditDTO fromReservationToDTO(Reservation reservation){
-        return new ReservationsAccreditDTO(reservation);
+    public static ReservationsAccreditDTO fromReservationToDTO(Reservation reservation, int cancellations){
+        return new ReservationsAccreditDTO(reservation, cancellations);
     }
 }

@@ -22,6 +22,7 @@ public class ReservationsAccreditDTO {
     private Double price;
     @Positive(message = "Guest number must be positive.")
     private Integer guestNumber;
+    private Integer cancellationNumber;
     private Reservation.Status status;
     private LocalDate requestDate;
     private LocalDate start;
@@ -31,10 +32,11 @@ public class ReservationsAccreditDTO {
     @NotNull(message = "Guest must be provided.")
     private UserDTO guest;
 
-    public ReservationsAccreditDTO(Reservation reservation) {
+    public ReservationsAccreditDTO(Reservation reservation, int cancel) {
         id = reservation.getId();
         price = reservation.getPrice();
         guestNumber = reservation.getGuestNumber();
+        cancellationNumber = cancel;
         status = reservation.getStatus();
         requestDate = reservation.getRequestDate().toLocalDate();
         start = reservation.getTimeSlot().getStart().toLocalDate();
