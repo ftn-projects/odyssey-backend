@@ -2,9 +2,10 @@ package com.example.odyssey.entity.reviews;
 
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
-import jakarta.persistence.*;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;

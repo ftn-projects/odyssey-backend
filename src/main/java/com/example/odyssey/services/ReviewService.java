@@ -139,7 +139,7 @@ public class ReviewService {
                 Review.Status.ACCEPTED
         );
 
-        List<String> reservationStatuses = Arrays.asList(
+        List<String> reservationStatuses = Collections.singletonList(
                 Reservation.Status.ACCEPTED.toString()
         );
 
@@ -167,7 +167,7 @@ public class ReviewService {
     }
 
     public Double getTotalRatingByAccommodation(Long id) {
-        List<Review.Status> statuses = Arrays.asList(
+        List<Review.Status> statuses = List.of(
                 Review.Status.ACCEPTED
         );
         List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(null, id, null, statuses);
@@ -176,7 +176,7 @@ public class ReviewService {
     }
 
     public Double getTotalRatingByHost(Long id) {
-        List<Review.Status> statuses = Arrays.asList(
+        List<Review.Status> statuses = List.of(
                 Review.Status.ACCEPTED
         );
         List<HostReview> reviews = hostReviewRepository.findAllWithFilter(null, id, null, statuses);
