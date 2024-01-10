@@ -66,7 +66,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
+//    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getAccommodationReviewById(@PathVariable Long id) {
         AccommodationReview review;
@@ -85,7 +85,7 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('GUEST')")
+//    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/accommodation")
     public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO reviewDTO) {
         AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(reviewDTO);

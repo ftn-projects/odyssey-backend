@@ -43,7 +43,9 @@ public class AccommodationService {
 
         LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
         LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
-        Accommodation.Type accommodationType = (type != null) ? Accommodation.Type.valueOf(type) : null;
+        Accommodation.Type accommodationType = (type != null) ? Accommodation.Type.valueOf(type.toUpperCase()) : null;
+
+
         return accommodationRepository.findAllWithFilter(
                 guestNumber, accommodationType, amenities, startDate, endDate, priceStart, priceEnd, location
         );
@@ -136,7 +138,6 @@ public class AccommodationService {
             return (double) -1;
         }
         if (accommodation.getPricing() == Accommodation.PricingType.PER_NIGHT) {
-            System.out.println("Per night price for range: " + priceForRange);
             return (days * accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate));
         } else if (accommodation.getPricing() == Accommodation.PricingType.PER_PERSON)
             if (guestNumber != null && guestNumber > 0) {

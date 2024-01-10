@@ -3,6 +3,7 @@ package com.example.odyssey.entity.reviews;
 import com.example.odyssey.entity.users.Guest;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @DiscriminatorValue("R")
@@ -30,9 +32,6 @@ public class Review {
     private Guest submitter;
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted = false;
-    public Review() {
-
-    }
     public enum Status {REQUESTED, DECLINED, ACCEPTED, REPORTED}
 
     public Review(Double rating, String comment, Status status, LocalDateTime submissionDate, Guest submitter) {

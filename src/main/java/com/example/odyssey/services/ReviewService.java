@@ -4,6 +4,8 @@ import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
+import com.example.odyssey.exceptions.CoolerReviewException;
+import com.example.odyssey.exceptions.ReviewException;
 import com.example.odyssey.repositories.AccommodationReviewRepository;
 import com.example.odyssey.repositories.HostReviewRepository;
 import com.example.odyssey.repositories.ReservationRepository;
@@ -63,8 +65,8 @@ public class ReviewService {
     }
 
     public AccommodationReview saveAccommodationReview(AccommodationReview review) {
-        LocalDateTime startDate = LocalDateTime.now().minusMinutes(120);
-        LocalDateTime endDate = LocalDateTime.now();
+        review.setStatus(Review.Status.REQUESTED);
+        LocalDateTime endDate = LocalDateTime.now().minusMinutes(10080);
 
         List<Review.Status> reviewStatuses = Arrays.asList(
                 Review.Status.REQUESTED,
@@ -72,15 +74,14 @@ public class ReviewService {
                 Review.Status.ACCEPTED
         );
 
-        List<Reservation.Status> reservationStatuses = Arrays.asList(
-          Reservation.Status.ACCEPTED
+        List<Reservation.Status> reservationStatuses = List.of(
+                Reservation.Status.ACCEPTED
         );
 
         List<Reservation> reservations = reservationRepository.findAllWithFilterButCooler(
                 null,
                 reservationStatuses,
                 review.getAccommodation().getId(),
-                startDate,
                 endDate
         );
 
@@ -91,11 +92,15 @@ public class ReviewService {
                 reviewStatuses
         );
 
-        if ((reviews == null || reviews.isEmpty()) && !reservations.isEmpty()) {
-            return accommodationReviewRepository.save(review);
+        if(reservations.isEmpty()){
+            throw new CoolerReviewException("You don't have a reservation for this accommodation");
         }
 
-        return null;
+        if(reviews != null && !reviews.isEmpty()){
+            throw new ReviewException("You have already reviewed this accommodation");
+        }
+
+        return accommodationReviewRepository.save(review);
     }
 
     public AccommodationReview reportAccommodationReview(Long id) {
@@ -116,7 +121,7 @@ public class ReviewService {
         return null;
     }
     public HostReview saveHostReview(HostReview review) {
-        LocalDateTime startDate = LocalDateTime.now().minusMinutes(120);
+        LocalDateTime startDate = LocalDateTime.now().minusMinutes(14400);
         LocalDateTime endDate = LocalDateTime.now();
 
         List<Review.Status> reviewStatuses = Arrays.asList(

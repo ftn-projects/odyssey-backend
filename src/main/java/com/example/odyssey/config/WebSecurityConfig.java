@@ -91,7 +91,10 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.POST,
                         "/api/v1/users/login",
                         "/api/v1/users/register",
-                        "/api/v1/users/confirmEmail/*").permitAll()
+                        "/api/v1/users/confirmEmail/*",
+                        "/api/v1/reviews/accommodation"
+
+                ).permitAll()
                 .requestMatchers(HttpMethod.GET,
                         "/api/v1/users/image/*",
                         "/api/v1/accommodations",
@@ -103,7 +106,9 @@ public class WebSecurityConfig {
                         "/api/v1/accommodationRequests/*/images",
                         "/api/v1/reviews/*",
                         "/api/v1/accommodationRequests/*/images/*",
-                        "/api/v1/reviews/accommodation/report/*").permitAll()
+                        "/api/v1/reviews/accommodation/report/*",
+                        "/api/v1/reviews/accommodation/*"
+                ).permitAll()
                 .anyRequest().authenticated());
         http.addFilterBefore(new TokenAuthenticationFilter(tokenUtil, userDetailsService()), UsernamePasswordAuthenticationFilter.class);
 
