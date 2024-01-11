@@ -17,7 +17,6 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 @Service
 public class ReviewService {
@@ -36,16 +35,17 @@ public class ReviewService {
     public List<AccommodationReview> getAllAccommodationReviews() {
         return accommodationReviewRepository.findAll();
     }
-    public List<HostReview> getAllHostReviews(){
+
+    public List<HostReview> getAllHostReviews() {
         return hostReviewRepository.findAll();
     }
 
-    public List<AccommodationReview> getAllAccommodationReviewsFiltered(Long accommodationId, Long submitterId, List<AccommodationReview.Status> listTypes) {
-        return accommodationReviewRepository.findAllWithFilter(accommodationId, submitterId, listTypes);
+    public List<AccommodationReview> getAllAccommodationReviewsFiltered(Long accommodationId, Long submitterId, List<AccommodationReview.Status> listStatuses) {
+        return accommodationReviewRepository.findAllWithFilter(null, accommodationId, submitterId, listStatuses);
     }
 
-    public List<HostReview> getAllHostReviewsFiltered(Long hostId, Long submitterId, List<HostReview.Status> listTypes) {
-        return hostReviewRepository.findAllWithFilter(hostId, submitterId, listTypes);
+    public List<HostReview> getAllHostReviewsFiltered(Long hostId, Long submitterId, List<HostReview.Status> listStatuses) {
+        return hostReviewRepository.findAllWithFilter(null, hostId, submitterId, listStatuses);
     }
 
     public AccommodationReview findAccommodationReviewById(Long id) {
@@ -54,6 +54,13 @@ public class ReviewService {
 
     public HostReview findHostReviewById(Long id) {
         return hostReviewRepository.findById(id).orElse(null);
+    }
+
+    public Review findById(Long id) {
+        Review review = findAccommodationReviewById(id);
+        if (review == null) review = findHostReviewById(id);
+        if (review == null) throw new NoSuchElementException(String.format("Review with id '%d' does not exist.", id));
+        return review;
     }
 
     public List<AccommodationReview> findAccommodationReviewsByAccommodationId(Long id) {
@@ -87,16 +94,17 @@ public class ReviewService {
 
         // Pass list of string values of enums
         List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(
+                null,
                 review.getAccommodation().getId(),
                 review.getSubmitter().getId(),
                 reviewStatuses
         );
 
-        if(reservations.isEmpty()){
+        if (reservations.isEmpty()) {
             throw new CoolerReviewException("You don't have a reservation for this accommodation");
         }
 
-        if(reviews != null && !reviews.isEmpty()){
+        if (reviews != null && !reviews.isEmpty()) {
             throw new ReviewException("You have already reviewed this accommodation");
         }
 
@@ -120,6 +128,7 @@ public class ReviewService {
         }
         return null;
     }
+
     public HostReview saveHostReview(HostReview review) {
         LocalDateTime startDate = LocalDateTime.now().minusMinutes(14400);
         LocalDateTime endDate = LocalDateTime.now();
@@ -130,11 +139,11 @@ public class ReviewService {
                 Review.Status.ACCEPTED
         );
 
-        List<String> reservationStatuses = Arrays.asList(
+        List<String> reservationStatuses = Collections.singletonList(
                 Reservation.Status.ACCEPTED.toString()
         );
 
-        List<Reservation> reservations = reservationService.getFiltered(
+        List<Reservation> reservations = reservationService.getFilteredByHost(
                 review.getHost().getId(),
                 reservationStatuses,
                 null,
@@ -144,6 +153,7 @@ public class ReviewService {
 
         // Pass list of string values of enums
         List<HostReview> reviews = hostReviewRepository.findAllWithFilter(
+                null,
                 review.getHost().getId(),
                 review.getSubmitter().getId(),
                 reviewStatuses
@@ -157,55 +167,77 @@ public class ReviewService {
     }
 
     public Double getTotalRatingByAccommodation(Long id) {
-        List<Review.Status> statuses = Arrays.asList(
+        List<Review.Status> statuses = List.of(
                 Review.Status.ACCEPTED
         );
-        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(id, null, statuses);
+        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(null, id, null, statuses);
         if (reviews == null || reviews.isEmpty()) return 0.0;
-        return reviews.stream().mapToDouble(AccommodationReview::getRating).sum()/reviews.size();
+        return reviews.stream().mapToDouble(AccommodationReview::getRating).sum() / reviews.size();
     }
 
     public Double getTotalRatingByHost(Long id) {
-        List<Review.Status> statuses = Arrays.asList(
+        List<Review.Status> statuses = List.of(
                 Review.Status.ACCEPTED
         );
-        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(id, null, statuses);
+        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(null, id, null, statuses);
         if (reviews == null || reviews.isEmpty()) return 0.0;
-        return reviews.stream().mapToDouble(HostReview::getRating).sum()/reviews.size();
+        return reviews.stream().mapToDouble(HostReview::getRating).sum() / reviews.size();
     }
 
     public List<Integer> getRatingsByAccommodation(Long id) {
         List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
-        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(id, null, statuses);
+        List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(null, id, null, statuses);
 
         // Count occurrences of each rating using Java streams
         Map<Double, Long> ratingCounts = reviews.stream()
                 .collect(Collectors.groupingBy(AccommodationReview::getRating, Collectors.counting()));
 
-        List<Integer> ratingCountsList = IntStream.range(1, 6)
+        return IntStream.range(1, 6)
                 .mapToObj(i -> ratingCounts.getOrDefault((double) i, 0L))
                 .map(Long::intValue)
                 .collect(Collectors.toList());
-
-        return ratingCountsList;
     }
 
     public List<Integer> getRatingsByHost(Long id) {
         List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
-        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(id, null, statuses);
+        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(null, id, null, statuses);
 
         // Count occurrences of each rating using Java streams
         Map<Double, Long> ratingCounts = reviews.stream()
                 .collect(Collectors.groupingBy(HostReview::getRating, Collectors.counting()));
 
-        List<Integer> ratingCountsList = IntStream.range(1, 6)
+        return IntStream.range(1, 6)
                 .mapToObj(i -> ratingCounts.getOrDefault((double) i, 0L))
                 .map(Long::intValue)
                 .collect(Collectors.toList());
-
-        return ratingCountsList;
     }
 
+    public void accept(Long id) {
+        Review review = findById(id);
+        review.setStatus(Review.Status.ACCEPTED);
+        save(review);
+    }
+
+    public void decline(Long id) {
+        Review review = findById(id);
+        review.setStatus(Review.Status.DECLINED);
+        save(review);
+    }
+
+    public void save(Review review) {
+        if (review instanceof AccommodationReview)
+            accommodationReviewRepository.save((AccommodationReview) review);
+        else hostReviewRepository.save((HostReview) review);
+    }
+
+    public List<Review> getAllFiltered(String search, List<Review.Status> statuses, List<String> types) {
+        List<Review> reviews = new ArrayList<>();
+        if (types == null || types.contains("ACCOMMODATION"))
+            reviews.addAll(accommodationReviewRepository.findAllWithFilter(search, null, null, statuses));
+        if (types == null || types.contains("HOST"))
+            reviews.addAll(hostReviewRepository.findAllWithFilter(search, null, null, statuses));
+        return reviews;
+    }
 
     public void deleteAccommodationReview(Long id) {
         accommodationReviewRepository.deleteById(id);

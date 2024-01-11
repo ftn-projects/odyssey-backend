@@ -18,7 +18,6 @@ public class PasswordDTO {
     @Positive(message = "Id should be a natural positive number.")
     private Long userId;
     private String oldPassword;
-    @NotBlank(message = "Password should not be blank.")
     @Size(min = 4, message = "Password should be at least 4 characters long.")
     private String newPassword;
 }

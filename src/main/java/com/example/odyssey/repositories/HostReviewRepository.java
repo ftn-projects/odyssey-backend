@@ -16,13 +16,15 @@ public interface HostReviewRepository extends JpaRepository<HostReview, Long> {
 
     @Query("SELECT r " +
             "FROM HostReview r " +
-            "WHERE (:hostId IS NULL OR r.host.id = :hostId) " +
+            "WHERE (:hostName IS NULL OR LOWER(CONCAT(r.host.name, ' ', r.host.surname)) LIKE %:hostName%) " +
+            "  AND (:hostId IS NULL OR r.host.id = :hostId) " +
             "  AND (:submitterId IS NULL OR r.submitter.id = :submitterId) " +
-            "  AND (:listTypes IS NULL OR r.status IN :listTypes)")
+            "  AND (:listStatuses IS NULL OR r.status IN :listTypes)")
     List<HostReview> findAllWithFilter(
+            @Param("hostName") String hostName,
             @Param("hostId") Long hostId,
             @Param("submitterId") Long guestId,
-            @Param("listTypes") List<Review.Status> listTypes
+            @Param("listStatuses") List<Review.Status> listStatuses
     );
     List<HostReview> findAllByHost_Id(Long id);
 

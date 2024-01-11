@@ -1,7 +1,6 @@
 package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
-import com.example.odyssey.dtos.accommodations.AvailabilitySlotDTO;
 import com.example.odyssey.dtos.statistics.AccommodationStatDTO;
 import com.example.odyssey.dtos.statistics.HostStatDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
@@ -67,7 +66,7 @@ public class AccommodationController {
             @RequestParam(required = false) Long dateStart,
             @RequestParam(required = false) Long dateEnd,
             @RequestParam(required = false) Integer guestNumber
-    ){
+    ) {
         Accommodation accommodation = service.getOne(id);
         AccommodationDTO accommodationDTO = new AccommodationDTO(accommodation);
 

@@ -1,7 +1,6 @@
 package com.example.odyssey.services;
 
 import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
@@ -105,9 +104,7 @@ public class AccommodationService {
 
         try (var stream = Files.walk(accommodationDir)) {
             stream.filter(Files::isRegularFile)
-                    .forEach(filePath -> {
-                        imageNames.add(filePath.getFileName().toString());
-                    });
+                    .forEach(filePath -> imageNames.add(filePath.getFileName().toString()));
         }
 
         return imageNames.stream().sorted().toList();

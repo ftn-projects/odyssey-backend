@@ -18,15 +18,15 @@ public class ReviewDTO {
     private Double rating;
     private String comment;
     private LocalDateTime submissionDate;
-    private UserDTO submitter;
     private Review.Status status;
+    private UserDTO submitter;
 
     public ReviewDTO(Review review) {
         id = review.getId();
         rating = review.getRating();
         comment = review.getComment();
         submissionDate = review.getSubmissionDate();
-        submitter = new UserDTO(review.getSubmitter());
         status = review.getStatus();
+        submitter = new UserDTO(review.getSubmitter());
     }
 }

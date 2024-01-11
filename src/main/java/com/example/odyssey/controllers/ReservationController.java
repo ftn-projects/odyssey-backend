@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -116,7 +115,7 @@ public class ReservationController {
         return reservations.stream().map(ReservationDTO::new).toList();
     }
 
-    private List<ReservationsAccreditDTO> mapToAccreditDTO(List<Reservation> reservations){
-        return reservations.stream().map(r->new ReservationsAccreditDTO(r, service.getCancellationNumber(r.getGuest().getId()))).toList();
+    private List<ReservationsAccreditDTO> mapToAccreditDTO(List<Reservation> reservations) {
+        return reservations.stream().map(r -> new ReservationsAccreditDTO(r, service.getCancellationNumber(r.getGuest().getId()))).toList();
     }
 }

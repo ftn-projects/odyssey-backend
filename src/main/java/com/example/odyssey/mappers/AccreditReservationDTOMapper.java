@@ -11,13 +11,15 @@ public class AccreditReservationDTOMapper {
     private static ModelMapper mapper;
 
     @Autowired
-    public AccreditReservationDTOMapper(ModelMapper mapper) {AccreditReservationDTOMapper.mapper = mapper;}
+    public AccreditReservationDTOMapper(ModelMapper mapper) {
+        AccreditReservationDTOMapper.mapper = mapper;
+    }
 
-    public static Reservation fromDTOtoReservation(ReservationsAccreditDTO dto){
+    public static Reservation fromDTOtoReservation(ReservationsAccreditDTO dto) {
         return mapper.map(dto, Reservation.class);
     }
 
-    public static ReservationsAccreditDTO fromReservationToDTO(Reservation reservation, int cancellations){
+    public static ReservationsAccreditDTO fromReservationToDTO(Reservation reservation, int cancellations) {
         return new ReservationsAccreditDTO(reservation, cancellations);
     }
 }

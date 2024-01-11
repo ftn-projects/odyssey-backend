@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 public class AccommodationReviewDTO extends ReviewDTO {
     private AccommodationDTO accommodation;
 
-    public AccommodationReviewDTO(Long id, Double rating, String comment, LocalDateTime submissionDate, UserDTO submitter, Review.Status status, AccommodationDTO accommodation) {
-        super(id, rating, comment, submissionDate, submitter, status);
+    public AccommodationReviewDTO(Long id, Double rating, String comment, LocalDateTime submissionDate, Review.Status status, UserDTO submitter, AccommodationDTO accommodation) {
+        super(id, rating, comment, submissionDate, status, submitter);
         this.accommodation = accommodation;
     }
 

@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public class HostReviewDTO extends ReviewDTO {
     private UserDTO host;
 
-    public HostReviewDTO(Long id, Double rating, String comment, LocalDateTime submissionDate, UserDTO submitter, Review.Status status, UserDTO host) {
-        super(id, rating, comment, submissionDate, submitter, status);
+    public HostReviewDTO(Long id, Double rating, String comment, LocalDateTime submissionDate, Review.Status status, UserDTO submitter, UserDTO host) {
+        super(id, rating, comment, submissionDate, status, submitter);
         this.host = host;
     }
 
