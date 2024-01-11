@@ -16,7 +16,7 @@ public interface HostReviewRepository extends JpaRepository<HostReview, Long> {
 
     @Query("SELECT r " +
             "FROM HostReview r " +
-            "WHERE (:hostName IS NULL OR LOWER(CONCAT(r.host.name, ' ', r.host.surname)) LIKE %:hostName%) " +
+            "WHERE (:hostName IS NULL OR UPPER(CONCAT(r.host.name, ' ', r.host.surname)) LIKE %:hostName%) " +
             "  AND (:hostId IS NULL OR r.host.id = :hostId) " +
             "  AND (:submitterId IS NULL OR r.submitter.id = :submitterId) " +
             "  AND (:listStatuses IS NULL OR r.status IN :listStatuses)")

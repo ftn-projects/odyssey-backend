@@ -30,7 +30,7 @@ public class ReviewController {
             @RequestParam(required = false) List<HostReview.Status> statuses,
             @RequestParam(required = false) List<String> types
     ) {
-        List<Review> reviews = service.getAllFiltered(search.toLowerCase(), statuses, types);
+        List<Review> reviews = service.getAllFiltered(search, statuses, types);
         return new ResponseEntity<>(reviews.stream().map(this::mapReviewToDTO).toList(), HttpStatus.OK);
     }
 

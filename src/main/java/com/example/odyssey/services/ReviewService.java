@@ -232,6 +232,8 @@ public class ReviewService {
 
     public List<Review> getAllFiltered(String search, List<Review.Status> statuses, List<String> types) {
         List<Review> reviews = new ArrayList<>();
+        search = search != null ? search.toUpperCase() : null;
+
         if (types == null || types.contains("ACCOMMODATION"))
             reviews.addAll(accommodationReviewRepository.findAllWithFilter(search, null, null, statuses));
         if (types == null || types.contains("HOST"))

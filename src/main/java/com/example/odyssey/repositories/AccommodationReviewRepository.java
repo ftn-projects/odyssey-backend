@@ -15,7 +15,7 @@ public interface AccommodationReviewRepository extends JpaRepository<Accommodati
 
     @Query("SELECT r " +
             "FROM AccommodationReview r " +
-            "WHERE (:accommodationTitle IS NULL OR LOWER(r.accommodation.title) LIKE %:accommodationTitle%) " +
+            "WHERE (:accommodationTitle IS NULL OR UPPER(r.accommodation.title) LIKE %:accommodationTitle%) " +
             "  AND (:accommodationId IS NULL OR r.accommodation.id = :accommodationId) " +
             "  AND (:submitterId IS NULL OR r.submitter.id = :submitterId) " +
             "  AND (:listStatuses IS NULL OR r.status IN :listStatuses)")

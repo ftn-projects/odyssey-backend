@@ -18,7 +18,7 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             "LEFT JOIN FETCH a.amenities am " +
             "WHERE (:guestNumber IS NULL OR :guestNumber BETWEEN a.minGuests AND a.maxGuests) " +
             "  AND (:type IS NULL OR a.type = :type) " +
-            "  AND (:location IS NULL OR a.address.city LIKE %:location% OR a.address.country LIKE %:location% OR a.address.street LIKE %:location%) " +
+            "  AND (:location IS NULL OR UPPER(a.address.city) LIKE %:location% OR UPPER(a.address.country) LIKE %:location% OR UPPER(a.address.street) LIKE %:location%) " +
             "  AND (COALESCE(:amenityIds, NULL) IS NULL OR am.id IN :amenityIds) " +
             " AND (" +
             "((cast(:reservationStartDate as localdatetime) IS NULL OR cast(:reservationEndDate as localdatetime) IS NULL))" +
