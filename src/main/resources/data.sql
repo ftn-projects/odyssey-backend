@@ -23,14 +23,14 @@ VALUES
 
 INSERT INTO accommodations (host_id, type, title, description, address_street, address_city, address_country, pricing, default_price, automatic_approval, cancellation_due, min_guests, max_guests)
 VALUES
-    (2, 1, 'Soba sa 3 kreveta', 'Soba sa pogledom na šetalište.', 'Rujanska 23', 'Zlatibor', 'Serbia', 0, 410.0, false, 364, 1, 4),
-    (2, 2, 'Kuća na brdu', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića 14', 'Vrnjačka Banja', 'Serbia', 0, 260.0, false, 563, 2, 5),
-    (3, 0, 'Mali apartman', 'Mali apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 450.0, true, 1265, 1, 2),
-    (3, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 900.0, true, 2446, 1, 4),
-    (3, 0, 'Delux apartman', 'Apartman u strogom centru grada.', 'Bulevar Nemanjića 45', 'Niš', 'Serbia', 1, 130.0, false, 125, 1, 2),
-    (4, 1, 'Soba sa bračnim ležajem', 'Soba sa pogledom na Južni bulevar.', 'Južni bulevar 89', 'Beograd', 'Serbia', 1, 630.0, true, 76, 1, 3),
-    (4, 1, 'Soba sa 3 ležaja', 'Soba sa pogledom sa 3 ležaja.', 'Južni bulevar 40', 'Beograd', 'Serbia', 1, 9700.0, true, 450, 2, 5),
-    (4, 0, 'Veliki apartman', 'Apartman blizu Kalemegdana sa pogledom na ušće.', 'Karađorđeva 92', 'Beograd', 'Serbia', 1, 10000.0, true, 4155, 3, 7);
+    (2, 1, 'Soba sa 3 kreveta', 'Soba sa pogledom na šetalište.', 'Rujanska 23', 'Zlatibor', 'Serbia', 0, 410.0, false, 4.32e14, 1, 4),
+    (2, 2, 'Kuća na brdu', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića 14', 'Vrnjačka Banja', 'Serbia', 0, 260.0, false, 8.64e14, 2, 5),
+    (3, 0, 'Mali apartman', 'Mali apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 450.0, true, 6.048e14, 1, 2),
+    (3, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 900.0, true, 1.2096e15, 1, 4),
+    (3, 0, 'Delux apartman', 'Apartman u strogom centru grada.', 'Bulevar Nemanjića 45', 'Niš', 'Serbia', 1, 130.0, false, 2.592e14, 1, 2),
+    (4, 1, 'Soba sa bračnim ležajem', 'Soba sa pogledom na Južni bulevar.', 'Južni bulevar 89', 'Beograd', 'Serbia', 1, 630.0, true, 7.776e14, 1, 3),
+    (4, 1, 'Soba sa 3 ležaja', 'Soba sa pogledom sa 3 ležaja.', 'Južni bulevar 40', 'Beograd', 'Serbia', 1, 9700.0, true, 1.728e15, 2, 5),
+    (4, 0, 'Veliki apartman', 'Apartman blizu Kalemegdana sa pogledom na ušće.', 'Karađorđeva 92', 'Beograd', 'Serbia', 1, 10000.0, true, 2.592e15, 3, 7);
 
 INSERT INTO accommodation_available_slots (accommodation_id, price, start_date, end_date)
 VALUES
