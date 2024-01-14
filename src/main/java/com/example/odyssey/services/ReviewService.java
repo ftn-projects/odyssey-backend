@@ -224,6 +224,12 @@ public class ReviewService {
         save(review);
     }
 
+    public void reportReview(Long id) {
+        Review review = findById(id);
+        review.setStatus(Review.Status.REPORTED);
+        save(review);
+    }
+
     public void save(Review review) {
         if (review instanceof AccommodationReview)
             accommodationReviewRepository.save((AccommodationReview) review);
