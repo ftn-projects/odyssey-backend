@@ -1,6 +1,7 @@
 package com.example.odyssey.services;
 
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.entity.reviews.Review;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -76,12 +78,9 @@ public class UserService {
     }
 
     public void deactivate(Long id) {
-        User user = findById(id);
-
-        if (!canDeactivate(user))
+        if (!canDeactivate(findById(id)))
             throw new UnsupportedOperationException("Account deactivation failed because you have active reservations.");
-
-        updateAccountStatus(user, User.AccountStatus.DEACTIVATED);
+        updateAccountStatus(id, User.AccountStatus.DEACTIVATED);
     }
 
     private boolean canDeactivate(User user) {
@@ -98,22 +97,25 @@ public class UserService {
     }
 
     public void block(Long id) {
-        User user = findById(id);
-        updateAccountStatus(user, User.AccountStatus.BLOCKED);
+        updateAccountStatus(id, User.AccountStatus.BLOCKED);
     }
 
-    public void updateAccountStatus(User user, User.AccountStatus status) {
+    public void activate(Long id) {
+        updateAccountStatus(id, User.AccountStatus.ACTIVE);
+    }
+
+    public void updateAccountStatus(Long id, User.AccountStatus status) {
+        User user = findById(id);
         user.setStatus(status);
         userRepository.save(user);
     }
 
     public void confirmEmail(Long id) {
         try {
-            User user = findById(id);
-            if (user.getStatus().equals(User.AccountStatus.PENDING))
+            if (findById(id).getStatus().equals(User.AccountStatus.PENDING))
                 throw new UnsupportedOperationException("User account has already been activated.");
 
-            updateAccountStatus(user, User.AccountStatus.ACTIVE);
+            updateAccountStatus(id, User.AccountStatus.ACTIVE);
         } catch (NoSuchElementException e) {
             throw new UnsupportedOperationException("Invalid email activation link.");
         }
@@ -156,5 +158,10 @@ public class UserService {
 
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    public List<User> getWithFilters(String search, List<String> roles, List<User.AccountStatus> statuses, Boolean reported) {
+        search = search == null ? null : search.toUpperCase();
+        return userRepository.findAllByFilters(search, roles, statuses, reported);
     }
 }
