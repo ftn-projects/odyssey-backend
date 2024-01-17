@@ -7,12 +7,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @DiscriminatorValue(value = "RESERVATION")
 public class ReservationNotif extends Notification {
 
@@ -22,13 +26,15 @@ public class ReservationNotif extends Notification {
     @ManyToOne
     private Reservation reservation;
 
-    public ReservationNotif() {
-        super(null, null);
-        reservation = null;
-    }
-
     public ReservationNotif(@NonNull Reservation reservation, @NonNull User receiver) {
-        super(null, receiver);
+        super(-1L, "", "", LocalDateTime.now(), false, null, receiver);
+        Notification.Type type = switch (reservation.getStatus()) {
+            case REQUESTED -> Type.RESERVATION_MADE;
+            case ACCEPTED -> Type.RESERVATION_ACCEPTED;
+            case DECLINED -> Type.RESERVATION_DECLINED;
+            default -> throw new IllegalStateException("Unexpected value: " + reservation.getStatus());
+        };
+        setType(type);
         this.reservation = reservation;
     }
 }

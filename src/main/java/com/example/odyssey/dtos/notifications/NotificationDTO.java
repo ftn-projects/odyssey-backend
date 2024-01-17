@@ -1,6 +1,7 @@
 package com.example.odyssey.dtos.notifications;
 
 import com.example.odyssey.dtos.reservation.ReservationDTO;
+import com.example.odyssey.dtos.reservation.ReservationsAccreditDTO;
 import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.HostReviewDTO;
 import com.example.odyssey.dtos.users.UserDTO;
@@ -14,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,32 +25,26 @@ public class NotificationDTO {
     private Long id;
     private String title;
     private String text;
+    private LocalDateTime date;
+    private Boolean read;
     private UserDTO receiver;
-    private ReservationDTO reservation;
+    private ReservationsAccreditDTO reservation;
     private AccommodationReviewDTO accommodationReview;
     private HostReviewDTO hostReview;
 
-    public NotificationDTO(Long id, User receiver) {
-        this.id = id;
-        this.receiver = new UserDTO(receiver);
-    }
-
     public NotificationDTO(Notification notification) {
-        this(notification.getId(), notification.getReceiver());
-    }
+        id = notification.getId();
+        title = notification.getTitle();
+        text = notification.getDescription();
+        date = notification.getDate();
+        read = notification.getRead();
+        receiver = new UserDTO(notification.getReceiver());
 
-    public NotificationDTO(AccommodationReviewedNotif notification) {
-        this(notification.getId(), notification.getReceiver());
-        accommodationReview = new AccommodationReviewDTO(notification.getReview());
-    }
-
-    public NotificationDTO(HostReviewedNotif notification) {
-        this(notification.getId(), notification.getReceiver());
-        hostReview = new HostReviewDTO(notification.getReview());
-    }
-
-    public NotificationDTO(ReservationNotif notification) {
-        this(notification.getId(), notification.getReceiver());
-        reservation = new ReservationDTO(notification.getReservation());
+        if (notification instanceof AccommodationReviewedNotif)
+            accommodationReview = new AccommodationReviewDTO(((AccommodationReviewedNotif) notification).getReview());
+        else if (notification instanceof HostReviewedNotif)
+            hostReview = new HostReviewDTO(((HostReviewedNotif) notification).getReview());
+        else if (notification instanceof ReservationNotif)
+            reservation = new ReservationsAccreditDTO(((ReservationNotif) notification).getReservation(), -1);
     }
 }

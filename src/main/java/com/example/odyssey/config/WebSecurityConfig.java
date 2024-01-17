@@ -86,6 +86,9 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/ws").permitAll()
+                .requestMatchers("/ws/*").permitAll()
+                .requestMatchers("/ws/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE,
                         "api/v1/reviews/accommodation/*").permitAll()
                 .requestMatchers(HttpMethod.PUT,

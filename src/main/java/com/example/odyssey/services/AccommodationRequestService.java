@@ -3,6 +3,7 @@ package com.example.odyssey.services;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.exceptions.InputValidationException;
 import com.example.odyssey.repositories.AccommodationRequestRepository;
 import com.example.odyssey.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +104,7 @@ public class AccommodationRequestService {
 
     public void uploadImage(Long id, MultipartFile image) throws IOException {
         if (image.getOriginalFilename() == null)
-            throw new IOException("Image is non existing.");
+            throw new InputValidationException("Image is non existing.", "image");
 
         findById(id); // id validation
 

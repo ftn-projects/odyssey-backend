@@ -101,7 +101,7 @@ VALUES
     (4, 1), (4, 2), (4, 3), (4, 4), (4, 6), (4, 7), (4, 9),
     (5, 2), (5, 4), (5, 5), (5, 7), (5, 8), (5, 9);
 
--- --------------------------- RESERVATIONS ---------------------------- --
+-- ------------------------- RESERVATIONS --------------------------- --
 
 INSERT INTO reservations (status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
 VALUES
@@ -112,7 +112,7 @@ VALUES
     (3, 5, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
     (1, 1, 7, 1, 430.0 * 3 * 1, '2023-12-20', '2023-12-26', '2024-01-01', '2024-01-04');
 
--- --------------------------- REVIEWS ---------------------------- --
+-- ---------------------------- REVIEWS ----------------------------- --
 
 INSERT INTO reviews (accommodation_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
@@ -125,10 +125,23 @@ VALUES
     (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
     (7, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR');
 
--- --------------------------- HOST REVIEWS ---------------------------- --
+-- ------------------------- HOST REVIEWS --------------------------- --
+
 INSERT INTO reviews (host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
     (2, 7, 5, 'Host odlican.', '2023-01-05 20:00:00', 0, 'HR'),
     (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 0, 'HR'),
     (4, 6, 3, 'Uzas Bozji, majko mila kakva budala od vlasnika.', '2024-01-24 20:00:00', 1, 'HR'),
     (2, 5, 2, 'Amazing. Totally wasnt paid to write this', '2023-02-10 20:00:00', 0, 'HR');
+
+-- ------------------------- NOTIFICATIONS -------------------------- --
+
+INSERT INTO notifications (type, receiver_id, read, date, title, description, notification_type, accommodation_review_id, host_review_id, reservation_id)
+VALUES
+    (0, 2, false, '2023-02-10 12:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 2, true, '2023-02-10 12:10:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 3, false, '2023-03-21 10:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 4, false, '2023-06-08 09:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 5, false, '2023-08-11 13:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 6, false, '2021=09-17 15:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 7, false, '2023-10-29 20:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null);
