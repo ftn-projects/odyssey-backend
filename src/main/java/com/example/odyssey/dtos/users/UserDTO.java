@@ -30,7 +30,7 @@ public class UserDTO {
     private String phone;
     @NotNull
     private AddressDTO address;
-    private User.Settings settings;
+    private User.NotificationSettings settings;
     @Size(max = 200, message = "Bio should not be longer than 200 characters.")
     private String bio;
 

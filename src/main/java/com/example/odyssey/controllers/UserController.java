@@ -81,6 +81,7 @@ public class UserController {
         address.setCity(dto.getAddress().getCity());
         address.setCountry(dto.getAddress().getCountry());
         user.setAddress(address);
+        user.setSettings(dto.getSettings());
 
         if (user instanceof Host) ((Host) user).setBio(dto.getBio());
 

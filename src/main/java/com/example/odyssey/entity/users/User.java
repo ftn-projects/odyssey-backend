@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String phone;
     private String profileImage;
     @Embedded
-    private Settings settings = new Settings();
+    private NotificationSettings settings = new NotificationSettings();
     private LocalDateTime created;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -50,6 +50,7 @@ public class User implements UserDetails {
     }
 
     public enum AccountStatus {PENDING, ACTIVE, BLOCKED, DEACTIVATED}
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -69,7 +70,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return status==AccountStatus.ACTIVE;
+        return status == AccountStatus.ACTIVE;
     }
 
     @JsonIgnore
@@ -81,7 +82,7 @@ public class User implements UserDetails {
     @JsonIgnore
     @Override
     public boolean isEnabled() {
-        return status==AccountStatus.ACTIVE;
+        return status == AccountStatus.ACTIVE;
     }
 
     @Embeddable
@@ -89,8 +90,12 @@ public class User implements UserDetails {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Settings {
-        private Boolean ReservationNotification_On = true;
-        private Boolean HostNotification_On = true;
+    public static class NotificationSettings {
+        private Boolean reservationRequested = true;
+        private Boolean reservationAccepted = true;
+        private Boolean reservationDeclined = true;
+        private Boolean reservationCancelled = true;
+        private Boolean profileReviewed = true;
+        private Boolean accommodationReviewed = true;
     }
 }
