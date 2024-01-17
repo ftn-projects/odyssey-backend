@@ -44,6 +44,10 @@ public class ReviewService {
         return accommodationReviewRepository.findAllWithFilter(null, accommodationId, submitterId, listStatuses);
     }
 
+    public List<AccommodationReview> getAllAccommodationReviewsByHost(Long hostId, List<AccommodationReview.Status> listStatuses) {
+        return accommodationReviewRepository.findAllByHost(hostId, listStatuses);
+    }
+
     public List<HostReview> getAllHostReviewsFiltered(Long hostId, Long submitterId, List<HostReview.Status> listStatuses) {
         return hostReviewRepository.findAllWithFilter(null, hostId, submitterId, listStatuses);
     }

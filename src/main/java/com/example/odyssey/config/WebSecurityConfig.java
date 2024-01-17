@@ -107,6 +107,7 @@ public class WebSecurityConfig {
                         "/api/v1/accommodations/stats/*",
                         "/api/v1/accommodationRequests/*/images",
                         "/api/v1/reviews/*",
+                        "/api/v1/reviews/accommodation/host/*",
                         "/api/v1/accommodationRequests/*/images/*",
                         "/api/v1/reviews/accommodation/report/*",
                         "/api/v1/reviews/accommodation/*",

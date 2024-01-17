@@ -25,6 +25,15 @@ public interface AccommodationReviewRepository extends JpaRepository<Accommodati
             @Param("submitterId") Long guestId,
             @Param("listStatuses") List<Review.Status> listStatuses
     );
+
+    @Query("SELECT r " +
+            "FROM AccommodationReview r " +
+            "WHERE (:hostId IS NULL OR r.accommodation.host.id = :hostId) " +
+            "  AND (:listStatuses IS NULL OR r.status IN :listStatuses)")
+    List<AccommodationReview> findAllByHost(
+            @Param("hostId") Long hostId,
+            @Param("listStatuses") List<Review.Status> listStatuses
+    );
     List<AccommodationReview> findAllByAccommodation_Id(Long id);
 
     List<AccommodationReview> findAllBySubmitter_Id(Long id);
