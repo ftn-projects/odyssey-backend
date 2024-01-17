@@ -3,6 +3,8 @@ package com.example.odyssey.services;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.exceptions.FieldValidationException;
+import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
 import com.example.odyssey.repositories.AccommodationRequestRepository;
 import com.example.odyssey.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +35,7 @@ public class AccommodationRequestService {
     }
 
     public AccommodationRequest findById(Long id) {
-        return repository.findById(id).orElseThrow(() ->
-                new NoSuchElementException(String.format("Accommodation request with id '%d' does not exist.", id)));
+        return repository.findById(id).orElseThrow(() -> new AccommodationNotFoundException(id));
     }
 
     public void editStatus(AccommodationRequest request, AccommodationRequest.Status status) throws IOException {
@@ -103,7 +104,7 @@ public class AccommodationRequestService {
 
     public void uploadImage(Long id, MultipartFile image) throws IOException {
         if (image.getOriginalFilename() == null)
-            throw new IOException("Image is non existing.");
+            throw new FieldValidationException("Image is non existing.", "image");
 
         findById(id); // id validation
 

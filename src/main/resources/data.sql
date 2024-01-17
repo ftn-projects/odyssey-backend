@@ -23,14 +23,14 @@ VALUES
 
 INSERT INTO accommodations (host_id, type, title, description, address_street, address_city, address_country, pricing, default_price, automatic_approval, cancellation_due, min_guests, max_guests)
 VALUES
-    (2, 1, 'Soba sa 3 kreveta', 'Soba sa pogledom na šetalište.', 'Rujanska 23', 'Zlatibor', 'Serbia', 0, 410.0, false, 364, 1, 4),
-    (2, 2, 'Kuća na brdu', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića 14', 'Vrnjačka Banja', 'Serbia', 0, 260.0, false, 563, 2, 5),
-    (3, 0, 'Mali apartman', 'Mali apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 450.0, true, 1265, 1, 2),
-    (3, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 900.0, true, 2446, 1, 4),
-    (3, 0, 'Delux apartman', 'Apartman u strogom centru grada.', 'Bulevar Nemanjića 45', 'Niš', 'Serbia', 1, 130.0, false, 125, 1, 2),
-    (4, 1, 'Soba sa bračnim ležajem', 'Soba sa pogledom na Južni bulevar.', 'Južni bulevar 89', 'Beograd', 'Serbia', 1, 630.0, true, 76, 1, 3),
-    (4, 1, 'Soba sa 3 ležaja', 'Soba sa pogledom sa 3 ležaja.', 'Južni bulevar 40', 'Beograd', 'Serbia', 1, 9700.0, true, 450, 2, 5),
-    (4, 0, 'Veliki apartman', 'Apartman blizu Kalemegdana sa pogledom na ušće.', 'Karađorđeva 92', 'Beograd', 'Serbia', 1, 10000.0, true, 4155, 3, 7);
+    (2, 1, 'Soba sa 3 kreveta', 'Soba sa pogledom na šetalište.', 'Rujanska 23', 'Zlatibor', 'Serbia', 0, 410.0, false, 4.32e14, 1, 4),
+    (2, 2, 'Kuća na brdu', 'Kuća na sprat sa 2 terase.', 'Bore Vasiljevića 14', 'Vrnjačka Banja', 'Serbia', 0, 260.0, false, 8.64e14, 2, 5),
+    (3, 0, 'Mali apartman', 'Mali apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 450.0, true, 6.048e14, 1, 2),
+    (3, 0, 'Veliki apartman', 'Veliki apartman u strogom centru grada.', 'Bulevar Nemanjića 44', 'Niš', 'Serbia', 0, 900.0, true, 1.2096e15, 1, 4),
+    (3, 0, 'Delux apartman', 'Apartman u strogom centru grada.', 'Bulevar Nemanjića 45', 'Niš', 'Serbia', 1, 130.0, false, 2.592e14, 1, 2),
+    (4, 1, 'Soba sa bračnim ležajem', 'Soba sa pogledom na Južni bulevar.', 'Južni bulevar 89', 'Beograd', 'Serbia', 1, 630.0, true, 7.776e14, 1, 3),
+    (4, 1, 'Soba sa 3 ležaja', 'Soba sa pogledom sa 3 ležaja.', 'Južni bulevar 40', 'Beograd', 'Serbia', 1, 9700.0, true, 1.728e15, 2, 5),
+    (4, 0, 'Veliki apartman', 'Apartman blizu Kalemegdana sa pogledom na ušće.', 'Karađorđeva 92', 'Beograd', 'Serbia', 1, 10000.0, true, 2.592e15, 3, 7);
 
 INSERT INTO accommodation_available_slots (accommodation_id, price, start_date, end_date)
 VALUES
@@ -101,7 +101,7 @@ VALUES
     (4, 1), (4, 2), (4, 3), (4, 4), (4, 6), (4, 7), (4, 9),
     (5, 2), (5, 4), (5, 5), (5, 7), (5, 8), (5, 9);
 
--- --------------------------- RESERVATIONS ---------------------------- --
+-- ------------------------- RESERVATIONS --------------------------- --
 
 INSERT INTO reservations (status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
 VALUES
@@ -112,7 +112,7 @@ VALUES
     (3, 5, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
     (1, 1, 7, 1, 430.0 * 3 * 1, '2023-12-20', '2023-12-26', '2024-01-01', '2024-01-04');
 
--- --------------------------- REVIEWS ---------------------------- --
+-- ---------------------------- REVIEWS ----------------------------- --
 
 INSERT INTO reviews (accommodation_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
@@ -125,10 +125,23 @@ VALUES
     (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
     (7, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR');
 
--- --------------------------- HOST REVIEWS ---------------------------- --
+-- ------------------------- HOST REVIEWS --------------------------- --
+
 INSERT INTO reviews (host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
     (2, 7, 5, 'Host odlican.', '2023-01-05 20:00:00', 2, 'HR'),
     (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 2, 'HR'),
     (4, 6, 3, 'Uzas Bozji, majko mila kakva budala od vlasnika.', '2024-01-24 20:00:00', 1, 'HR'),
     (2, 5, 2, 'Amazing. Totally wasnt paid to write this', '2023-02-10 20:00:00', 0, 'HR');
+
+-- ------------------------- NOTIFICATIONS -------------------------- --
+
+INSERT INTO notifications (type, receiver_id, read, date, title, description, notification_type, accommodation_review_id, host_review_id, reservation_id)
+VALUES
+    (0, 2, false, '2023-02-10 12:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 2, true, '2023-02-10 12:10:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 3, false, '2023-03-21 10:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 4, false, '2023-06-08 09:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 5, false, '2023-08-11 13:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 6, false, '2021=09-17 15:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
+    (0, 7, false, '2023-10-29 20:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null);

@@ -110,6 +110,13 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/activate/{id}")
+    public ResponseEntity<?> activate(@PathVariable Long id) {
+        service.activate(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/block/{id}")
     public ResponseEntity<?> block(@PathVariable Long id) {
         service.block(id);

@@ -4,8 +4,9 @@ import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
-import com.example.odyssey.exceptions.CoolerReviewException;
-import com.example.odyssey.exceptions.ReviewException;
+import com.example.odyssey.exceptions.reviews.CoolerReviewException;
+import com.example.odyssey.exceptions.reviews.ReviewException;
+import com.example.odyssey.exceptions.reviews.ReviewNotFoundException;
 import com.example.odyssey.repositories.AccommodationReviewRepository;
 import com.example.odyssey.repositories.HostReviewRepository;
 import com.example.odyssey.repositories.ReservationRepository;
@@ -63,7 +64,7 @@ public class ReviewService {
     public Review findById(Long id) {
         Review review = findAccommodationReviewById(id);
         if (review == null) review = findHostReviewById(id);
-        if (review == null) throw new NoSuchElementException(String.format("Review with id '%d' does not exist.", id));
+        if (review == null) throw new ReviewNotFoundException(id);
         return review;
     }
 
@@ -225,6 +226,12 @@ public class ReviewService {
     public void decline(Long id) {
         Review review = findById(id);
         review.setStatus(Review.Status.DECLINED);
+        save(review);
+    }
+
+    public void reportReview(Long id) {
+        Review review = findById(id);
+        review.setStatus(Review.Status.REPORTED);
         save(review);
     }
 

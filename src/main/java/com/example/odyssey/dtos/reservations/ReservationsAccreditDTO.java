@@ -1,4 +1,4 @@
-package com.example.odyssey.dtos.reservation;
+package com.example.odyssey.dtos.reservations;
 
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.users.UserDTO;

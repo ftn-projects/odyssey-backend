@@ -4,6 +4,7 @@ import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
 import com.example.odyssey.repositories.AccommodationRepository;
 import com.example.odyssey.repositories.AmenityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,7 @@ public class AccommodationService {
     }
 
     public Accommodation getOne(Long id) {
-        return accommodationRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException(String.format("Accommodation with the id '%s' does not exist.", id)));
+        return accommodationRepository.findById(id).orElseThrow(() -> new AccommodationNotFoundException(id));
     }
 
     public List<Accommodation> findByHost(Host host) {
