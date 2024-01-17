@@ -36,11 +36,13 @@ public class AccommodationRequestCreationDTO {
     private AddressDTO newAddress;
     @NotNull(message = "Pricing type must be set.")
     private Accommodation.PricingType newPricing;
+    @NotNull(message = "Default price must be set.")
     @Positive(message = "Default price must be positive.")
     private Double newDefaultPrice;
     @NotNull(message = "Automatic approval must be set.")
     private Boolean newAutomaticApproval;
     @NotNull(message = "Cancellation due must be set.")
+    @Positive(message = "Cancellation due must be positive.")
     private Long newCancellationDue;
     @NotNull(message = "Available slots must be set.")
     private Set<AvailabilitySlot> newAvailableSlots = new HashSet<>();

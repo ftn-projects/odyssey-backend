@@ -13,7 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AvailabilitySlotDTO {
-    @Positive
     private Double price;
     private TimeSlotDTO timeSlot;
 

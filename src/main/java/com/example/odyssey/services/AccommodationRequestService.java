@@ -2,7 +2,11 @@ package com.example.odyssey.services;
 
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
+import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.exceptions.InputValidationException;
+import com.example.odyssey.exceptions.InvalidAvailabilitySlotException;
+import com.example.odyssey.exceptions.SlotHasReservationsException;
 import com.example.odyssey.repositories.AccommodationRequestRepository;
 import com.example.odyssey.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,8 @@ public class AccommodationRequestService {
     private AccommodationRequestRepository repository;
     @Autowired
     private AccommodationService accommodationService;
+    @Autowired
+    private ReservationService reservationService;
 
     private final String imagesDirPath = "src/main/resources/images/accommodationRequests/";
 
@@ -65,6 +71,16 @@ public class AccommodationRequestService {
     public AccommodationRequest create(AccommodationRequest.Type type, AccommodationRequest.Details details, Host host, Long accommodationId) {
         AccommodationRequest request = new AccommodationRequest(
                 -1L, LocalDateTime.now(), type, AccommodationRequest.Status.REQUESTED, details, host, accommodationId);
+
+         for(AvailabilitySlot slot: request.getDetails().getNewAvailableSlots()){
+             if(slot.getPrice()<=0 || slot.getTimeSlot().getEnd().isBefore(LocalDateTime.now())
+                     || slot.getPrice() == null) throw new InvalidAvailabilitySlotException("newAvailableSlots");
+
+
+             if(request.getType().equals(AccommodationRequest.Type.UPDATE) &&
+                     reservationService.overlapsReservation(request.getAccommodationId(), slot.getTimeSlot())) throw new SlotHasReservationsException("newAvailableSlots");
+         }
+
         return repository.save(request);
     }
 
