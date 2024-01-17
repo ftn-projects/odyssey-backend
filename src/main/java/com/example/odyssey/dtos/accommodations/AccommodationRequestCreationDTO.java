@@ -45,9 +45,9 @@ public class AccommodationRequestCreationDTO {
     @Positive(message = "Cancellation due must be positive.")
     private Long newCancellationDue;
     @NotNull(message = "Available slots must be set.")
-    private Set<AvailabilitySlot> newAvailableSlots = new HashSet<>();
+    private Set<AvailabilitySlotDTO> newAvailableSlots = new HashSet<>();
     @NotNull(message = "Amenities must be set.")
-    private Set<Amenity> newAmenities = new HashSet<>();
+    private Set<AmenityDTO> newAmenities = new HashSet<>();
     @Positive(message = "Minimum guests number must be positive.")
     private Integer newMinGuests;
     @Positive(message = "Maximum guests number must be positive.")

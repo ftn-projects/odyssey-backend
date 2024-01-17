@@ -4,6 +4,7 @@ import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.exceptions.AvailabilitySlotsOverlappingException;
 import com.example.odyssey.exceptions.InputValidationException;
 import com.example.odyssey.exceptions.InvalidAvailabilitySlotException;
 import com.example.odyssey.exceptions.SlotHasReservationsException;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 public class AccommodationRequestService {
@@ -72,13 +74,19 @@ public class AccommodationRequestService {
         AccommodationRequest request = new AccommodationRequest(
                 -1L, LocalDateTime.now(), type, AccommodationRequest.Status.REQUESTED, details, host, accommodationId);
 
-         for(AvailabilitySlot slot: request.getDetails().getNewAvailableSlots()){
-             if(slot.getPrice()<=0 || slot.getTimeSlot().getEnd().isBefore(LocalDateTime.now())
-                     || slot.getPrice() == null) throw new InvalidAvailabilitySlotException("newAvailableSlots");
+        Set<AvailabilitySlot> slots = request.getDetails().getNewAvailableSlots();
 
+         for(AvailabilitySlot slot: slots){
+             if(slot.getPrice() == null || slot.getTimeSlot().getStart() == null || slot.getTimeSlot().getEnd() == null
+                     || slot.getPrice()<=0 || slot.getTimeSlot().getEnd().isBefore(LocalDateTime.now())
+                     || !slot.getTimeSlot().getStart().isBefore(slot.getTimeSlot().getEnd())) throw new InvalidAvailabilitySlotException("newAvailableSlots");
 
              if(request.getType().equals(AccommodationRequest.Type.UPDATE) &&
                      reservationService.overlapsReservation(request.getAccommodationId(), slot.getTimeSlot())) throw new SlotHasReservationsException("newAvailableSlots");
+
+             for(AvailabilitySlot s: slots){
+                 if(!s.equals(slot) && s.getTimeSlot().overlaps(slot.getTimeSlot())) throw new AvailabilitySlotsOverlappingException("newAvailableSlots");
+             }
          }
 
         return repository.save(request);
