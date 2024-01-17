@@ -91,72 +91,6 @@ public class TokenUtil {
         return issueAt;
     }
 
-    public String getAudienceFromToken(String token) {
-        String audience;
-        try {
-            final Claims claims = this.getAllClaimsFromToken(token);
-            audience = claims.getAudience();
-        } catch (ExpiredJwtException ex) {
-            throw ex;
-        } catch (Exception e) {
-            audience = null;
-        }
-        return audience;
-    }
-
-    public Date getExpirationDateFromToken(String token) {
-        Date expiration;
-        try {
-            final Claims claims = this.getAllClaimsFromToken(token);
-            expiration = claims.getExpiration();
-        } catch (ExpiredJwtException ex) {
-            throw ex;
-        } catch (Exception e) {
-            expiration = null;
-        }
-
-        return expiration;
-    }
-
-    public Long getIdFromToken(String token) {
-        Long id;
-
-        try {
-            final Claims claims = this.getAllClaimsFromToken(token);
-            id = ((Integer) claims.get("subId")).longValue();
-        } catch (ExpiredJwtException ex) {
-            throw ex;
-        } catch (Exception e) {
-            id = null;
-        }
-
-        return id;
-    }
-
-    public Boolean containsAuthority(String token, String authority) {
-        Claims claims = getAllClaimsFromToken(token);
-        Object roleClaim = claims.get("role");
-
-        if (!(roleClaim instanceof Collection))
-            return null;
-
-        var authorities = (ArrayList<LinkedHashMap<String, String>>) claims.get("role");
-        for (var a : authorities)
-            if (a.get("name").equals(authority)) return true;
-        return false;
-    }
-
-    public void validateAccess(String authToken, Long id, Boolean admin) {
-        String token = authToken.substring(7);
-
-        Long tokenId = getIdFromToken(token);
-        if (tokenId == null)
-            throw new ValidationException("Internal authentication error.");
-
-        if (!(Objects.equals(id, tokenId) || (admin && containsAuthority(token, "ADMIN"))))
-            throw new ValidationException("Unauthorized access.");
-    }
-
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;
         try {
@@ -179,10 +113,6 @@ public class TokenUtil {
         final Date created = getIssuedAtDateFromToken(token);
 
         return (username != null && username.equals(userDetails.getUsername()));
-    }
-
-    private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
-        return (lastPasswordReset != null && created.before(lastPasswordReset));
     }
 
     public int getExpiredIn() {

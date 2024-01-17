@@ -1,11 +1,14 @@
 package com.example.odyssey.services;
 
 import com.example.odyssey.entity.reservations.Reservation;
-import com.example.odyssey.entity.reviews.Review;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
-import com.example.odyssey.exceptions.InputValidationException;
+import com.example.odyssey.exceptions.FieldValidationException;
+import com.example.odyssey.exceptions.ValidationException;
+import com.example.odyssey.exceptions.users.FailedActivationException;
+import com.example.odyssey.exceptions.users.FailedDeactivationException;
+import com.example.odyssey.exceptions.users.UserNotFoundException;
 import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
 import com.example.odyssey.util.EmailUtil;
@@ -21,7 +24,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -44,8 +46,7 @@ public class UserService {
     }
 
     public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException(String.format("User with id '%d' does not exist.", id)));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public User register(User user, String role) {
@@ -63,15 +64,14 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findUserByEmail(email).orElseThrow(() ->
-                new NoSuchElementException(String.format("User with the email '%s' does not exist.", email)));
+        return userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("email", email));
     }
 
     public void updatePassword(Long id, String oldPassword, String newPassword) {
         User user = findById(id);
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword()))
-            throw new InputValidationException("Current password is incorrect.", "Old password");
+            throw new FieldValidationException("Password is incorrect.", "Current password");
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
@@ -79,7 +79,7 @@ public class UserService {
 
     public void deactivate(Long id) {
         if (!canDeactivate(findById(id)))
-            throw new UnsupportedOperationException("Account deactivation failed because you have active reservations.");
+            throw new FailedDeactivationException("because you have active reservations");
         updateAccountStatus(id, User.AccountStatus.DEACTIVATED);
     }
 
@@ -113,11 +113,11 @@ public class UserService {
     public void confirmEmail(Long id) {
         try {
             if (findById(id).getStatus().equals(User.AccountStatus.PENDING))
-                throw new UnsupportedOperationException("User account has already been activated.");
+                throw new FailedActivationException("User account has already been activated.");
 
             updateAccountStatus(id, User.AccountStatus.ACTIVE);
         } catch (NoSuchElementException e) {
-            throw new UnsupportedOperationException("Invalid email activation link.");
+            throw new FailedActivationException("Invalid email activation link.");
         }
     }
 
@@ -148,7 +148,7 @@ public class UserService {
         User user = findById(id);
 
         if (image.getOriginalFilename() == null)
-            throw new IOException("Image upload file cannot be found.");
+            throw new ValidationException("Image upload file cannot be found.");
 
         String uploadDir = StringUtils.cleanPath(imagesDirPath + id);
         ImageUtil.saveImage(uploadDir, "profile.png", image);

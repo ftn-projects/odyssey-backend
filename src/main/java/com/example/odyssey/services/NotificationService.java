@@ -1,6 +1,7 @@
 package com.example.odyssey.services;
 
 import com.example.odyssey.entity.notifications.Notification;
+import com.example.odyssey.exceptions.notifications.NotificationNotFoundException;
 import com.example.odyssey.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,7 @@ public class NotificationService {
     }
 
     public Notification findById(Long id) {
-        return notificationRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException("Notification with id " + id + " does not exist"));
+        return notificationRepository.findById(id).orElseThrow(() -> new NotificationNotFoundException(id));
     }
 
     public List<Notification> findAllByFilter(Long id, List<Notification.Type> types, Boolean read) {

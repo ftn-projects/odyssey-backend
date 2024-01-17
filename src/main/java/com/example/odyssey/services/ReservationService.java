@@ -2,6 +2,7 @@ package com.example.odyssey.services;
 
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.exceptions.reservations.FailedCancellationException;
 import com.example.odyssey.repositories.ReservationRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,7 @@ public class ReservationService {
             if (reservation.getTimeSlot().getStart().isAfter(
                     reservation.getTimeSlot().getStart().minusDays(
                             reservation.getAccommodation().getCancellationDue().toDays())))
-                throw new UnsupportedOperationException("Cancellation due date for this reservation has already passed.");
+                throw new FailedCancellationException("because the due date has already passed.");
         }
         reservation.setStatus(Reservation.Status.valueOf(status));
         reservation = save(reservation);

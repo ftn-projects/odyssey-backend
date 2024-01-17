@@ -1,7 +1,6 @@
 package com.example.odyssey.dtos.notifications;
 
-import com.example.odyssey.dtos.reservation.ReservationDTO;
-import com.example.odyssey.dtos.reservation.ReservationsAccreditDTO;
+import com.example.odyssey.dtos.reservations.ReservationsAccreditDTO;
 import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.HostReviewDTO;
 import com.example.odyssey.dtos.users.UserDTO;
@@ -9,7 +8,6 @@ import com.example.odyssey.entity.notifications.AccommodationReviewedNotif;
 import com.example.odyssey.entity.notifications.HostReviewedNotif;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.notifications.ReservationNotif;
-import com.example.odyssey.entity.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

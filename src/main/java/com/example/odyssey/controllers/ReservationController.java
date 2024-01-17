@@ -1,8 +1,8 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.reservation.ReservationDTO;
-import com.example.odyssey.dtos.reservation.ReservationRequestDTO;
-import com.example.odyssey.dtos.reservation.ReservationsAccreditDTO;
+import com.example.odyssey.dtos.reservations.ReservationDTO;
+import com.example.odyssey.dtos.reservations.ReservationRequestDTO;
+import com.example.odyssey.dtos.reservations.ReservationsAccreditDTO;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReservationDTOMapper;
