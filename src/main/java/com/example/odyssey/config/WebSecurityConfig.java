@@ -103,6 +103,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.GET,
                         "/api/v1/users/image/*",
                         "/api/v1/accommodations",
+                        "api/v1/accommodations/stats/period",
                         "/api/v1/accommodations/*",
                         "/api/v1/accommodations/*/images",
                         "/api/v1/accommodations/*/images/*",

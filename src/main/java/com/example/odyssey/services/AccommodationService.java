@@ -7,9 +7,16 @@ import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
 import com.example.odyssey.repositories.AccommodationRepository;
 import com.example.odyssey.repositories.AmenityRepository;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfDocument;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -143,5 +150,22 @@ public class AccommodationService {
                 return (double) -1;
         else
             return (double) -1;
+    }
+
+
+    public byte[] generatePeriodStatsPdf(Long startDate, Long endDate) throws IOException {
+        List<Accommodation> accommodations = getAll(null, startDate, endDate, null, null, null, null, null);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Document document = new Document();
+        try {
+            PdfWriter.getInstance(document, byteArrayOutputStream);
+            document.open();
+            document.add(new Paragraph("Accommodation statistics for period: " + startDate + " - " + endDate));
+            document.add(new Paragraph("Number of accommodations: " + accommodations.size()));
+            document.close();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 }

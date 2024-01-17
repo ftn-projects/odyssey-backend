@@ -7,6 +7,7 @@ import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +92,7 @@ public class AccommodationController {
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/{id}/images/{im`ageName}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/{id}/images/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> getImage(@PathVariable Long id, @PathVariable String imageName) throws IOException {
         return new ResponseEntity<>(service.getImage(id, imageName), HttpStatus.OK);
     }
@@ -106,18 +107,27 @@ public class AccommodationController {
         return new ResponseEntity<>(service.getAmenities(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/stats/period")
-    public ResponseEntity<?> getPeriodStats(@RequestParam Long startDate, @RequestParam Long endDate) {
-        List<HostStatDTO> statistics = new ArrayList<>();
-        statistics.add(new HostStatDTO());
-        return new ResponseEntity<>(statistics, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/stats/period")
+//    public ResponseEntity<?> getPeriodStats(@RequestParam Long startDate, @RequestParam Long endDate) {
+//        List<HostStatDTO> statistics = new ArrayList<>();
+//        statistics.add(new HostStatDTO());
+//        return new ResponseEntity<>(statistics, HttpStatus.OK);
+//    }
 
-    @GetMapping(value = "/stats/{id}")
-    public ResponseEntity<?> getAccommodationStats(@PathVariable Long id, @RequestParam(required = false) Long year) {
-        List<AccommodationStatDTO> statistics = new ArrayList<>();
-        statistics.add(new AccommodationStatDTO());
-        return new ResponseEntity<>(statistics, HttpStatus.OK);
+    @GetMapping(value = "/stats/period", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> getPeriodStatsAsPdf() {
+        try {
+            byte[] pdfBytes = service.generatePeriodStatsPdf(null,null);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "statistics.pdf");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
