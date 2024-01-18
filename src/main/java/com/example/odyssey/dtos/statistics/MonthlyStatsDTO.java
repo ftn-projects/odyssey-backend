@@ -13,16 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class HostStatDTO {
-    List<AccommodationDetails> details = new ArrayList<>();
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AccommodationDetails {
-        AccommodationDTO accommodation;
-        Double income;
-        Integer reservationCount;
-    }
+public class MonthlyStatsDTO {
+    private Long month;
+    private Integer reservationsCount;
 }

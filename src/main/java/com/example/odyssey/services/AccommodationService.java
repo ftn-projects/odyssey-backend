@@ -1,18 +1,25 @@
 package com.example.odyssey.services;
 
+import com.example.odyssey.dtos.statistics.MonthlyStatsDTO;
+import com.example.odyssey.dtos.statistics.TotalStatsDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
+import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.entity.users.User;
 import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
 import com.example.odyssey.repositories.AccommodationRepository;
 import com.example.odyssey.repositories.AmenityRepository;
+import com.example.odyssey.repositories.ReservationRepository;
+import com.example.odyssey.repositories.UserRepository;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
@@ -21,19 +28,25 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 @Service
 public class AccommodationService {
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired
     private AccommodationRepository accommodationRepository;
 
     @Autowired
     private AmenityRepository amenityRepository;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     public static final String imagesDirPath = "src/main/resources/images/accommodations/";
 
@@ -66,8 +79,8 @@ public class AccommodationService {
         return accommodationRepository.findById(id).orElseThrow(() -> new AccommodationNotFoundException(id));
     }
 
-    public List<Accommodation> findByHost(Host host) {
-        return accommodationRepository.findAllByHost(host);
+    public List<Accommodation> findByHostId(Long hostId) {
+        return accommodationRepository.findAllByHostId(hostId);
     }
 
     public Accommodation save(Accommodation accommodation) {
@@ -153,19 +166,103 @@ public class AccommodationService {
     }
 
 
-    public byte[] generatePeriodStatsPdf(Long startDate, Long endDate) throws IOException {
-        List<Accommodation> accommodations = getAll(null, startDate, endDate, null, null, null, null, null);
+    public byte[] generatePeriodStatsPdf(Long hostId, Long startDate, Long endDate) throws IOException, DocumentException {
+        List<Accommodation> accommodations = findByHostId(hostId);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        if(hostId == null) return byteArrayOutputStream.toByteArray();
+
+
+        Instant startInstant = Instant.ofEpochMilli(startDate);
+        LocalDateTime startLocalDateTime = LocalDateTime.ofInstant(startInstant, ZoneOffset.UTC);
+
+        Instant endInstant = Instant.ofEpochMilli(endDate);
+        LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(endInstant, ZoneOffset.UTC);
+
+        TotalStatsDTO totalStatsDTO = generatePeriodStats(hostId, startDate, endDate);
+
+        generatePdfDocument(byteArrayOutputStream, totalStatsDTO);
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    private void generatePdfDocument(ByteArrayOutputStream byteArrayOutputStream, TotalStatsDTO totalStatsDTO) throws DocumentException {
         Document document = new Document();
         try {
+            LocalDateTime startDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(totalStatsDTO.getStart()), ZoneId.systemDefault());
+            LocalDateTime endDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(totalStatsDTO.getEnd()), ZoneId.systemDefault());
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
-            document.add(new Paragraph("Accommodation statistics for period: " + startDate + " - " + endDate));
-            document.add(new Paragraph("Number of accommodations: " + accommodations.size()));
+            document.add(new Paragraph("Host: " + totalStatsDTO.getHost().getName() + " " + totalStatsDTO.getHost().getSurname()));
+            document.add(new Paragraph("Accommodation statistics for period: " +
+                    startDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " - " +
+                    endDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
+            document.add(new Paragraph("Number of accommodations: " + totalStatsDTO.getTotalAccommodations()));
+            document.add(new Paragraph("Number of reservations: " + totalStatsDTO.getTotalReservations()));
+
+            for (MonthlyStatsDTO monthlyStatsDTO : totalStatsDTO.getMonthlyStats()) {
+                LocalDateTime monthDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(monthlyStatsDTO.getMonth()), ZoneOffset.UTC);
+                document.add(new Paragraph("Reservations for " + monthDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")) +
+                        ": " + monthlyStatsDTO.getReservationsCount()));
+            }
+
             document.close();
         } catch (DocumentException e) {
             e.printStackTrace();
         }
-        return byteArrayOutputStream.toByteArray();
+    }
+
+
+    public TotalStatsDTO generatePeriodStats(Long hostId, Long startDate, Long endDate) {
+        List<Accommodation> accommodations = findByHostId(hostId);
+        User host = userRepository.findById(hostId).orElse(null);
+        List<Reservation.Status> statuses = new ArrayList<>();
+        statuses.add(Reservation.Status.ACCEPTED);
+        List<Reservation> reservations = reservationRepository.findAllWithFilter(hostId, statuses, null, null, null);
+
+        Instant startInstant = Instant.ofEpochMilli(startDate);
+        LocalDateTime startLocalDateTime = LocalDateTime.ofInstant(startInstant, ZoneOffset.UTC);
+
+        Instant endInstant = Instant.ofEpochMilli(endDate);
+        LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(endInstant, ZoneOffset.UTC);
+
+        List<MonthlyStatsDTO> monthlyStats = calculateMonthlyStats(reservations, startDate, endDate);
+
+        int totalAccommodations = accommodations.size();
+        int totalReservations = reservations.size();
+
+        return new TotalStatsDTO(startDate, endDate, (Host) host, totalAccommodations, totalReservations, monthlyStats);
+    }
+    private List<MonthlyStatsDTO> calculateMonthlyStats(List<Reservation> reservations, Long startDate, Long endDate) {
+        List<MonthlyStatsDTO> monthlyStats = new ArrayList<>();
+
+        LocalDateTime currentMonth = LocalDateTime.ofInstant(Instant.ofEpochMilli(startDate), ZoneId.systemDefault()).withDayOfMonth(1);
+        LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endDate), ZoneId.systemDefault()).withDayOfMonth(1);
+
+        while (!currentMonth.isAfter(endLocalDateTime)) {
+            long startOfMonthMillis = currentMonth.toInstant(ZoneOffset.UTC).toEpochMilli();
+            long endOfMonthMillis = currentMonth.plusMonths(1).minusDays(1).toInstant(ZoneOffset.UTC).toEpochMilli();
+
+            int monthlyReservationsCount = 0;
+
+            for (Reservation reservation : reservations) {
+                LocalDateTime reservationStartDate = reservation.getTimeSlot().getStart();
+                LocalDateTime reservationEndDate = reservation.getTimeSlot().getEnd();
+
+                // Check if the reservation overlaps with the specified date range
+                if (reservationStartDate.isAfter(LocalDateTime.ofInstant(Instant.ofEpochMilli(startOfMonthMillis), ZoneId.systemDefault())) &&
+                        reservationEndDate.isBefore(LocalDateTime.ofInstant(Instant.ofEpochMilli(endOfMonthMillis), ZoneId.systemDefault()))) {
+                    monthlyReservationsCount++;
+                }
+            }
+
+            MonthlyStatsDTO monthlyStatsDTO = new MonthlyStatsDTO();
+            monthlyStatsDTO.setMonth(startOfMonthMillis);
+            monthlyStatsDTO.setReservationsCount(monthlyReservationsCount);
+            monthlyStats.add(monthlyStatsDTO);
+
+            currentMonth = currentMonth.plusMonths(1);
+        }
+
+        return monthlyStats;
     }
 }

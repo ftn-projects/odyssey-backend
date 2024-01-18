@@ -1,11 +1,10 @@
 package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.accommodations.AccommodationDTO;
-import com.example.odyssey.dtos.statistics.AccommodationStatDTO;
-import com.example.odyssey.dtos.statistics.HostStatDTO;
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.ReviewService;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -107,17 +106,15 @@ public class AccommodationController {
         return new ResponseEntity<>(service.getAmenities(), HttpStatus.OK);
     }
 
-//    @GetMapping(value = "/stats/period")
-//    public ResponseEntity<?> getPeriodStats(@RequestParam Long startDate, @RequestParam Long endDate) {
-//        List<HostStatDTO> statistics = new ArrayList<>();
-//        statistics.add(new HostStatDTO());
-//        return new ResponseEntity<>(statistics, HttpStatus.OK);
-//    }
 
-    @GetMapping(value = "/stats/period", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> getPeriodStatsAsPdf() {
+    @GetMapping(value = "/stats/host/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> getPeriodStatsAsPdf(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long startDate,
+            @RequestParam(required = false) Long endDate
+    ) {
         try {
-            byte[] pdfBytes = service.generatePeriodStatsPdf(null,null);
+            byte[] pdfBytes = service.generatePeriodStatsPdf(id,startDate,endDate);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
@@ -127,6 +124,8 @@ public class AccommodationController {
         } catch (IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
         }
     }
 
