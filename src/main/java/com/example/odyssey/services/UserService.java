@@ -105,18 +105,18 @@ public class UserService {
         updateAccountStatus(id, User.AccountStatus.ACTIVE);
     }
 
-    public void updateAccountStatus(Long id, User.AccountStatus status) {
+    public User updateAccountStatus(Long id, User.AccountStatus status) {
         User user = findById(id);
         user.setStatus(status);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void confirmEmail(Long id) {
+    public User confirmEmail(Long id) {
         try {
             if (findById(id).getStatus().equals(User.AccountStatus.PENDING))
                 throw new FailedActivationException("User account has already been activated.");
 
-            updateAccountStatus(id, User.AccountStatus.ACTIVE);
+            return updateAccountStatus(id, User.AccountStatus.ACTIVE);
         } catch (NoSuchElementException e) {
             throw new FailedActivationException("Invalid email activation link.");
         }
@@ -164,5 +164,9 @@ public class UserService {
     public List<User> getWithFilters(String search, List<String> roles, List<User.AccountStatus> statuses, Boolean reported) {
         search = search == null ? null : search.toUpperCase();
         return userRepository.findAllByFilters(search, roles, statuses, reported);
+    }
+
+    public List<User> findAllAdmins() {
+        return userRepository.findAllByRole("ADMIN");
     }
 }

@@ -49,15 +49,15 @@ public class NotificationController {
     @PutMapping
     public ResponseEntity<?> update(@RequestBody NotificationDTO notificationDTO) {
         Notification notification = NotificationDTOMapper.fromDTOtoNotification(notificationDTO);
-        notification = service.update(notification);
+        notification = service.save(notification);
         return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping(value = "/{id}/{read}")
     public ResponseEntity<?> updateRead(@PathVariable Long id, @PathVariable Boolean read) {
-        service.setRead(id, read);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Notification notification = service.updateRead(id, read);
+        return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")

@@ -1,6 +1,11 @@
 package com.example.odyssey.services;
 
+import com.example.odyssey.entity.notifications.HostReviewedNotif;
 import com.example.odyssey.entity.notifications.Notification;
+import com.example.odyssey.entity.notifications.ReservationNotif;
+import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.entity.reviews.HostReview;
+import com.example.odyssey.entity.users.User;
 import com.example.odyssey.exceptions.notifications.NotificationNotFoundException;
 import com.example.odyssey.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +35,22 @@ public class NotificationService {
         return notificationRepository.findAllByFilter(id, types, read);
     }
 
-    public Notification update(Notification notification) {
+    public Notification create(Notification notification) {
+        notification.setDate(LocalDateTime.now());
+        notification.setRead(false);
+        return save(notification);
+    }
+
+    public Notification updateRead(Long id, Boolean read) {
+        Notification notification = findById(id);
+        notification.setRead(read);
+        return save(notification);
+    }
+
+    public Notification save(Notification notification) {
         Notification n = notificationRepository.save(notification);
         webSocketService.notifyChange(n.getReceiver().getId());
         return n;
-    }
-
-    public void setRead(Long id, Boolean read) {
-        Notification notification = findById(id);
-        notification.setRead(read);
-        update(notification);
     }
 
     public void delete(Long id) {
@@ -48,10 +59,41 @@ public class NotificationService {
         webSocketService.notifyChange(receiverId);
     }
 
-    public void create(Notification n) {
-        n.setDate(LocalDateTime.now());
-        n.setRead(false);
-        notificationRepository.save(n);
-        webSocketService.notifyChange(n.getReceiver().getId());
+    public void notifyRequested(Reservation reservation) {
+        String accommodation = reservation.getAccommodation().getTitle();
+
+        User receiver = reservation.getAccommodation().getHost();
+        if (receiver.getSettings().getReservationRequested())
+            create(new ReservationNotif(reservation, receiver, Notification.Type.RESERVATION_REQUESTED,
+                    "Reservation requested for your accommodation " + accommodation));
+
+        receiver = reservation.getGuest();
+        if (receiver.getSettings().getReservationRequested())
+            create(new ReservationNotif(reservation, receiver, Notification.Type.RESERVATION_REQUESTED,
+                    "You made a reservation request for " + accommodation));
+    }
+
+    public void notifyAccepted(Reservation reservation) {
+        String accommodation = reservation.getAccommodation().getTitle();
+        User receiver = reservation.getGuest();
+        if (receiver.getSettings().getReservationAccepted())
+            create(new ReservationNotif(reservation, receiver, Notification.Type.RESERVATION_ACCEPTED,
+                    "Your reservation request for " + accommodation + " has been accepted"));
+    }
+
+    public void notifyDeclined(Reservation reservation) {
+        String accommodation = reservation.getAccommodation().getTitle();
+        User receiver = reservation.getGuest();
+        if (reservation.getGuest().getSettings().getReservationDeclined())
+            create(new ReservationNotif(reservation, receiver, Notification.Type.RESERVATION_DECLINED,
+                    "Your reservation request for " + accommodation + " has been declined"));
+    }
+
+    public void notifyCancelled(Reservation reservation) {
+        String accommodation = reservation.getAccommodation().getTitle();
+        User receiver = reservation.getAccommodation().getHost();
+        if (receiver.getSettings().getReservationDeclined())
+            create(new ReservationNotif(reservation, receiver, Notification.Type.RESERVATION_CANCELLED,
+                    "Reservation for your accommodation " + accommodation + " has been cancelled"));
     }
 }
