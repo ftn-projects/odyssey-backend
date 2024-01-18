@@ -107,7 +107,7 @@ public class AccommodationController {
     }
 
 
-    @GetMapping(value = "/stats/host/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/stats/host/{id}/file", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getPeriodStatsAsPdf(
             @PathVariable Long id,
             @RequestParam(required = false) Long startDate,
@@ -129,6 +129,54 @@ public class AccommodationController {
         }
     }
 
+    @GetMapping(value = "/stats/accommodation/{id}/file", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> getPeriodStatsForAccommodationAsPdf(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long startDate,
+            @RequestParam(required = false) Long endDate
+    ) {
+        try {
+            byte[] pdfBytes = service.generatePeriodStatsPdfAccommodation(id,startDate,endDate);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "statistics.pdf");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping(value = "/stats/accommodation/{id}")
+    public ResponseEntity<?> getPeriodStatsForAccommodation(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long startDate,
+            @RequestParam(required = false) Long endDate
+    ) {
+        return new ResponseEntity<>(service.generatePeriodStatsAccommodation(id, startDate, endDate), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/stats/host/{id}")
+    public ResponseEntity<?> getPeriodStats(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long startDate,
+            @RequestParam(required = false) Long endDate
+    ) {
+        return new ResponseEntity<>(service.generatePeriodStats(id, startDate, endDate), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/stats/host/{id}/all")
+    public ResponseEntity<?> getPeriodStatsAllAccommodation(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long startDate,
+            @RequestParam(required = false) Long endDate
+    ) {
+        return new ResponseEntity<>(service.getAllAccommodationStats(id, startDate, endDate), HttpStatus.OK);
+    }
     private static List<AccommodationDTO> mapToDTO(List<Accommodation> accommodations) {
         return accommodations.stream().map(AccommodationDTO::new).toList();
     }

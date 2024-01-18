@@ -16,4 +16,5 @@ import java.util.List;
 public class MonthlyStatsDTO {
     private Long month;
     private Integer reservationsCount;
+    private Double totalIncome;
 }
