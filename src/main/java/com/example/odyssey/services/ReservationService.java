@@ -152,4 +152,15 @@ public class ReservationService {
             cancelOverlapping(r.getAccommodation().getId(), r);
         }
     }
+
+    public void declineAllForGuest(Long guestId) {
+        findByGuest(guestId).stream().filter(r ->
+                r.getTimeSlot().getEnd().isAfter(LocalDateTime.now()) &&
+                        (r.getStatus().equals(Reservation.Status.REQUESTED) ||
+                                r.getStatus().equals(Reservation.Status.ACCEPTED))
+        ).forEach(r -> {
+            r.setStatus(Reservation.Status.DECLINED);
+            save(r);
+        });
+    }
 }

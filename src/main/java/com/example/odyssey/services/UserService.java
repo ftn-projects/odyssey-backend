@@ -97,6 +97,7 @@ public class UserService {
     }
 
     public void block(Long id) {
+        reservationService.declineAllForGuest(id);
         updateAccountStatus(id, User.AccountStatus.BLOCKED);
     }
 
