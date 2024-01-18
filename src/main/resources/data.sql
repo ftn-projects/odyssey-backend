@@ -138,10 +138,9 @@ VALUES
 
 INSERT INTO notifications (type, receiver_id, read, date, title, description, notification_type, accommodation_review_id, host_review_id, reservation_id)
 VALUES
-    (0, 2, false, '2023-02-10 12:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
-    (0, 2, true, '2023-02-10 12:10:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
-    (0, 3, false, '2023-03-21 10:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
-    (0, 4, false, '2023-06-08 09:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
-    (0, 5, false, '2023-08-11 13:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
-    (0, 6, false, '2021=09-17 15:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null),
-    (0, 7, false, '2023-10-29 20:00:00', 'Dobro došli na platformu Odyssey', 'Pretražite smeštaje na Home stranici.', 'NOTIFICATION', null, null, null);
+    (0, 2, true, '2023-02-10 12:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 3, false, '2023-03-21 10:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 4, false, '2023-06-08 09:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 5, false, '2023-08-11 13:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 6, false, '2021=09-17 15:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 7, false, '2023-10-29 20:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null);

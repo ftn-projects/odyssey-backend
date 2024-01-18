@@ -25,6 +25,7 @@ public class NotificationDTO {
     private String text;
     private LocalDateTime date;
     private Boolean read;
+    private Notification.Type type;
     private UserDTO receiver;
     private ReservationsAccreditDTO reservation;
     private AccommodationReviewDTO accommodationReview;
@@ -36,6 +37,7 @@ public class NotificationDTO {
         text = notification.getDescription();
         date = notification.getDate();
         read = notification.getRead();
+        type = notification.getType();
         receiver = new UserDTO(notification.getReceiver());
 
         if (notification instanceof AccommodationReviewedNotif)

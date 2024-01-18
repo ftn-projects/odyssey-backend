@@ -32,4 +32,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("roles") List<String> roles,
             @Param("statuses") List<User.AccountStatus> statuses,
             @Param("reported") Boolean reported);
+
+    @Query("SELECT u " +
+            "FROM User u " +
+            "WHERE :role IN (SELECT r.name FROM u.roles r)")
+    List<User> findAllByRole(String role);
 }

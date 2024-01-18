@@ -25,8 +25,13 @@ public class AccommodationReviewedNotif extends Notification {
     private AccommodationReview review;
 
     public AccommodationReviewedNotif(@NonNull AccommodationReview review, @NonNull User receiver) {
-        super(-1L, "", "", LocalDateTime.now(), false, Type.ACCOMMODATION_REVIEW, receiver);
-        // Additional initialization specific to AccommodationReviewedNotification if needed
+        super(null, "", "", null, null, Type.ACCOMMODATION_REVIEW, receiver);
         this.review = review;
+
+        String submitter = review.getSubmitter().getName() + " " + review.getSubmitter().getSurname();
+        String accommodation = review.getAccommodation().getTitle();
+
+        boolean isAdmin = !receiver.getId().equals(review.getAccommodation().getHost().getId());
+        this.title = submitter + " reviewed " + (isAdmin ? accommodation : "your accommodation " + accommodation);
     }
 }

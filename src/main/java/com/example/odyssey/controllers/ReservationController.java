@@ -3,11 +3,13 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.reservations.ReservationDTO;
 import com.example.odyssey.dtos.reservations.ReservationRequestDTO;
 import com.example.odyssey.dtos.reservations.ReservationsAccreditDTO;
+import com.example.odyssey.entity.notifications.ReservationNotif;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReservationDTOMapper;
 import com.example.odyssey.mappers.ReservationRequestDTOMapper;
 import com.example.odyssey.services.AccommodationService;
+import com.example.odyssey.services.NotificationService;
 import com.example.odyssey.services.ReservationService;
 import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class ReservationController {
     private AccommodationService accommodationService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private NotificationService notificationService;
 
     // GET method for getting all reservations
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -83,20 +87,15 @@ public class ReservationController {
     @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ReservationRequestDTO requestDTO) {
-        Reservation reservation;
-        ReservationDTO dto;
-        try {
-            reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
-            reservation.setStatus(Reservation.Status.REQUESTED);
-            reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
-            reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
-            reservation = service.create(reservation);
-            service.automaticApproval(reservation);
-            dto = ReservationDTOMapper.fromReservationToDTO(reservation);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+        Reservation reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
+        reservation.setStatus(Reservation.Status.REQUESTED);
+        reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
+        reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
+        reservation = service.create(reservation);
+        service.automaticApproval(reservation);
+
+        notificationService.notifyRequested(reservation);
+        return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.CREATED);
     }
 
     // PUT method for updating a reservation status
@@ -108,6 +107,14 @@ public class ReservationController {
     ) {
         Reservation reservation = service.find(id);
         service.updateStatus(reservation, status);
+
+        if (reservation.getStatus().equals(Reservation.Status.CANCELLED_RESERVATION))
+            notificationService.notifyCancelled(reservation);
+        else if (reservation.getStatus().equals(Reservation.Status.ACCEPTED))
+            notificationService.notifyAccepted(reservation);
+        else if (reservation.getStatus().equals(Reservation.Status.DECLINED))
+            notificationService.notifyDeclined(reservation);
+
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }
 

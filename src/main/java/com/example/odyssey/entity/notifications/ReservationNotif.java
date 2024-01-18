@@ -26,16 +26,8 @@ public class ReservationNotif extends Notification {
     @ManyToOne
     private Reservation reservation;
 
-    public ReservationNotif(@NonNull Reservation reservation, @NonNull User receiver) {
-        super(-1L, "", "", LocalDateTime.now(), false, null, receiver);
-        Notification.Type type = switch (reservation.getStatus()) {
-            case REQUESTED -> Type.RESERVATION_REQUESTED;
-            case ACCEPTED -> Type.RESERVATION_ACCEPTED;
-            case DECLINED -> Type.RESERVATION_DECLINED;
-            case CANCELLED_RESERVATION -> Type.RESERVATION_CANCELLED;
-            default -> throw new IllegalStateException("Unexpected value: " + reservation.getStatus());
-        };
-        setType(type);
+    public ReservationNotif(@NonNull Reservation reservation, @NonNull User receiver, Notification.Type type, String title) {
+        super(null, title, "", null, null, type, receiver);
         this.reservation = reservation;
     }
 }
