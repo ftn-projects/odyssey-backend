@@ -46,6 +46,8 @@ public class ReviewController {
         return new ResponseEntity<>(reviews.stream().map(this::mapReviewToDTO).toList(), HttpStatus.OK);
     }
 
+
+
     //    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews(
@@ -67,6 +69,16 @@ public class ReviewController {
     ) {
         List<AccommodationReview> reviews = service
                 .getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes);
+        return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/accommodation/host/{id}")
+    public ResponseEntity<?> getAllAccommodationReviewsByHost(
+            @PathVariable Long id,
+            @RequestParam(required = false) List<Review.Status> listTypes
+    ) {
+        List<AccommodationReview> reviews = service
+                .getAllAccommodationReviewsByHost(id, listTypes);
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 

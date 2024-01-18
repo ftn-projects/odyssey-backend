@@ -129,8 +129,8 @@ VALUES
 
 INSERT INTO reviews (host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
-    (2, 7, 5, 'Host odlican.', '2023-01-05 20:00:00', 0, 'HR'),
-    (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 0, 'HR'),
+    (2, 7, 5, 'Host odlican.', '2023-01-05 20:00:00', 2, 'HR'),
+    (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 2, 'HR'),
     (4, 6, 3, 'Uzas Bozji, majko mila kakva budala od vlasnika.', '2024-01-24 20:00:00', 1, 'HR'),
     (2, 5, 2, 'Amazing. Totally wasnt paid to write this', '2023-02-10 20:00:00', 0, 'HR');
 
