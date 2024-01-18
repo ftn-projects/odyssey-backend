@@ -244,14 +244,14 @@ public class AccommodationService {
             LocalDateTime endDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(totalStatsDTO.getEnd()), ZoneId.systemDefault());
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
-            document.add(new Paragraph("Accommodation: " + totalStatsDTO.getAccommodationDTO().getTitle()));
+            document.add(new Paragraph("Accommodation: " + totalStatsDTO.getAccommodation().getTitle()));
             document.add(new Paragraph("Accommodation statistics for period: " +
                     startDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " - " +
                     endDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
             document.add(new Paragraph("Number of reservations: " + totalStatsDTO.getTotalReservations()));
 
 
-            for (MonthlyStatsDTO monthlyStatsDTO : totalStatsDTO.getMonthlyStatsDTO()) {
+            for (MonthlyStatsDTO monthlyStatsDTO : totalStatsDTO.getMonthlyStats()) {
                 document.add(new Paragraph("\n"));
                 LocalDateTime monthDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(monthlyStatsDTO.getMonth()), ZoneOffset.UTC);
                 document.add(new Paragraph("Reservations for " + monthDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")) +
@@ -281,11 +281,20 @@ public class AccommodationService {
 
         List<MonthlyStatsDTO> monthlyStats = calculateMonthlyStats(reservations, startDate, endDate);
 
+        Double totalIncome = getTotalIncome(reservations);
+
         int totalReservations = reservations.size();
 
-        return new AccommodationTotalStatsDTO(startDate, endDate, totalReservations, new AccommodationDTO(accommodation), monthlyStats);
+        return new AccommodationTotalStatsDTO(startDate, endDate, totalReservations, totalIncome, new AccommodationDTO(accommodation), monthlyStats);
     }
 
+    private Double getTotalIncome(List<Reservation> reservations){
+        Double totalIncome = 0.0;
+        for(Reservation reservation : reservations){
+            totalIncome += reservation.getPrice();
+        }
+        return totalIncome;
+    }
     public TotalStatsDTO generatePeriodStats(Long hostId, Long startDate, Long endDate) {
         List<Accommodation> accommodations = findByHostId(hostId);
         User host = userRepository.findById(hostId).orElse(null);
@@ -304,8 +313,9 @@ public class AccommodationService {
 
         int totalAccommodations = accommodations.size();
         int totalReservations = reservations.size();
+        Double totalIncome = getTotalIncome(reservations);
 
-        return new TotalStatsDTO(startDate, endDate, new UserDTO(host), totalAccommodations, totalReservations, monthlyStats);
+        return new TotalStatsDTO(startDate, endDate, new UserDTO(host), totalAccommodations, totalReservations, totalIncome, monthlyStats);
     }
     private List<MonthlyStatsDTO> calculateMonthlyStats(List<Reservation> reservations, Long startDate, Long endDate) {
         List<MonthlyStatsDTO> monthlyStats = new ArrayList<>();

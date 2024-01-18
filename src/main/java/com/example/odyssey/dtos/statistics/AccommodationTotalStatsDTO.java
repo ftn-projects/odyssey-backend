@@ -17,7 +17,8 @@ import java.util.List;
 public class AccommodationTotalStatsDTO {
     Long start;
     Long end;
-    private int totalReservations;
-    AccommodationDTO accommodationDTO;
-    List<MonthlyStatsDTO> monthlyStatsDTO;
+    Integer totalReservations;
+    Double totalIncome;
+    AccommodationDTO accommodation;
+    List<MonthlyStatsDTO> monthlyStats;
 }

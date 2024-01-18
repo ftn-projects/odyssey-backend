@@ -21,7 +21,8 @@ public class TotalStatsDTO {
     Long start;
     Long end;
     UserDTO host;
-    private int totalAccommodations;
-    private int totalReservations;
-    private List<MonthlyStatsDTO> monthlyStats;
+    Integer totalAccommodations;
+    Integer totalReservations;
+    Double totalIncome;
+    List<MonthlyStatsDTO> monthlyStats;
 }
