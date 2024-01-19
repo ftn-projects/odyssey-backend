@@ -111,7 +111,7 @@ public class AccommodationService {
             return;
         }
         else{
-            Accommodation accommodation = getOne(accommodationId);
+            Accommodation accommodation = findById(accommodationId);
             Guest guest = (Guest) user;
             Set<Accommodation> accommodations;
             accommodations = guest.getFavorites();
