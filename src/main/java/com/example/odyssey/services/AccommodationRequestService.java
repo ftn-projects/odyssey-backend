@@ -57,15 +57,19 @@ public class AccommodationRequestService {
         }
 
         Long id = accommodationService.save(accommodation).getId();
-        ImageUtil.copyFiles(
-                imagesDirPath + request.getId(),
+        ImageUtil.copyFiles(imagesDirPath + request.getId(),
                 AccommodationService.imagesDirPath + id);
     }
 
-    public AccommodationRequest create(AccommodationRequest.Type type, AccommodationRequest.Details details, Host host, Long accommodationId) {
-        AccommodationRequest request = new AccommodationRequest(
-                -1L, LocalDateTime.now(), type, AccommodationRequest.Status.REQUESTED, details, host, accommodationId);
-        return repository.save(request);
+    public AccommodationRequest create(AccommodationRequest.Type type, AccommodationRequest.Details details, Host host, Long accommodationId) throws IOException {
+        AccommodationRequest request = repository.save(new AccommodationRequest(
+                -1L, LocalDateTime.now(), type, AccommodationRequest.Status.REQUESTED, details, host, accommodationId));
+
+        if (type.equals(AccommodationRequest.Type.UPDATE))
+            ImageUtil.copyFiles(AccommodationService.imagesDirPath + accommodationId,
+                    imagesDirPath + request.getId(), details.getNewImages());
+
+        return request;
     }
 
     public byte[] getImage(Long id, String imageName) throws IOException {

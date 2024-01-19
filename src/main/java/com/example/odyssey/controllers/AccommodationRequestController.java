@@ -71,7 +71,7 @@ public class AccommodationRequestController {
 
     @PreAuthorize("hasAuthority('HOST')")
     @PostMapping
-    public ResponseEntity<?> create(@Valid @RequestBody AccommodationRequestCreationDTO dto) {
+    public ResponseEntity<?> create(@Valid @RequestBody AccommodationRequestCreationDTO dto) throws IOException {
         AccommodationRequest.Details details = AccommodationDTOMapper.fromCreationDTOToAccommodationDetails(dto);
         details.setNewCancellationDue(Duration.ofDays(dto.getNewCancellationDue()));
 

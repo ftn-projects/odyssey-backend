@@ -1,6 +1,5 @@
 package com.example.odyssey.services;
 
-import com.example.odyssey.dtos.notifications.NotificationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ public class WebSocketService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public void notifyChange(Long userId) {
+    public void notificationChange(Long userId) {
         messagingTemplate.convertAndSend("/topic/notificationChange", userId);
     }
 }

@@ -47,7 +47,7 @@ public class GlobalErrorsHandler {
     }
 
     @ExceptionHandler({UnsupportedOperationException.class}) // FOR INVALID OPERATION
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<String> handleConstraintViolationException(UnsupportedOperationException e) {
         return new ResponseEntity<>(e.getMessage(), getHeaders("operation"), HttpStatus.UNAUTHORIZED);
     }
@@ -67,6 +67,7 @@ public class GlobalErrorsHandler {
     private MultiValueMap<String, String> getHeaders(String errorType) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Error-Type", errorType);
+        headers.add("Access-Control-Expose-Headers", "Error-Type");
         return headers;
     }
 }

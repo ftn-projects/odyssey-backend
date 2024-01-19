@@ -49,15 +49,8 @@ public class AccommodationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AccommodationDTO> findById(
-            @PathVariable Long id
-    ) {
-        Accommodation accommodation = service.findById(id);
-        AccommodationDTO accommodationDTO = new AccommodationDTO(accommodation);
-
-        if (accommodation != null)
-            return new ResponseEntity<>(new AccommodationDTO(accommodation), HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<AccommodationDTO> findById(@PathVariable Long id) {
+        return new ResponseEntity<>(new AccommodationDTO(service.findById(id)), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/totalPrice")
@@ -68,15 +61,12 @@ public class AccommodationController {
             @RequestParam(required = false) Integer guestNumber
     ) {
         Accommodation accommodation = service.findById(id);
-        AccommodationDTO accommodationDTO = new AccommodationDTO(accommodation);
+        AccommodationDTO accommodationDTO = new AccommodationDTO(service.findById(id));
 
-        if (accommodation != null) {
-            accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodation.getId(), dateStart, dateEnd, guestNumber));
-            accommodationDTO.setDefaultPrice(service.getPriceForDateRange(accommodation.getId(), dateStart, dateEnd));
+        accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodation.getId(), dateStart, dateEnd, guestNumber));
+        accommodationDTO.setDefaultPrice(service.getPriceForDateRange(accommodation.getId(), dateStart, dateEnd));
 
-            return new ResponseEntity<>(accommodationDTO, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(accommodationDTO, HttpStatus.OK);
     }
 
 //    @PreAuthorize("hasAuthority('GUEST')")

@@ -1,10 +1,8 @@
 package com.example.odyssey.services;
 
-import com.example.odyssey.entity.notifications.HostReviewedNotif;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.notifications.ReservationNotif;
 import com.example.odyssey.entity.reservations.Reservation;
-import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.exceptions.notifications.NotificationNotFoundException;
 import com.example.odyssey.repositories.NotificationRepository;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class NotificationService {
@@ -49,14 +46,14 @@ public class NotificationService {
 
     public Notification save(Notification notification) {
         Notification n = notificationRepository.save(notification);
-        webSocketService.notifyChange(n.getReceiver().getId());
+        webSocketService.notificationChange(n.getReceiver().getId());
         return n;
     }
 
     public void delete(Long id) {
         Long receiverId = findById(id).getReceiver().getId();
         notificationRepository.deleteById(id);
-        webSocketService.notifyChange(receiverId);
+        webSocketService.notificationChange(receiverId);
     }
 
     public void notifyRequested(Reservation reservation) {
