@@ -219,6 +219,7 @@ public class AccommodationService {
                     startDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " - " +
                     endDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
             document.add(new Paragraph("Number of accommodations: " + totalStatsDTO.getTotalAccommodations()));
+            document.add(new Paragraph("Total income: " + totalStatsDTO.getTotalIncome()));
             document.add(new Paragraph("Number of reservations: " + totalStatsDTO.getTotalReservations()));
 
 
@@ -249,6 +250,7 @@ public class AccommodationService {
                     startDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) + " - " +
                     endDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))));
             document.add(new Paragraph("Number of reservations: " + totalStatsDTO.getTotalReservations()));
+            document.add(new Paragraph("Total income: " + totalStatsDTO.getTotalIncome()));
 
 
             for (MonthlyStatsDTO monthlyStatsDTO : totalStatsDTO.getMonthlyStats()) {
