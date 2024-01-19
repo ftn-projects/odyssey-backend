@@ -87,12 +87,21 @@ public class AccommodationController {
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
 
-    @PostMapping(value="favorites/{guestId}/{accommodationId}")
+    @PutMapping(value="favorites/{guestId}/{accommodationId}")
     public ResponseEntity<?> addGuestFavorites(
             @PathVariable Long guestId,
             @PathVariable Long accommodationId
             ){
         service.addGuestFavorite(guestId, accommodationId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value="favorites/{guestId}/{accommodationId}")
+    public ResponseEntity<?> removeGuestFavorites(
+            @PathVariable Long guestId,
+            @PathVariable Long accommodationId
+    ){
+        service.removeGuestFavorite(guestId, accommodationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
