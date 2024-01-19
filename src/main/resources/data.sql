@@ -101,6 +101,14 @@ VALUES
     (4, 1), (4, 2), (4, 3), (4, 4), (4, 6), (4, 7), (4, 9),
     (5, 2), (5, 4), (5, 5), (5, 7), (5, 8), (5, 9);
 
+
+-- ------------------------- GUEST FAVORITES --------------------------- --
+INSERT INTO guest_favourited(accommodation_id, user_id)
+VALUES
+    (1,5), (2,5), (3,5), (4,5),
+    (3,6), (7,6),
+    (8,7);
+
 -- ------------------------- RESERVATIONS --------------------------- --
 
 INSERT INTO reservations (status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
