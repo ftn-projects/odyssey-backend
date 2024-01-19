@@ -79,16 +79,21 @@ public class AccommodationController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PreAuthorize("hasAuthority('GUEST')")
+//    @PreAuthorize("hasAuthority('GUEST')")
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
         List<Accommodation> accommodations = new ArrayList<>();
-
-
-        // accommodation = service.findByGuestFavorites(id);
-
-
+        accommodations = service.findByGuestFavorites(id);
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
+    }
+
+    @PostMapping(value="favorites/{guestId}/{accommodationId}")
+    public ResponseEntity<?> addGuestFavorites(
+            @PathVariable Long guestId,
+            @PathVariable Long accommodationId
+            ){
+        service.addGuestFavorite(guestId, accommodationId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}/images/{imageName}", produces = MediaType.IMAGE_JPEG_VALUE)

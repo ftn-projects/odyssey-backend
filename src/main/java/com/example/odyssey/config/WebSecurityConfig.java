@@ -97,7 +97,8 @@ public class WebSecurityConfig {
                         "/api/v1/users/login",
                         "/api/v1/users/register",
                         "/api/v1/users/confirmEmail/*",
-                        "/api/v1/reviews/accommodation"
+                        "/api/v1/reviews/accommodation",
+                        "api/v1/accommodations/favorites/*/*"
 
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET,
@@ -112,6 +113,7 @@ public class WebSecurityConfig {
                         "/api/v1/accommodations/stats/accommodation/*",
                         "/api/v1/accommodations/stats/host/*/file",
                         "/api/v1/accommodations/stats/host/*/all",
+                        "api/v1/accommodations/favorites/*",
                         "/api/v1/accommodations/stats/accommodation/*/file",
                         "/api/v1/accommodationRequests/*/images",
                         "/api/v1/reviews/*",

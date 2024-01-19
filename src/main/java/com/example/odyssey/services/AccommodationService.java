@@ -9,6 +9,7 @@ import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.Amenity;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
@@ -37,6 +38,9 @@ import java.util.List;
 public class AccommodationService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private AccommodationRepository accommodationRepository;
@@ -84,6 +88,38 @@ public class AccommodationService {
 
     public Accommodation save(Accommodation accommodation) {
         return accommodationRepository.save(accommodation);
+    }
+
+    public List<Accommodation> findByGuestFavorites(Long guestId){
+        List<Accommodation> accommodations = new ArrayList<>();
+        User user = userService.findById(guestId);
+        if(!(user instanceof Guest)){
+            return accommodations;
+        }
+        else{
+            Guest guest = (Guest) user;
+            Set<Accommodation> favoriteAccommodations = guest.getFavorites();
+            accommodations = new ArrayList<>(favoriteAccommodations);
+
+        }
+        return accommodations;
+    }
+
+    public void addGuestFavorite(Long guestId, Long accommodationId){
+        User user = userService.findById(guestId);
+        if(!(user instanceof Guest)){
+            return;
+        }
+        else{
+            Accommodation accommodation = getOne(accommodationId);
+            Guest guest = (Guest) user;
+            Set<Accommodation> accommodations;
+            accommodations = guest.getFavorites();
+            accommodations.add(accommodation);
+            guest.setFavorites(accommodations);
+            userRepository.save(user);
+        }
+
     }
 
     public boolean slotsOverlap(Set<AvailabilitySlot> slots) {
