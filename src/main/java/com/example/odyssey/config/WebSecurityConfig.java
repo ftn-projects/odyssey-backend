@@ -90,7 +90,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/ws/*").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE,
-                        "api/v1/reviews/accommodation/*").permitAll()
+                        "api/v1/reviews/accommodation/*",
+                        "api/v1/accommodations/favorites/*/*").permitAll()
                 .requestMatchers(HttpMethod.PUT,
                         "/api/v1/reviews/accommodation/report/*").permitAll()
                 .requestMatchers(HttpMethod.POST,

@@ -122,6 +122,22 @@ public class AccommodationService {
 
     }
 
+    public void removeGuestFavorite(Long guestId, Long accommodationId){
+        User user = userService.findById(guestId);
+        if(!(user instanceof Guest)){
+            return;
+        }
+        else{
+            Guest guest = (Guest) user;
+            Set<Accommodation> accommodations;
+            accommodations = guest.getFavorites();
+            accommodations.removeIf(accommodation -> accommodation.getId().equals(accommodationId));
+            guest.setFavorites(accommodations);
+            userRepository.save(user);
+        }
+
+    }
+
     public boolean slotsOverlap(Set<AvailabilitySlot> slots) {
         for (AvailabilitySlot i : slots)
             for (AvailabilitySlot j : slots)
