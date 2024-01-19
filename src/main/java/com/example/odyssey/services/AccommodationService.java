@@ -19,13 +19,10 @@ import com.example.odyssey.repositories.UserRepository;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 
@@ -78,7 +74,7 @@ public class AccommodationService {
         return accommodationRepository.findAll();
     }
 
-    public Accommodation getOne(Long id) {
+    public Accommodation findById(Long id) {
         return accommodationRepository.findById(id).orElseThrow(() -> new AccommodationNotFoundException(id));
     }
 
@@ -99,7 +95,7 @@ public class AccommodationService {
     }
 
     public byte[] getImage(Long id, String imageName) throws IOException {
-        getOne(id); // id validation
+        findById(id); // id validation
 
         String accommodationDirPath = imagesDirPath + id;
 
@@ -113,7 +109,7 @@ public class AccommodationService {
     }
 
     public List<String> getImageNames(Long id) throws IOException {
-        getOne(id); // id validation
+        findById(id); // id validation
 
         String accommodationDirPath = imagesDirPath + id;
 
@@ -150,7 +146,7 @@ public class AccommodationService {
             return (double) -1;
         LocalDateTime startDate = new ReservationService().convertToDate(startDateLong);
         LocalDateTime endDate = new ReservationService().convertToDate(endDateLong);
-        Accommodation accommodation = getOne(accommodationID);
+        Accommodation accommodation = findById(accommodationID);
 
         long days = endDate.toLocalDate().toEpochDay() - startDate.toLocalDate().toEpochDay() + 1;
         Double priceForRange = accommodationRepository.findPriceForDateRange(accommodationID, startDate, endDate);
@@ -189,7 +185,7 @@ public class AccommodationService {
     }
 
     public byte[] generatePeriodStatsPdfAccommodation(Long accommodationId, Long startDate, Long endDate) throws IOException, DocumentException {
-        Accommodation accommodation = getOne(accommodationId);
+        Accommodation accommodation = findById(accommodationId);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         if(accommodationId == null) return byteArrayOutputStream.toByteArray();
 
@@ -269,7 +265,7 @@ public class AccommodationService {
     }
 
     public AccommodationTotalStatsDTO generatePeriodStatsAccommodation(Long accommodationId, Long startDate, Long endDate) {
-        Accommodation accommodation = getOne(accommodationId);
+        Accommodation accommodation = findById(accommodationId);
         User host = userRepository.findById(accommodation.getHost().getId()).orElse(null);
         List<Reservation.Status> statuses = new ArrayList<>();
         statuses.add(Reservation.Status.ACCEPTED);

@@ -3,7 +3,6 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.reservations.ReservationDTO;
 import com.example.odyssey.dtos.reservations.ReservationRequestDTO;
 import com.example.odyssey.dtos.reservations.ReservationsAccreditDTO;
-import com.example.odyssey.entity.notifications.ReservationNotif;
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReservationDTOMapper;
@@ -89,7 +88,7 @@ public class ReservationController {
     public ResponseEntity<?> create(@RequestBody ReservationRequestDTO requestDTO) {
         Reservation reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
         reservation.setStatus(Reservation.Status.REQUESTED);
-        reservation.setAccommodation(accommodationService.getOne(requestDTO.getAccommodationId()));
+        reservation.setAccommodation(accommodationService.findById(requestDTO.getAccommodationId()));
         reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
         reservation = service.create(reservation);
         service.automaticApproval(reservation);

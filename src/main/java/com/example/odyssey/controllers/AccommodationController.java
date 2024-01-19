@@ -52,7 +52,7 @@ public class AccommodationController {
     public ResponseEntity<AccommodationDTO> findById(
             @PathVariable Long id
     ) {
-        Accommodation accommodation = service.getOne(id);
+        Accommodation accommodation = service.findById(id);
         AccommodationDTO accommodationDTO = new AccommodationDTO(accommodation);
 
         if (accommodation != null)
@@ -67,7 +67,7 @@ public class AccommodationController {
             @RequestParam(required = false) Long dateEnd,
             @RequestParam(required = false) Integer guestNumber
     ) {
-        Accommodation accommodation = service.getOne(id);
+        Accommodation accommodation = service.findById(id);
         AccommodationDTO accommodationDTO = new AccommodationDTO(accommodation);
 
         if (accommodation != null) {

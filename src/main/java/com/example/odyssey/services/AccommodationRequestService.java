@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class AccommodationRequestService {
@@ -53,7 +52,7 @@ public class AccommodationRequestService {
             accommodation = new Accommodation(request.getDetails());
             accommodation.setHost(request.getHost());
         } else {
-            accommodation = accommodationService.getOne(request.getAccommodationId());
+            accommodation = accommodationService.findById(request.getAccommodationId());
             accommodation.updateWithDetails(request.getDetails());
         }
 

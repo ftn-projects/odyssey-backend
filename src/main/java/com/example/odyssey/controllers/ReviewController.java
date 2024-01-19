@@ -5,11 +5,12 @@ import com.example.odyssey.dtos.reviews.HostReviewDTO;
 import com.example.odyssey.dtos.reviews.ReviewDTO;
 import com.example.odyssey.entity.notifications.AccommodationReviewedNotif;
 import com.example.odyssey.entity.notifications.HostReviewedNotif;
-import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
+import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReviewDTOMapper;
+import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.NotificationService;
 import com.example.odyssey.services.ReviewService;
 import com.example.odyssey.services.UserService;
@@ -30,6 +31,9 @@ public class ReviewController {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private AccommodationService accommodationService;
 
     @Autowired
     private UserService userService;
@@ -119,8 +123,7 @@ public class ReviewController {
                 ReviewDTOMapper.fromDTOtoHostReview(dto));
 
         notificationService.create(new HostReviewedNotif(review, review.getHost()));
-        userService.findAllAdmins().forEach(admin ->
-                notificationService.create(new HostReviewedNotif(review, admin)));
+        notificationService.create(new HostReviewedNotif(review, userService.getAdmin()));
 
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
@@ -128,12 +131,13 @@ public class ReviewController {
     //    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/accommodation")
     public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO dto) {
-        AccommodationReview review = service.saveAccommodationReview(
-                ReviewDTOMapper.fromDTOtoAccommodationReview(dto));
+        AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(dto);
+        review.setSubmitter((Guest) userService.findById(dto.getSubmitter().getId()));
+        review.setAccommodation(accommodationService.findById(dto.getAccommodation().getId()));
+        review = service.saveAccommodationReview(review);
 
         notificationService.create(new AccommodationReviewedNotif(review, review.getAccommodation().getHost()));
-        userService.findAllAdmins().forEach(admin ->
-                notificationService.create(new AccommodationReviewedNotif(review, admin)));
+        notificationService.create(new AccommodationReviewedNotif(review, userService.getAdmin()));
 
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }

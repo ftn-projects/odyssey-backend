@@ -166,7 +166,7 @@ public class UserService {
         return userRepository.findAllByFilters(search, roles, statuses, reported);
     }
 
-    public List<User> findAllAdmins() {
-        return userRepository.findAllByRole("ADMIN");
+    public User getAdmin() {
+        return userRepository.findAllByRole("ADMIN").get(0);
     }
 }
