@@ -370,8 +370,8 @@ public class AccommodationService {
     private List<MonthlyStatsDTO> calculateMonthlyStats(List<Reservation> reservations, Long startDate, Long endDate) {
         List<MonthlyStatsDTO> monthlyStats = new ArrayList<>();
 
-        LocalDateTime currentMonth = LocalDateTime.ofInstant(Instant.ofEpochMilli(startDate), ZoneId.systemDefault()).withDayOfMonth(1);
-        LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endDate), ZoneId.systemDefault()).withDayOfMonth(1);
+        LocalDateTime currentMonth = LocalDateTime.ofInstant(Instant.ofEpochMilli(startDate), ZoneId.systemDefault());
+        LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(endDate), ZoneId.systemDefault());
 
         while (!currentMonth.isAfter(endLocalDateTime)) {
             long startOfMonthMillis = currentMonth.toInstant(ZoneOffset.UTC).toEpochMilli();
