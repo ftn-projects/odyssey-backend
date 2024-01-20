@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
@@ -35,7 +36,7 @@ public class NotificationDTO {
         id = notification.getId();
         title = notification.getTitle();
         text = notification.getDescription();
-        date = notification.getDate();
+        date = notification.getDate().truncatedTo(ChronoUnit.SECONDS);
         read = notification.getRead();
         type = notification.getType();
         receiver = new UserDTO(notification.getReceiver());

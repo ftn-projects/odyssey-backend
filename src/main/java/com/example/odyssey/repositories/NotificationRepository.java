@@ -12,7 +12,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             "FROM Notification n " +
             "WHERE (:receiverId IS NULL OR n.receiver.id = :receiverId) " +
             "AND (COALESCE(:types, NULL) IS NULL OR n.type IN :types)" +
-            "AND (:read IS NULL OR :read = TRUE OR n.read = :read)")
+            "AND (:read IS NULL OR n.read = :read)")
     List<Notification> findAllByFilter(
             @Param("receiverId") Long receiverId,
             @Param("types") List<Notification.Type> types,
