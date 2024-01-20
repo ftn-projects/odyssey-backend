@@ -27,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 public class WebSecurityConfig {
     @Bean
@@ -86,9 +86,7 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/error").permitAll()
-                .requestMatchers("/ws").permitAll()
-                .requestMatchers("/ws/*").permitAll()
-                .requestMatchers("/ws/**").permitAll()
+                .requestMatchers("/websocket").permitAll()
                 .requestMatchers(HttpMethod.DELETE,
                         "api/v1/reviews/accommodation/*",
                         "api/v1/accommodations/favorites/*/*").permitAll()

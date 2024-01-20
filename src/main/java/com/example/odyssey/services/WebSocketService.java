@@ -14,6 +14,6 @@ public class WebSocketService {
     }
 
     public void notificationChange(Long userId) {
-        messagingTemplate.convertAndSend("/topic/notificationChange", userId);
+        messagingTemplate.convertAndSend("/topic/notifications", userId);
     }
 }
