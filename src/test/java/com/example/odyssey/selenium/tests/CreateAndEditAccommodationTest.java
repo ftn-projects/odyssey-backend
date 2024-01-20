@@ -32,5 +32,16 @@ public class CreateAndEditAccommodationTest extends TestBase{
         CreateAccommodationPage createAccommodationPage = new CreateAccommodationPage(driver);
         createAccommodationPage.waitUntilOpen();
         createAccommodationPage.inputTitle("Naslov");
+        createAccommodationPage.selectAmenity();
+        createAccommodationPage.inputPrice("200");
+        createAccommodationPage.inputDue("5");
+        createAccommodationPage.inputDescription("Opis");
+        createAccommodationPage.inputStreet("Armina Lajningena 32");
+        createAccommodationPage.inputCity("Titel");
+        createAccommodationPage.clickCalendar();
+        createAccommodationPage.selectDateRange();
+        createAccommodationPage.inputSlotPrice("200");
+        createAccommodationPage.addSlotClick();
+        createAccommodationPage.createClick();
     }
 }
