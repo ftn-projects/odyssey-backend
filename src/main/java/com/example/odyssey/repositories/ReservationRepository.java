@@ -63,18 +63,30 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
 
     @Query("SELECT DISTINCT r " +
-            "FROM Reservation  r " +
-            "LEFT JOIN FETCH r.guest g " +
-            "LEFT JOIN FETCH  r.accommodation a " +
-            "WHERE (:hostId IS NULL OR r.accommodation.host.id = :hostId) " +
-            "AND (:status IS NULL OR r.status IN :status) " +
+            "FROM Reservation r " +
+            "WHERE (:guestId IS NULL OR r.guest.id = :guestId) " +
+            "AND (r.status IN :statuses) " +
             "AND (:accommodationId IS NULL OR r.accommodation.id = :accommodationId) " +
-            "AND (cast(:reservationEndDate as localdatetime) IS NULL) " +
-            "OR (r.timeSlot.start <= :reservationEndDate AND r.timeSlot.end >= :reservationEndDate)")
-    List<Reservation> findAllWithFilterButCooler(
+            "AND  " +
+            "(r.timeSlot.end >= :reservationStartDate AND r.timeSlot.end <= :reservationEndDate)")
+    List<Reservation> findAllWithFilterAccommodationReview(
+            @Param("guestId") Long guestId,
+            @Param("accommodationId") Long accommodationId,
+            @Param("statuses") List<Reservation.Status> status,
+            @Param("reservationStartDate") LocalDateTime reservationStartDate,
+            @Param("reservationEndDate") LocalDateTime reservationEndDate);
+
+    @Query("SELECT DISTINCT r " +
+            "FROM Reservation  r " +
+            "WHERE (:guestId IS NULL OR r.guest.id = :guestId) " +
+            "AND (:hostId IS NULL OR r.accommodation.host.id = :hostId) " +
+            "AND (:status IS NULL OR r.status IN :status) " +
+            "AND (r.timeSlot.end >= :reservationStartDate AND r.timeSlot.end <= :reservationEndDate)")
+    List<Reservation> findAllWithFilterHostReview(
+            @Param("guestId") Long guestId,
             @Param("hostId") Long hostId,
             @Param("status") List<Reservation.Status> status,
-            @Param("accommodationId") Long accommodationId,
+            @Param("reservationStartDate") LocalDateTime reservationStartDate,
             @Param("reservationEndDate") LocalDateTime reservationEndDate);
 
 

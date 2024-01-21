@@ -97,6 +97,7 @@ public class WebSecurityConfig {
                         "/api/v1/users/register",
                         "/api/v1/users/confirmEmail/*",
                         "/api/v1/reviews/accommodation",
+                        "/api/v1/reviews/host",
                         "api/v1/accommodations/favorites/*/*"
 
                 ).permitAll()

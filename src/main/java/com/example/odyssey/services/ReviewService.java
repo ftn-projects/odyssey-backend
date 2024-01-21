@@ -78,7 +78,8 @@ public class ReviewService {
 
     public AccommodationReview saveAccommodationReview(AccommodationReview review) {
         review.setStatus(Review.Status.REQUESTED);
-        LocalDateTime endDate = LocalDateTime.now().minusMinutes(10080);
+        LocalDateTime startDate = LocalDateTime.now().minusMinutes(14400);
+        LocalDateTime endDate = LocalDateTime.now();
 
         List<Review.Status> reviewStatuses = Arrays.asList(
                 Review.Status.REQUESTED,
@@ -90,14 +91,14 @@ public class ReviewService {
                 Reservation.Status.ACCEPTED
         );
 
-        List<Reservation> reservations = reservationRepository.findAllWithFilterButCooler(
-                null,
-                reservationStatuses,
+        List<Reservation> reservations = reservationRepository.findAllWithFilterAccommodationReview(
+                review.getSubmitter().getId(),
                 review.getAccommodation().getId(),
+                reservationStatuses,
+                startDate,
                 endDate
         );
 
-        // Pass list of string values of enums
         List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(
                 null,
                 review.getAccommodation().getId(),
@@ -108,6 +109,7 @@ public class ReviewService {
         if (reservations.isEmpty()) {
             throw new ReviewException("You don't have a recent reservation for this accommodation");
         }
+
 
         if (reviews != null && !reviews.isEmpty()) {
             throw new ReviewException("You have already reviewed this accommodation");
@@ -121,7 +123,6 @@ public class ReviewService {
         if (review == null) throw new ReviewNotFoundException(id);
         review.setStatus(Review.Status.REPORTED);
         return accommodationReviewRepository.save(review);
-
     }
 
     public HostReview reportHostReview(Long id) {
@@ -132,28 +133,26 @@ public class ReviewService {
     }
 
     public HostReview saveHostReview(HostReview review) {
-        LocalDateTime startDate = LocalDateTime.now().minusMinutes(14400);
+        LocalDateTime startDate = LocalDateTime.now().minusMinutes(200000);
         LocalDateTime endDate = LocalDateTime.now();
-
         List<Review.Status> reviewStatuses = Arrays.asList(
                 Review.Status.REQUESTED,
                 Review.Status.REPORTED,
                 Review.Status.ACCEPTED
         );
 
-        List<String> reservationStatuses = Collections.singletonList(
-                Reservation.Status.ACCEPTED.toString()
+        List<Reservation.Status> reservationStatuses = Arrays.asList(
+                Reservation.Status.ACCEPTED
         );
-
-        List<Reservation> reservations = reservationService.getFilteredByHost(
+        List<Reservation> reservations = reservationRepository.findAllWithFilterHostReview(
+                review.getSubmitter().getId(),
                 review.getHost().getId(),
                 reservationStatuses,
-                null,
-                startDate.toEpochSecond(ZoneOffset.UTC),
-                endDate.toEpochSecond(ZoneOffset.UTC)
+                startDate,
+                endDate
         );
 
-        // Pass list of string values of enums
+
         List<HostReview> reviews = hostReviewRepository.findAllWithFilter(
                 null,
                 review.getHost().getId(),
@@ -161,7 +160,7 @@ public class ReviewService {
                 reviewStatuses
         );
 
-        if (reservations.isEmpty()) {
+        if (reservations == null || reservations.isEmpty()) {
             throw new ReviewException("You don't have a recent reservation at this host's accommodations");
         }
 
