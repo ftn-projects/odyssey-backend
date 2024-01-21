@@ -1,9 +1,7 @@
 package com.example.odyssey.entity.reports;
 
 import com.example.odyssey.entity.users.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +15,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_reports")
-public class UserReport extends Report {
+public class UserReport {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String description;
+    private LocalDateTime submissionDate;
     @ManyToOne
-    private User reportedUser;
-
-    public UserReport(Long id, String description, LocalDateTime submissionDate, User submitter, User reportedUser) {
-        super(id, description, submissionDate, submitter);
-        this.reportedUser = reportedUser;
-    }
+    private User submitter;
+    @ManyToOne
+    private User reported;
 }

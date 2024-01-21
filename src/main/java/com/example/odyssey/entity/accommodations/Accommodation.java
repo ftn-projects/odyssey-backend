@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,11 +25,9 @@ public class Accommodation {
     private Long id;
     private String title;
     private String description;
-    @Enumerated(value = EnumType.ORDINAL)
     private Type type;
     @Embedded
     private Address address;
-    @Enumerated(value = EnumType.ORDINAL)
     private PricingType pricing;
     private Double defaultPrice;
     private Boolean automaticApproval;
@@ -47,5 +46,34 @@ public class Accommodation {
 
     public enum Type {APARTMENT, ROOM, HOUSE} // ako je usko vezana uz klasu najbolje da bude u njoj
 
-    public enum PricingType {PER_PERSON, PER_ACCOMMODATION}
+    public enum PricingType {PER_PERSON, PER_NIGHT}
+
+    public Accommodation(AccommodationRequest.Details details) {
+        this();
+        updateWithDetails(details);
+    }
+
+    public void updateWithDetails(AccommodationRequest.Details details) {
+        title = details.getNewTitle();
+        description = details.getNewDescription();
+        type = details.getNewAccommodationType();
+        address = new Address(details.getNewAddress());
+        pricing = details.getNewPricing();
+        defaultPrice = details.getNewDefaultPrice();
+        automaticApproval = details.getNewAutomaticApproval();
+        cancellationDue = details.getNewCancellationDue();
+        minGuests = details.getNewMinGuests();
+        maxGuests = details.getNewMaxGuests();
+
+        availableSlots = new HashSet<>(details.getNewAvailableSlots());
+        amenities = new HashSet<>(details.getNewAmenities());
+        images = new HashSet<>(details.getNewImages());
+    }
+
+    public Double getDatesPrice(LocalDate date) {
+        for (AvailabilitySlot x : availableSlots)
+            if (x.getTimeSlot().containsDay(date))
+                return x.getPrice();
+        return null;
+    }
 }

@@ -1,74 +1,81 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.reports.ReportDTO;
-import com.example.odyssey.dtos.reports.ReviewReportDTO;
-import com.example.odyssey.dtos.reports.UserReportDTO;
-import com.example.odyssey.entity.reports.Report;
-import com.example.odyssey.entity.reports.ReviewReport;
+import com.example.odyssey.dtos.reports.UserReportSubmissionDTO;
+import com.example.odyssey.dtos.users.UserWithReportsDTO;
 import com.example.odyssey.entity.reports.UserReport;
-import com.example.odyssey.mappers.ReportDTOMapper;
+import com.example.odyssey.entity.users.Guest;
+import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.entity.users.User;
+import com.example.odyssey.services.ReportService;
+import com.example.odyssey.services.ReviewService;
+import com.example.odyssey.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/reports")
 public class ReportController {
-//    @Autowired
-//    private ReportService service;
-//
-//    @Autowired
-//    public ReportController(ReportService service) {
-//        this.service = service;
-//    }
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ReportService reportService;
+    @Autowired
+    private ReviewService reviewService;
 
-    private final List<ReviewReport> reviewData = DummyData.getReviewReports();
-    private final List<UserReport> userData = DummyData.getUserReports();
-
-    @GetMapping("/review")
-    public ResponseEntity<List<ReviewReportDTO>> getAllReviewReports() {
-        List<ReviewReport> reports = reviewData;
-
-//        service.getAllReviewReports();
-
-        return new ResponseEntity<>(reports.stream().map(ReviewReportDTO::new).toList(), HttpStatus.OK);
-    }
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/user")
-    public ResponseEntity<List<UserReportDTO>> getAllUserReports() {
-        List<UserReport> reports = userData;
-
-//        service.getAllReviewReports();
-
-        return new ResponseEntity<>(reports.stream().map(UserReportDTO::new).toList(), HttpStatus.OK);
+    public ResponseEntity<?> getAllUsersWithReports(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<String> roles,
+            @RequestParam(required = false) List<User.AccountStatus> statuses,
+            @RequestParam(required = false) Boolean reported
+    ) {
+        List<UserWithReportsDTO> users = userService
+                .getWithFilters(search, roles, statuses, reported)
+                .stream().map(user ->
+                        new UserWithReportsDTO(user, reportService.findByReportedId(user.getId()))
+                ).toList();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/review")
-    public ResponseEntity<ReviewReportDTO> createReviewReport(@RequestBody ReviewReportDTO reportDTO) {
-        ReviewReport report = ReportDTOMapper.fromDTOtoReviewReport(reportDTO);
-
-//        service.saveReviewReport(report);
-
-        return new ResponseEntity<>(ReportDTOMapper.fromReviewReportToDTO(report), HttpStatus.CREATED);
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> findUserWithReports(@PathVariable("id") Long id) {
+        UserWithReportsDTO user = new UserWithReportsDTO(
+                userService.findById(id), reportService.findByReportedId(id));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('USER')")
+    @PostMapping("/review/{id}")
+    public ResponseEntity<?> reportReview(@PathVariable Long id) {
+        reviewService.reportReview(id);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/user")
-    public ResponseEntity<UserReportDTO> createUserReport(@RequestBody UserReportDTO reportDTO) {
-        UserReport report = ReportDTOMapper.fromDTOtoUserReport(reportDTO);
-
-//        service.saveUserReport(report);
-
-        return new ResponseEntity<>(ReportDTOMapper.fromUserReportToDTO(report), HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ReportDTO> delete(@PathVariable Long id) {
-        Report report = reviewData.get(0);
-
-//        report = service.delete(id);
-
-        return new ResponseEntity<>(ReportDTOMapper.fromReportToDTO(report), HttpStatus.OK);
+    public ResponseEntity<?> reportUser(@RequestBody UserReportSubmissionDTO dto) {
+        User submitter = userService.findById(dto.getSubmitterId());
+        if (submitter.hasRole("HOST")) {
+            reportService.createHostReportGuest(new UserReport(-1L,
+                    dto.getDescription(),
+                    LocalDateTime.now(),
+                    userService.findById(dto.getSubmitterId()),
+                    userService.findById(dto.getReportedId())));
+        } else {
+            reportService.createGuestReportHost(new UserReport(-1L,
+                    dto.getDescription(),
+                    LocalDateTime.now(),
+                    userService.findById(dto.getSubmitterId()),
+                    userService.findById(dto.getReportedId())));
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

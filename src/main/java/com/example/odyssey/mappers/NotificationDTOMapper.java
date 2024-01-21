@@ -1,9 +1,7 @@
 package com.example.odyssey.mappers;
 
 import com.example.odyssey.dtos.notifications.NotificationDTO;
-import com.example.odyssey.dtos.reservation.ReservationDTO;
 import com.example.odyssey.entity.notifications.Notification;
-import com.example.odyssey.entity.reservations.Reservation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

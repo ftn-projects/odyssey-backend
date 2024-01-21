@@ -1,10 +1,7 @@
 package com.example.odyssey.mappers;
 
-import com.example.odyssey.dtos.accommodations.AccommodationDTO;
 import com.example.odyssey.dtos.users.RegistrationDTO;
 import com.example.odyssey.dtos.users.UserDTO;
-import com.example.odyssey.entity.accommodations.Accommodation;
-import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import org.modelmapper.ModelMapper;
@@ -21,11 +18,7 @@ public class UserDTOMapper {
     }
 
     public static User fromDTOtoUser(UserDTO dto) {
-        return switch (dto.getRole()) {
-            case HOST -> mapper.map(dto, Host.class);
-            case GUEST -> mapper.map(dto, Guest.class);
-            default -> mapper.map(dto, User.class);
-        };
+        return mapper.map(dto, User.class);
     }
 
     public static User fromRegistrationDTOtoUser(RegistrationDTO dto) {
@@ -35,7 +28,7 @@ public class UserDTOMapper {
     }
 
     public static UserDTO fromUserToDTO(User user) {
-        if (user.getRole().equals(User.Role.HOST))
+        if (user.getRoles().get(0).getName().equals("HOST"))
             return new UserDTO((Host) user);
         return new UserDTO(user);
     }

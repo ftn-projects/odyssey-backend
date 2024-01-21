@@ -2,6 +2,7 @@ package com.example.odyssey.dtos.accommodations;
 
 import com.example.odyssey.dtos.TimeSlotDTO;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

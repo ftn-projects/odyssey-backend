@@ -1,7 +1,7 @@
 package com.example.odyssey.dtos;
 
-import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.TimeSlot;
+import com.example.odyssey.validation.TimeSlotConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@TimeSlotConstraint
 public class TimeSlotDTO {
     private LocalDateTime start;
     private LocalDateTime end;

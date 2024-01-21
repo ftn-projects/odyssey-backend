@@ -1,107 +1,127 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.reservation.ReservationDTO;
+import com.example.odyssey.dtos.reservations.ReservationDTO;
+import com.example.odyssey.dtos.reservations.ReservationRequestDTO;
+import com.example.odyssey.dtos.reservations.ReservationsAccreditDTO;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReservationDTOMapper;
+import com.example.odyssey.mappers.ReservationRequestDTOMapper;
+import com.example.odyssey.services.AccommodationService;
+import com.example.odyssey.services.NotificationService;
+import com.example.odyssey.services.ReservationService;
+import com.example.odyssey.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(value = "/api/v1/reservations")
 public class ReservationController {
-//    @Autowired
-//    private ReservationService service;
-//
-//    @Autowired
-//    public ReservationController(ReservationService service) {
-//        this.service = service;
-//    }
-
-    private final List<Reservation> data = DummyData.getReservations();
+    @Autowired
+    private ReservationService service;
+    @Autowired
+    private AccommodationService accommodationService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private NotificationService notificationService;
 
     // GET method for getting all reservations
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<ReservationDTO>> getAll() {
-        List<Reservation> reservations = data;
-
-//        reservations = service.getAll();
+    public ResponseEntity<?> getAll() {
+        List<Reservation> reservations = service.getAll();
 
         return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
     }
 
     // GET method for getting all reservations for accommodation
+    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
-    public ResponseEntity<List<ReservationDTO>> getByAccommodationId(@PathVariable Long id) {
-        List<Reservation> reservations = data.subList(0, 3);
-
-//        reservations = service.getByAccommodationId(id);
+    public ResponseEntity<?> getByAccommodationId(@PathVariable Long id) {
+        List<Reservation> reservations = service.findByAccommodation(id);
 
         return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
     }
 
     // GET method for getting all reservations for guest
+    @PreAuthorize("hasAuthority('GUEST')")
     @GetMapping("/guest/{id}")
-    public ResponseEntity<List<ReservationDTO>> getByGuestId(
+    public ResponseEntity<?> getByGuestId(
             @PathVariable Long id,
-            @RequestParam(required = false) Long accommodationId,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate) {
-        List<Reservation> reservations = data.subList(2, 4);
+        List<Reservation> reservations;
 
-//        reservations = service.getByGuestId(id);
-//        reservations = service.filter(reservations, accommodationId, status, startDate, endDate);
+        reservations = service.getFilteredByGuest(id, status, title, startDate, endDate);
 
-        return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
+        return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
     // GET method for getting all reservations for host
+    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
-    public ResponseEntity<List<ReservationDTO>> getReservationsByHost(
+    public ResponseEntity<?> getReservationsByHost(
             @PathVariable Long id,
-            @RequestParam(required = false) Long accommodationId,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate) {
-        List<Reservation> reservations = data.subList(1, 4);
+        List<Reservation> reservations;
 
-//        reservations = service.getByHostId(id);
-//        reservations = service.filter(reservations, accommodationId, status, startDate, endDate);
+        reservations = service.getFilteredByHost(id, status, title, startDate, endDate);
 
-        return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
+        return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
     // POST method for creating a reservation
+    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping
-    public ResponseEntity<ReservationDTO> create(@RequestBody ReservationDTO reservationDTO) {
-        Reservation reservation = ReservationDTOMapper.fromDTOtoReservation(reservationDTO);
+    public ResponseEntity<?> create(@RequestBody ReservationRequestDTO requestDTO) {
+        Reservation reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
+        reservation.setStatus(Reservation.Status.REQUESTED);
+        reservation.setAccommodation(accommodationService.findById(requestDTO.getAccommodationId()));
+        reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
+        reservation = service.create(reservation);
+        service.automaticApproval(reservation);
 
-//        reservation = service.create(reservation);
-
+        notificationService.notifyRequested(reservation);
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.CREATED);
     }
 
     // PUT method for updating a reservation status
-    @PutMapping("/{id}/status")
-    public ResponseEntity<ReservationDTO> updateStatus(
+    @PreAuthorize("hasAuthority('HOST') || hasAuthority('GUEST')")
+    @PutMapping("/status/{id}")
+    public ResponseEntity<?> updateStatus(
             @PathVariable Long id,
             @RequestParam String status
     ) {
-        Reservation reservation = data.stream().filter((r) -> Objects.equals(r.getId(), id))
-                .findFirst().orElse(new Reservation());
+        Reservation reservation = service.find(id);
+        service.updateStatus(reservation, status);
 
-//        reservation = service.getById(id);
-        reservation.setStatus(Reservation.Status.valueOf(status));
-//        reservation = service.update(reservation);
+        if (reservation.getStatus().equals(Reservation.Status.CANCELLED_RESERVATION))
+            notificationService.notifyCancelled(reservation);
+        else if (reservation.getStatus().equals(Reservation.Status.ACCEPTED))
+            notificationService.notifyAccepted(reservation);
+        else if (reservation.getStatus().equals(Reservation.Status.DECLINED))
+            notificationService.notifyDeclined(reservation);
 
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }
 
     private static List<ReservationDTO> mapToDTO(List<Reservation> reservations) {
         return reservations.stream().map(ReservationDTO::new).toList();
+    }
+
+    private List<ReservationsAccreditDTO> mapToAccreditDTO(List<Reservation> reservations) {
+        return reservations.stream().map(r -> new ReservationsAccreditDTO(r, service.getCancellationNumber(r.getGuest().getId()))).toList();
     }
 }
