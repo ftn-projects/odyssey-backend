@@ -2,7 +2,12 @@ package com.example.odyssey.services;
 
 import com.example.odyssey.entity.accommodations.Accommodation;
 import com.example.odyssey.entity.accommodations.AccommodationRequest;
+import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.exceptions.AvailabilitySlotsOverlappingException;
+import com.example.odyssey.exceptions.InputValidationException;
+import com.example.odyssey.exceptions.InvalidAvailabilitySlotException;
+import com.example.odyssey.exceptions.SlotHasReservationsException;
 import com.example.odyssey.exceptions.FieldValidationException;
 import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
 import com.example.odyssey.repositories.AccommodationRequestRepository;
@@ -19,6 +24,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 @Service
 public class AccommodationRequestService {
@@ -26,6 +33,8 @@ public class AccommodationRequestService {
     private AccommodationRequestRepository repository;
     @Autowired
     private AccommodationService accommodationService;
+    @Autowired
+    private ReservationService reservationService;
 
     private final String imagesDirPath = "src/main/resources/images/accommodationRequests/";
 
@@ -61,15 +70,26 @@ public class AccommodationRequestService {
                 AccommodationService.imagesDirPath + id);
     }
 
-    public AccommodationRequest create(AccommodationRequest.Type type, AccommodationRequest.Details details, Host host, Long accommodationId) throws IOException {
-        AccommodationRequest request = repository.save(new AccommodationRequest(
-                -1L, LocalDateTime.now(), type, AccommodationRequest.Status.REQUESTED, details, host, accommodationId));
+    public AccommodationRequest create(AccommodationRequest.Type type, AccommodationRequest.Details details, Host host, Long accommodationId) {
+        AccommodationRequest request = new AccommodationRequest(
+                -1L, LocalDateTime.now(), type, AccommodationRequest.Status.REQUESTED, details, host, accommodationId);
 
-        if (type.equals(AccommodationRequest.Type.UPDATE))
-            ImageUtil.copyFiles(AccommodationService.imagesDirPath + accommodationId,
-                    imagesDirPath + request.getId(), details.getNewImages());
+        Set<AvailabilitySlot> slots = request.getDetails().getNewAvailableSlots();
 
-        return request;
+         for(AvailabilitySlot slot: slots){
+             if(slot.getPrice() == null || slot.getTimeSlot().getStart() == null || slot.getTimeSlot().getEnd() == null
+                     || slot.getPrice()<=0 || slot.getTimeSlot().getEnd().isBefore(LocalDateTime.now())
+                     || !slot.getTimeSlot().getStart().isBefore(slot.getTimeSlot().getEnd())) throw new InvalidAvailabilitySlotException("newAvailableSlots");
+
+             if(request.getType().equals(AccommodationRequest.Type.UPDATE) &&
+                     reservationService.overlapsReservation(request.getAccommodationId(), slot.getTimeSlot())) throw new SlotHasReservationsException("newAvailableSlots");
+
+             for(AvailabilitySlot s: slots){
+                 if(!s.equals(slot) && s.getTimeSlot().overlaps(slot.getTimeSlot())) throw new AvailabilitySlotsOverlappingException("newAvailableSlots");
+             }
+         }
+
+        return repository.save(request);
     }
 
     public byte[] getImage(Long id, String imageName) throws IOException {
