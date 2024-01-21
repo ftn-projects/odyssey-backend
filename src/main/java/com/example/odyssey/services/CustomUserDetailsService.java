@@ -1,5 +1,6 @@
 package com.example.odyssey.services;
 
+import com.example.odyssey.exceptions.users.UserNotFoundException;
 import com.example.odyssey.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findUserByEmail(email).orElseThrow(() ->
-                new NoSuchElementException(String.format("User with the email '%s' does not exist.", email)));
+        return userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("email", email));
     }
 }

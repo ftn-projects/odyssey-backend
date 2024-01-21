@@ -8,6 +8,8 @@ import com.example.odyssey.exceptions.AvailabilitySlotsOverlappingException;
 import com.example.odyssey.exceptions.InputValidationException;
 import com.example.odyssey.exceptions.InvalidAvailabilitySlotException;
 import com.example.odyssey.exceptions.SlotHasReservationsException;
+import com.example.odyssey.exceptions.FieldValidationException;
+import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
 import com.example.odyssey.repositories.AccommodationRequestRepository;
 import com.example.odyssey.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +43,7 @@ public class AccommodationRequestService {
     }
 
     public AccommodationRequest findById(Long id) {
-        return repository.findById(id).orElseThrow(() ->
-                new NoSuchElementException(String.format("Accommodation request with id '%d' does not exist.", id)));
+        return repository.findById(id).orElseThrow(() -> new AccommodationNotFoundException(id));
     }
 
     public void editStatus(AccommodationRequest request, AccommodationRequest.Status status) throws IOException {
@@ -60,13 +61,12 @@ public class AccommodationRequestService {
             accommodation = new Accommodation(request.getDetails());
             accommodation.setHost(request.getHost());
         } else {
-            accommodation = accommodationService.getOne(request.getAccommodationId());
+            accommodation = accommodationService.findById(request.getAccommodationId());
             accommodation.updateWithDetails(request.getDetails());
         }
 
         Long id = accommodationService.save(accommodation).getId();
-        ImageUtil.copyFiles(
-                imagesDirPath + request.getId(),
+        ImageUtil.copyFiles(imagesDirPath + request.getId(),
                 AccommodationService.imagesDirPath + id);
     }
 
@@ -127,7 +127,7 @@ public class AccommodationRequestService {
 
     public void uploadImage(Long id, MultipartFile image) throws IOException {
         if (image.getOriginalFilename() == null)
-            throw new IOException("Image is non existing.");
+            throw new FieldValidationException("Image is non existing.", "image");
 
         findById(id); // id validation
 

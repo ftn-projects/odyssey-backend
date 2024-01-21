@@ -58,6 +58,7 @@ public class Accommodation {
         description = details.getNewDescription();
         type = details.getNewAccommodationType();
         address = new Address(details.getNewAddress());
+        pricing = details.getNewPricing();
         defaultPrice = details.getNewDefaultPrice();
         automaticApproval = details.getNewAutomaticApproval();
         cancellationDue = details.getNewCancellationDue();

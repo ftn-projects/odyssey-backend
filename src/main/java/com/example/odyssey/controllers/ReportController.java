@@ -4,6 +4,9 @@ import com.example.odyssey.dtos.reports.UserReportDTO;
 import com.example.odyssey.dtos.reports.UserReportSubmissionDTO;
 import com.example.odyssey.dtos.users.UserWithReportsDTO;
 import com.example.odyssey.entity.reports.UserReport;
+import com.example.odyssey.entity.reviews.Review;
+import com.example.odyssey.entity.users.Host;
+import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.ReportDTOMapper;
 import com.example.odyssey.services.ReportService;
 import com.example.odyssey.services.ReviewService;
@@ -29,10 +32,17 @@ public class ReportController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/user")
-    public ResponseEntity<?> getAllUsersWithReports() {
-        List<UserWithReportsDTO> users = userService.getAll().stream().map(user ->
-                new UserWithReportsDTO(user, reportService.findByReportedId(user.getId()))
-        ).toList();
+    public ResponseEntity<?> getAllUsersWithReports(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<String> roles,
+            @RequestParam(required = false) List<User.AccountStatus> statuses,
+            @RequestParam(required = false) Boolean reported
+            ) {
+        List<UserWithReportsDTO> users = userService
+                .getWithFilters(search, roles, statuses, reported)
+                .stream().map(user ->
+                        new UserWithReportsDTO(user, reportService.findByReportedId(user.getId()))
+                ).toList();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

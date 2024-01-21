@@ -3,11 +3,17 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.reviews.AccommodationReviewDTO;
 import com.example.odyssey.dtos.reviews.HostReviewDTO;
 import com.example.odyssey.dtos.reviews.ReviewDTO;
+import com.example.odyssey.entity.notifications.AccommodationReviewedNotif;
+import com.example.odyssey.entity.notifications.HostReviewedNotif;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
+import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReviewDTOMapper;
+import com.example.odyssey.services.AccommodationService;
+import com.example.odyssey.services.NotificationService;
 import com.example.odyssey.services.ReviewService;
+import com.example.odyssey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +29,15 @@ public class ReviewController {
     @Autowired
     private ReviewService service;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private AccommodationService accommodationService;
+
+    @Autowired
+    private UserService userService;
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll(
@@ -34,6 +49,8 @@ public class ReviewController {
         List<Review> reviews = service.getAllFiltered(search, statuses, types);
         return new ResponseEntity<>(reviews.stream().map(this::mapReviewToDTO).toList(), HttpStatus.OK);
     }
+
+
 
     //    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
@@ -56,6 +73,17 @@ public class ReviewController {
     ) {
         List<AccommodationReview> reviews = service
                 .getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes);
+        return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/accommodation/host/{id}")
+    public ResponseEntity<?> getAllAccommodationReviewsByHost(
+            @PathVariable Long id,
+            @RequestParam(required = false) List<Review.Status> listTypes
+    ) {
+        List<AccommodationReview> reviews = service
+                .getAllAccommodationReviewsByHost(id, listTypes);
+        if(listTypes==null) System.out.println("List types is null");
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
@@ -91,20 +119,26 @@ public class ReviewController {
 
     @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/host")
-    public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO reviewDTO) {
-        HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
+    public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO dto) {
+        HostReview review = service.saveHostReview(
+                ReviewDTOMapper.fromDTOtoHostReview(dto));
 
-        review = service.saveHostReview(review);
+        notificationService.create(new HostReviewedNotif(review, review.getHost()));
+        notificationService.create(new HostReviewedNotif(review, userService.getAdmin()));
 
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
 
     //    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping("/accommodation")
-    public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO reviewDTO) {
-        AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(reviewDTO);
-
+    public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO dto) {
+        AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(dto);
+        review.setSubmitter((Guest) userService.findById(dto.getSubmitter().getId()));
+        review.setAccommodation(accommodationService.findById(dto.getAccommodation().getId()));
         review = service.saveAccommodationReview(review);
+
+        notificationService.create(new AccommodationReviewedNotif(review, review.getAccommodation().getHost()));
+        notificationService.create(new AccommodationReviewedNotif(review, userService.getAdmin()));
 
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }

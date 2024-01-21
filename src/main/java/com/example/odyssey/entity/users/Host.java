@@ -2,6 +2,7 @@ package com.example.odyssey.entity.users;
 
 import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.accommodations.Accommodation;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -21,18 +22,18 @@ import java.util.Set;
 @DiscriminatorValue(value = "HOST")
 public class Host extends User {
     private String bio;
-    @OneToMany(mappedBy = "host")
+    @OneToMany(mappedBy = "host", cascade = CascadeType.ALL)
     private Set<Accommodation> accommodations;
 
-    public Host(User user){
+    public Host(User user) {
         this(user.getId(), user.getStatus(), user.getName(), user.getSurname(), user.getEmail(),
                 user.getPassword(), user.getAddress(), user.getPhone(), user.getProfileImage(),
-                user.getSettings(),user.getRoles(),"",new HashSet<>());
+                user.getSettings(), user.getRoles(), "", new HashSet<>());
 
     }
 
-    public Host(Long id,AccountStatus status, String name, String surname, String email, String password, Address address,
-                String phone, String profileImage, User.Settings settings, List<Role> roles, String bio, Set<Accommodation> accommodations) {
+    public Host(Long id, AccountStatus status, String name, String surname, String email, String password, Address address,
+                String phone, String profileImage, NotificationSettings settings, List<Role> roles, String bio, Set<Accommodation> accommodations) {
         super(id, status, name, surname, email, password, address, phone, profileImage, settings, LocalDateTime.now(), roles);
         this.bio = bio;
         this.accommodations = accommodations;

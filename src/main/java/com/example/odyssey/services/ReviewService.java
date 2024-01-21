@@ -4,8 +4,9 @@ import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
-import com.example.odyssey.exceptions.CoolerReviewException;
-import com.example.odyssey.exceptions.ReviewException;
+import com.example.odyssey.exceptions.reviews.CoolerReviewException;
+import com.example.odyssey.exceptions.reviews.ReviewException;
+import com.example.odyssey.exceptions.reviews.ReviewNotFoundException;
 import com.example.odyssey.repositories.AccommodationReviewRepository;
 import com.example.odyssey.repositories.HostReviewRepository;
 import com.example.odyssey.repositories.ReservationRepository;
@@ -44,6 +45,10 @@ public class ReviewService {
         return accommodationReviewRepository.findAllWithFilter(null, accommodationId, submitterId, listStatuses);
     }
 
+    public List<AccommodationReview> getAllAccommodationReviewsByHost(Long hostId, List<AccommodationReview.Status> listStatuses) {
+        return accommodationReviewRepository.findAllByHost(hostId, listStatuses);
+    }
+
     public List<HostReview> getAllHostReviewsFiltered(Long hostId, Long submitterId, List<HostReview.Status> listStatuses) {
         return hostReviewRepository.findAllWithFilter(null, hostId, submitterId, listStatuses);
     }
@@ -59,7 +64,7 @@ public class ReviewService {
     public Review findById(Long id) {
         Review review = findAccommodationReviewById(id);
         if (review == null) review = findHostReviewById(id);
-        if (review == null) throw new NoSuchElementException(String.format("Review with id '%d' does not exist.", id));
+        if (review == null) throw new ReviewNotFoundException(id);
         return review;
     }
 

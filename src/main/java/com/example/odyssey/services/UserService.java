@@ -4,7 +4,11 @@ import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
-import com.example.odyssey.exceptions.InputValidationException;
+import com.example.odyssey.exceptions.FieldValidationException;
+import com.example.odyssey.exceptions.ValidationException;
+import com.example.odyssey.exceptions.users.FailedActivationException;
+import com.example.odyssey.exceptions.users.FailedDeactivationException;
+import com.example.odyssey.exceptions.users.UserNotFoundException;
 import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
 import com.example.odyssey.util.EmailUtil;
@@ -42,8 +46,7 @@ public class UserService {
     }
 
     public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(() ->
-                new NoSuchElementException(String.format("User with id '%d' does not exist.", id)));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public User register(User user, String role) {
@@ -61,27 +64,23 @@ public class UserService {
     }
 
     public User findByEmail(String email) {
-        return userRepository.findUserByEmail(email).orElseThrow(() ->
-                new NoSuchElementException(String.format("User with the email '%s' does not exist.", email)));
+        return userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("email", email));
     }
 
     public void updatePassword(Long id, String oldPassword, String newPassword) {
         User user = findById(id);
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword()))
-            throw new InputValidationException("Current password is incorrect.", "Old password");
+            throw new FieldValidationException("Password is incorrect.", "Current password");
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
     public void deactivate(Long id) {
-        User user = findById(id);
-
-        if (!canDeactivate(user))
-            throw new UnsupportedOperationException("Account deactivation failed because you have active reservations.");
-
-        updateAccountStatus(user, User.AccountStatus.DEACTIVATED);
+        if (!canDeactivate(findById(id)))
+            throw new FailedDeactivationException("because you have active reservations");
+        updateAccountStatus(id, User.AccountStatus.DEACTIVATED);
     }
 
     private boolean canDeactivate(User user) {
@@ -98,24 +97,28 @@ public class UserService {
     }
 
     public void block(Long id) {
+        reservationService.declineAllForGuest(id);
+        updateAccountStatus(id, User.AccountStatus.BLOCKED);
+    }
+
+    public void activate(Long id) {
+        updateAccountStatus(id, User.AccountStatus.ACTIVE);
+    }
+
+    public User updateAccountStatus(Long id, User.AccountStatus status) {
         User user = findById(id);
-        updateAccountStatus(user, User.AccountStatus.BLOCKED);
-    }
-
-    public void updateAccountStatus(User user, User.AccountStatus status) {
         user.setStatus(status);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void confirmEmail(Long id) {
+    public User confirmEmail(Long id) {
         try {
-            User user = findById(id);
-            if (user.getStatus().equals(User.AccountStatus.PENDING))
-                throw new UnsupportedOperationException("User account has already been activated.");
+            if (findById(id).getStatus().equals(User.AccountStatus.PENDING))
+                throw new FailedActivationException("User account has already been activated.");
 
-            updateAccountStatus(user, User.AccountStatus.ACTIVE);
+            return updateAccountStatus(id, User.AccountStatus.ACTIVE);
         } catch (NoSuchElementException e) {
-            throw new UnsupportedOperationException("Invalid email activation link.");
+            throw new FailedActivationException("Invalid email activation link.");
         }
     }
 
@@ -146,7 +149,7 @@ public class UserService {
         User user = findById(id);
 
         if (image.getOriginalFilename() == null)
-            throw new IOException("Image upload file cannot be found.");
+            throw new ValidationException("Image upload file cannot be found.");
 
         String uploadDir = StringUtils.cleanPath(imagesDirPath + id);
         ImageUtil.saveImage(uploadDir, "profile.png", image);
@@ -156,5 +159,14 @@ public class UserService {
 
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    public List<User> getWithFilters(String search, List<String> roles, List<User.AccountStatus> statuses, Boolean reported) {
+        search = search == null ? null : search.toUpperCase();
+        return userRepository.findAllByFilters(search, roles, statuses, reported);
+    }
+
+    public User getAdmin() {
+        return userRepository.findAllByRole("ADMIN").get(0);
     }
 }

@@ -2,9 +2,11 @@ package com.example.odyssey.controllers;
 
 import com.example.odyssey.dtos.users.*;
 import com.example.odyssey.entity.Address;
+import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.mappers.UserDTOMapper;
+import com.example.odyssey.services.NotificationService;
 import com.example.odyssey.services.UserService;
 import com.example.odyssey.util.TokenUtil;
 import jakarta.validation.Valid;
@@ -28,6 +30,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService service;
+    @Autowired
+    private NotificationService notificationService;
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -81,6 +85,7 @@ public class UserController {
         address.setCity(dto.getAddress().getCity());
         address.setCountry(dto.getAddress().getCountry());
         user.setAddress(address);
+        user.setSettings(dto.getSettings());
 
         if (user instanceof Host) ((Host) user).setBio(dto.getBio());
 
@@ -98,7 +103,9 @@ public class UserController {
 
     @PostMapping("/confirmEmail/{id}")
     public ResponseEntity<String> confirmEmail(@PathVariable Long id) {
-        service.confirmEmail(id);
+        User user = service.confirmEmail(id);
+        notificationService.create(new Notification(
+                Notification.WELCOME_TITLE, Notification.WELCOME_DESCRIPTION, user));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -106,6 +113,13 @@ public class UserController {
     @DeleteMapping("/deactivate/{id}")
     public ResponseEntity<?> deactivate(@PathVariable Long id) {
         service.deactivate(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/activate/{id}")
+    public ResponseEntity<?> activate(@PathVariable Long id) {
+        service.activate(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

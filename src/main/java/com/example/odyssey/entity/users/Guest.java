@@ -30,7 +30,7 @@ public class Guest extends User {
 
     public Guest(Long id, AccountStatus status, String name, String surname,
                  String email, String password, Address address, String phone, String profileImage,
-                 User.Settings settings,List<Role> roles, Set<Accommodation> favorites) {
+                 NotificationSettings settings, List<Role> roles, Set<Accommodation> favorites) {
         super(id, status, name, surname, email, password, address, phone, profileImage, settings, LocalDateTime.now(), roles);
         this.favorites = favorites;
     }
