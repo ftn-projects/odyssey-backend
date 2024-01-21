@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
+import static com.example.odyssey.entity.reservations.Reservation.Status.ACCEPTED;
+
 @Service
 public class ReservationService {
 
@@ -99,11 +101,20 @@ public class ReservationService {
 
     public void updateStatus(Reservation reservation, String status) {
         if (status.equals("CANCELLED_REQUEST") || status.equals("CANCELLED_RESERVATION")) {
-            if (reservation.getTimeSlot().getStart().isAfter(
-                    reservation.getTimeSlot().getStart().minusDays(
-                            reservation.getAccommodation().getCancellationDue().toDays())))
-                throw new FailedCancellationException("because the due date has already passed.");
+            if (LocalDateTime.now().isAfter(reservation.getTimeSlot().getStart().minusDays(
+                    reservation.getAccommodation().getCancellationDue().toDays())))
+                throw new FailedCancellationException("because due date has already passed.");
         }
+
+        if (status.equals("ACCEPTED") && reservation.getStatus().equals(ACCEPTED))
+            throw new ValidationException("Reservation has already been accepted.");
+        else if (status.equals("DECLINED") && reservation.getStatus().equals(Reservation.Status.DECLINED))
+            throw new ValidationException("Reservation has already been declined.");
+        else if (status.equals("CANCELLED_REQUEST") && reservation.getStatus().equals(Reservation.Status.CANCELLED_REQUEST))
+            throw new ValidationException("Reservation request has already been cancelled.");
+        else if (status.equals("CANCELLED_RESERVATION") && reservation.getStatus().equals(Reservation.Status.CANCELLED_RESERVATION))
+            throw new ValidationException("Reservation has already been cancelled.");
+
         reservation.setStatus(Reservation.Status.valueOf(status));
         reservation = save(reservation);
         cancelOverlapping(reservation.getAccommodation().getId(), reservation);
@@ -112,7 +123,7 @@ public class ReservationService {
     public boolean overlapsReservation(Long accommodationId, TimeSlot slot) {
         List<Reservation> reservations = findByAccommodation(accommodationId);
         for (Reservation i : reservations)
-            if (i.getTimeSlot().overlaps(slot) && i.getStatus().equals(Reservation.Status.ACCEPTED))
+            if (i.getTimeSlot().overlaps(slot) && i.getStatus().equals(ACCEPTED))
                 return true;
         return false;
     }
@@ -126,7 +137,7 @@ public class ReservationService {
     }
 
     public void cancelOverlapping(Long accommodationId, Reservation reservation) {
-        if (!reservation.getStatus().equals(Reservation.Status.ACCEPTED)) return;
+        if (!reservation.getStatus().equals(ACCEPTED)) return;
         List<Reservation> reservations = findByAccommodation(accommodationId);
         for (Reservation i : reservations) {
             if (i.getTimeSlot().overlaps(reservation.getTimeSlot()) && i.getStatus().equals(Reservation.Status.REQUESTED)) {
@@ -147,7 +158,7 @@ public class ReservationService {
 
     public void automaticApproval(Reservation r) {
         if (r.getAccommodation().getAutomaticApproval()) {
-            r.setStatus(Reservation.Status.ACCEPTED);
+            r.setStatus(ACCEPTED);
             save(r);
             cancelOverlapping(r.getAccommodation().getId(), r);
         }
@@ -157,7 +168,7 @@ public class ReservationService {
         findByGuest(guestId).stream().filter(r ->
                 r.getTimeSlot().getEnd().isAfter(LocalDateTime.now()) &&
                         (r.getStatus().equals(Reservation.Status.REQUESTED) ||
-                                r.getStatus().equals(Reservation.Status.ACCEPTED))
+                                r.getStatus().equals(ACCEPTED))
         ).forEach(r -> {
             r.setStatus(Reservation.Status.DECLINED);
             save(r);
