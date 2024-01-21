@@ -83,6 +83,7 @@ public class ReviewController {
     ) {
         List<AccommodationReview> reviews = service
                 .getAllAccommodationReviewsByHost(id, listTypes);
+        if(listTypes==null) System.out.println("List types is null");
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
