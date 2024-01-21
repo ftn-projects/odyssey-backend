@@ -50,7 +50,9 @@ public class AccommodationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<AccommodationDTO> findById(@PathVariable Long id) {
-        return new ResponseEntity<>(new AccommodationDTO(service.findById(id)), HttpStatus.OK);
+        AccommodationDTO accommodationDTO = new AccommodationDTO(service.findById(id));
+        accommodationDTO.setAverageRating(reviewService.getTotalRatingByAccommodation(accommodationDTO.getId()));
+        return new ResponseEntity<>(accommodationDTO, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/totalPrice")
@@ -65,8 +67,20 @@ public class AccommodationController {
 
         accommodationDTO.setTotalPrice(service.calculateTotalPrice(accommodation.getId(), dateStart, dateEnd, guestNumber));
         accommodationDTO.setDefaultPrice(service.getPriceForDateRange(accommodation.getId(), dateStart, dateEnd));
+        accommodationDTO.setAverageRating(reviewService.getTotalRatingByAccommodation(accommodationDTO.getId()));
 
         return new ResponseEntity<>(accommodationDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/host/{id}")
+    public ResponseEntity<?> findByHostId(@PathVariable Long id) {
+        List<Accommodation> accommodations = new ArrayList<>();
+        accommodations = service.findByHostId(id);
+        List<AccommodationDTO> dtos = mapToDTO(accommodations);
+        for (AccommodationDTO dto : dtos) {
+            dto.setAverageRating(reviewService.getTotalRatingByAccommodation(dto.getId()));
+        }
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
 //    @PreAuthorize("hasAuthority('GUEST')")
@@ -74,6 +88,10 @@ public class AccommodationController {
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
         List<Accommodation> accommodations = new ArrayList<>();
         accommodations = service.findByGuestFavorites(id);
+        List<AccommodationDTO> dtos = mapToDTO(accommodations);
+        for (AccommodationDTO dto : dtos) {
+            dto.setAverageRating(reviewService.getTotalRatingByAccommodation(dto.getId()));
+        }
         return new ResponseEntity<>(mapToDTO(accommodations), HttpStatus.OK);
     }
 
