@@ -2,6 +2,7 @@ package com.example.odyssey.services;
 
 import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
+import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.exceptions.FieldValidationException;
@@ -58,7 +59,9 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreated(LocalDateTime.now());
 
-        user = userRepository.save(new Guest(user));
+        if (user.hasRole("GUEST")) user = new Guest(user);
+        else user = new Host(user);
+        user = userRepository.save(user);
         EmailUtil.sendConfirmation(user.getEmail(), user.getName(), user.getId());
         return user;
     }
@@ -117,7 +120,7 @@ public class UserService {
 
     public User confirmEmail(Long id) {
         try {
-            if (findById(id).getStatus().equals(User.AccountStatus.PENDING))
+            if (!findById(id).getStatus().equals(User.AccountStatus.PENDING))
                 throw new FailedActivationException("User account has already been activated.");
 
             return updateAccountStatus(id, User.AccountStatus.ACTIVE);

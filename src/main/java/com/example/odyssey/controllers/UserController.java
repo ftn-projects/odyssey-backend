@@ -5,6 +5,7 @@ import com.example.odyssey.entity.Address;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.exceptions.users.UserNotFoundException;
 import com.example.odyssey.mappers.UserDTOMapper;
 import com.example.odyssey.services.NotificationService;
 import com.example.odyssey.services.UserService;
@@ -131,8 +132,11 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegistrationDTO userDTO) {
-        User exists = this.service.findByEmail(userDTO.getEmail());
-        if (exists != null) return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
+        try {
+            User exists = this.service.findByEmail(userDTO.getEmail());
+            if (exists != null) return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
+        } catch (UserNotFoundException ignored) {
+        }
 
         User user = UserDTOMapper.fromRegistrationDTOtoUser(userDTO);
 
