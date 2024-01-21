@@ -107,6 +107,10 @@ public class UserService {
 
     public User updateAccountStatus(Long id, User.AccountStatus status) {
         User user = findById(id);
+        if ((status.equals(User.AccountStatus.DEACTIVATED) ||
+                status.equals(User.AccountStatus.BLOCKED)) &&
+                user.hasRole("ADMIN"))
+            throw new ValidationException("Admin account cannot be deactivated or blocked.");
         user.setStatus(status);
         return userRepository.save(user);
     }

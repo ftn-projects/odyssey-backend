@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
@@ -25,7 +26,7 @@ public class ReviewDTO {
         id = review.getId();
         rating = review.getRating();
         comment = review.getComment();
-        submissionDate = review.getSubmissionDate();
+        submissionDate = review.getSubmissionDate().truncatedTo(ChronoUnit.SECONDS);
         status = review.getStatus();
         submitter = new UserDTO(review.getSubmitter());
     }
