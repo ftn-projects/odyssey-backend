@@ -114,19 +114,18 @@ public class ReviewController {
         return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('GUEST')")
+
     @PostMapping("/host")
     public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO dto) {
         HostReview review = service.saveHostReview(
                 ReviewDTOMapper.fromDTOtoHostReview(dto));
-
         notificationService.create(new HostReviewedNotif(review, review.getHost()));
         notificationService.create(new HostReviewedNotif(review, userService.getAdmin()));
 
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
 
-    //    @PreAuthorize("hasAuthority('GUEST')")
+
     @PostMapping("/accommodation")
     public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO dto) {
         AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(dto);
