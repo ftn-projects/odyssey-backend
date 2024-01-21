@@ -140,7 +140,7 @@ VALUES
     (6, null, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
     (7, null, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
     (7, null, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
-    (null, 2, 7, 3, 'BRT MI SMO NAAACI.', '2023-02-10 20:00:00', 2, 'HR');
+    (null, 2, 7, 3, 'Superr.', '2023-02-10 20:00:00', 2, 'HR');
 
 -- ------------------------- HOST REVIEWS --------------------------- --
 

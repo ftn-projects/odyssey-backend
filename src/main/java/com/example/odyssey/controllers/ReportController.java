@@ -3,6 +3,8 @@ package com.example.odyssey.controllers;
 import com.example.odyssey.dtos.reports.UserReportSubmissionDTO;
 import com.example.odyssey.dtos.users.UserWithReportsDTO;
 import com.example.odyssey.entity.reports.UserReport;
+import com.example.odyssey.entity.users.Guest;
+import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.services.ReportService;
 import com.example.odyssey.services.ReviewService;
@@ -60,11 +62,20 @@ public class ReportController {
     @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/user")
     public ResponseEntity<?> reportUser(@RequestBody UserReportSubmissionDTO dto) {
-        reportService.create(new UserReport(-1L,
-                dto.getDescription(),
-                LocalDateTime.now(),
-                userService.findById(dto.getSubmitterId()),
-                userService.findById(dto.getReportedId())));
+        User submitter = userService.findById(dto.getSubmitterId());
+        if (submitter.hasRole("HOST")) {
+            reportService.createHostReportGuest(new UserReport(-1L,
+                    dto.getDescription(),
+                    LocalDateTime.now(),
+                    userService.findById(dto.getSubmitterId()),
+                    userService.findById(dto.getReportedId())));
+        } else {
+            reportService.createGuestReportHost(new UserReport(-1L,
+                    dto.getDescription(),
+                    LocalDateTime.now(),
+                    userService.findById(dto.getSubmitterId()),
+                    userService.findById(dto.getReportedId())));
+        }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
