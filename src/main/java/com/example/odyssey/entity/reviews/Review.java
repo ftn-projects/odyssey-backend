@@ -19,8 +19,7 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("R")
 @SQLDelete(sql = "UPDATE host_reviews SET deleted = true WHERE id=?")
 @SQLDelete(sql = "UPDATE accommodation_reviews SET deleted = true WHERE id=?")
-@Table(name = "reviews", uniqueConstraints = {@UniqueConstraint(columnNames = {"submitter_id", "accommodation_id"}, name = "unique_submitter_accommodation"),
-        @UniqueConstraint(columnNames = {"submitter_id", "host_id"}, name = "unique_submitter_host")})
+@Table(name = "reviews")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -101,6 +101,7 @@ public class WebSecurityConfig {
 
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET,
+                        "/api/v1/users/*",
                         "/api/v1/users/image/*",
                         "/api/v1/accommodations",
                         "api/v1/accommodations/stats/period",

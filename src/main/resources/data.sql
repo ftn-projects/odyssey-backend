@@ -122,16 +122,17 @@ VALUES
 
 -- ---------------------------- REVIEWS ----------------------------- --
 
-INSERT INTO reviews (accommodation_id, submitter_id, rating, comment, submission_date, status, type)
+INSERT INTO reviews (accommodation_id, host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
-    (1, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
-    (2, 7, 4, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
-    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-01 20:00:00', 2, 'AR'),
-    (4, 7, 2, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
-    (5, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
-    (6, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
-    (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
-    (7, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR');
+    (1, null, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
+    (2, null, 7, 4, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
+    (3, null, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-01 20:00:00', 2, 'AR'),
+    (4, null, 7, 2, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
+    (5, null, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
+    (6, null, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
+    (7, null, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
+    (7, null, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
+    (null, 2, 7, 3, 'BRT MI SMO NAAACI.', '2023-02-10 20:00:00', 2, 'HR');
 
 -- ------------------------- HOST REVIEWS --------------------------- --
 

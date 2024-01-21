@@ -1,8 +1,12 @@
 package com.example.odyssey.services;
 
+import com.example.odyssey.entity.notifications.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class WebSocketService {
@@ -14,6 +18,13 @@ public class WebSocketService {
     }
 
     public void notificationChange(Long userId) {
-        messagingTemplate.convertAndSend("/topic/notifications", userId);
+        messagingTemplate.convertAndSend("/topic/notificationChange", userId);
+    }
+
+    public void newNotification(Long userId, Long notificationId) {
+        Map<String, Long> map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("notificationId", notificationId);
+        messagingTemplate.convertAndSend("/topic/newNotification", map);
     }
 }

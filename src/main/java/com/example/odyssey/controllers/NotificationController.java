@@ -27,7 +27,7 @@ public class NotificationController {
         return new ResponseEntity<>(mapToDTO(notifications), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         Notification notification = service.findById(id);

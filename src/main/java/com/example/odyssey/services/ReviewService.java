@@ -164,11 +164,15 @@ public class ReviewService {
                 reviewStatuses
         );
 
-        if ((reviews == null || reviews.isEmpty()) && !reservations.isEmpty()) {
-            return hostReviewRepository.save(review);
+        if (reservations.isEmpty()) {
+            throw new CoolerReviewException("You don't have a reservation for this accommodation");
         }
 
-        return null;
+        if (reviews != null && !reviews.isEmpty()) {
+            throw new ReviewException("You have already reviewed this accommodation");
+        }
+
+        return hostReviewRepository.save(review);
     }
 
     public Double getTotalRatingByAccommodation(Long id) {

@@ -35,7 +35,9 @@ public class NotificationService {
     public Notification create(Notification notification) {
         notification.setDate(LocalDateTime.now());
         notification.setRead(false);
-        return save(notification);
+        notification = save(notification);
+        webSocketService.newNotification(notification.getReceiver().getId(), notification.getId());
+        return notification;
     }
 
     public Notification updateRead(Long id, Boolean read) {
