@@ -10,10 +10,7 @@ import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReviewDTOMapper;
-import com.example.odyssey.services.AccommodationService;
-import com.example.odyssey.services.NotificationService;
-import com.example.odyssey.services.ReviewService;
-import com.example.odyssey.services.UserService;
+import com.example.odyssey.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,16 +40,11 @@ public class ReviewController {
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) List<Review.Status> statuses,
-            @RequestParam(required = false) List<String> types
-    ) {
-
+            @RequestParam(required = false) List<String> types) {
         List<Review> reviews = service.getAllFiltered(search, statuses, types);
         return new ResponseEntity<>(reviews.stream().map(this::mapReviewToDTO).toList(), HttpStatus.OK);
     }
 
-
-
-    //    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews(
             @RequestParam(required = false) Long hostId,
@@ -60,11 +52,13 @@ public class ReviewController {
             @RequestParam(required = false) List<Review.Status> listTypes
     ) {
         List<HostReview> reviews = service
-                .getAllHostReviewsFiltered(hostId, submitterId, listTypes);
+                .getAllHostReviewsFiltered(hostId, submitterId, listTypes)
+                .stream().filter(r ->
+                        !r.getStatus().equals(Review.Status.REQUESTED) && !r.getStatus().equals(Review.Status.DECLINED))
+                .toList();
         return new ResponseEntity<>(reviews.stream().map(HostReviewDTO::new).toList(), HttpStatus.OK);
     }
 
-    //    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/accommodation")
     public ResponseEntity<?> getAllAccommodationReviews(
             @RequestParam(required = false) Long accommodationId,
@@ -72,7 +66,10 @@ public class ReviewController {
             @RequestParam(required = false) List<Review.Status> listTypes
     ) {
         List<AccommodationReview> reviews = service
-                .getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes);
+                .getAllAccommodationReviewsFiltered(accommodationId, submitterId, listTypes)
+                .stream().filter(r ->
+                        !r.getStatus().equals(Review.Status.REQUESTED) && !r.getStatus().equals(Review.Status.DECLINED))
+                .toList();
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
@@ -83,7 +80,7 @@ public class ReviewController {
     ) {
         List<AccommodationReview> reviews = service
                 .getAllAccommodationReviewsByHost(id, listTypes);
-        if(listTypes==null) System.out.println("List types is null");
+        if (listTypes == null) System.out.println("List types is null");
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
@@ -190,6 +187,13 @@ public class ReviewController {
     @PutMapping("/decline/{id}")
     public ResponseEntity<?> decline(@PathVariable Long id) {
         service.decline(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/dismiss/{id}")
+    public ResponseEntity<?> dismiss(@PathVariable Long id) {
+        service.dismiss(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
