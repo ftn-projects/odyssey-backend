@@ -5,7 +5,6 @@ import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.exceptions.AvailabilitySlotsOverlappingException;
-import com.example.odyssey.exceptions.InputValidationException;
 import com.example.odyssey.exceptions.InvalidAvailabilitySlotException;
 import com.example.odyssey.exceptions.SlotHasReservationsException;
 import com.example.odyssey.exceptions.FieldValidationException;
