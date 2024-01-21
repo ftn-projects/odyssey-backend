@@ -106,7 +106,7 @@ public class ReviewService {
         );
 
         if (reservations.isEmpty()) {
-            throw new CoolerReviewException("You don't have a reservation for this accommodation");
+            throw new ReviewException("You don't have a recent reservation for this accommodation");
         }
 
         if (reviews != null && !reviews.isEmpty()) {
@@ -118,20 +118,17 @@ public class ReviewService {
 
     public AccommodationReview reportAccommodationReview(Long id) {
         AccommodationReview review = accommodationReviewRepository.findById(id).orElse(null);
-        if (review != null) {
-            review.setStatus(Review.Status.REPORTED);
-            return accommodationReviewRepository.save(review);
-        }
-        return null;
+        if (review == null) throw new ReviewNotFoundException(id);
+        review.setStatus(Review.Status.REPORTED);
+        return accommodationReviewRepository.save(review);
+
     }
 
     public HostReview reportHostReview(Long id) {
         HostReview review = hostReviewRepository.findById(id).orElse(null);
-        if (review != null) {
-            review.setStatus(Review.Status.REPORTED);
-            return hostReviewRepository.save(review);
-        }
-        return null;
+        if (review == null) throw new ReviewNotFoundException(id);
+        review.setStatus(Review.Status.REPORTED);
+        return hostReviewRepository.save(review);
     }
 
     public HostReview saveHostReview(HostReview review) {
@@ -165,11 +162,11 @@ public class ReviewService {
         );
 
         if (reservations.isEmpty()) {
-            throw new CoolerReviewException("You don't have a reservation for this accommodation");
+            throw new ReviewException("You don't have a recent reservation at this host's accommodations");
         }
 
         if (reviews != null && !reviews.isEmpty()) {
-            throw new ReviewException("You have already reviewed this accommodation");
+            throw new ReviewException("You have already reviewed this host");
         }
 
         return hostReviewRepository.save(review);

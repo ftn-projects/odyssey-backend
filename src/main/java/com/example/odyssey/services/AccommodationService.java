@@ -12,7 +12,10 @@ import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
+import com.example.odyssey.exceptions.FieldValidationException;
+import com.example.odyssey.exceptions.ValidationException;
 import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
+import com.example.odyssey.exceptions.users.UserNotFoundException;
 import com.example.odyssey.repositories.AccommodationRepository;
 import com.example.odyssey.repositories.AmenityRepository;
 import com.example.odyssey.repositories.ReservationRepository;
@@ -66,6 +69,8 @@ public class AccommodationService {
 
         LocalDateTime startDate = (dateStart != null) ? new ReservationService().convertToDate(dateStart) : null;
         LocalDateTime endDate = (dateEnd != null) ? new ReservationService().convertToDate(dateEnd) : null;
+        if(startDate!=null && endDate!=null && startDate.isAfter(endDate))
+            throw new ValidationException("Start date is after end date.");
         Accommodation.Type accommodationType = (type != null) ? Accommodation.Type.valueOf(type.toUpperCase()) : null;
         location = (location != null) ? location.toUpperCase() : null;
 
@@ -94,13 +99,12 @@ public class AccommodationService {
         List<Accommodation> accommodations = new ArrayList<>();
         User user = userService.findById(guestId);
         if(!(user instanceof Guest)){
-            return accommodations;
+            throw new RuntimeException("User is not a guest.");
         }
         else{
             Guest guest = (Guest) user;
             Set<Accommodation> favoriteAccommodations = guest.getFavorites();
             accommodations = new ArrayList<>(favoriteAccommodations);
-
         }
         return accommodations;
     }
@@ -108,10 +112,12 @@ public class AccommodationService {
     public void addGuestFavorite(Long guestId, Long accommodationId){
         User user = userService.findById(guestId);
         if(!(user instanceof Guest)){
-            return;
+            throw new RuntimeException("User is not a guest.");
         }
         else{
             Accommodation accommodation = findById(accommodationId);
+            if(accommodation==null)
+                throw new AccommodationNotFoundException(accommodationId);
             Guest guest = (Guest) user;
             Set<Accommodation> accommodations;
             accommodations = guest.getFavorites();
@@ -125,7 +131,7 @@ public class AccommodationService {
     public void removeGuestFavorite(Long guestId, Long accommodationId){
         User user = userService.findById(guestId);
         if(!(user instanceof Guest)){
-            return;
+            throw new UserNotFoundException(guestId);
         }
         else{
             Guest guest = (Guest) user;
@@ -220,7 +226,7 @@ public class AccommodationService {
     public byte[] generatePeriodStatsPdf(Long hostId, Long startDate, Long endDate) throws IOException, DocumentException {
         List<Accommodation> accommodations = findByHostId(hostId);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        if(hostId == null) return byteArrayOutputStream.toByteArray();
+        if(hostId == null) throw new FieldValidationException("Host id is null.", "hostId");
 
 
         Instant startInstant = Instant.ofEpochMilli(startDate);
@@ -228,6 +234,8 @@ public class AccommodationService {
 
         Instant endInstant = Instant.ofEpochMilli(endDate);
         LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(endInstant, ZoneOffset.UTC);
+
+        if(startLocalDateTime.isAfter(endLocalDateTime)) throw new ValidationException("Start date is after end date.");
 
         TotalStatsDTO totalStatsDTO = generatePeriodStats(hostId, startDate, endDate);
 
@@ -239,7 +247,7 @@ public class AccommodationService {
     public byte[] generatePeriodStatsPdfAccommodation(Long accommodationId, Long startDate, Long endDate) throws IOException, DocumentException {
         Accommodation accommodation = findById(accommodationId);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        if(accommodationId == null) return byteArrayOutputStream.toByteArray();
+        if(accommodationId == null) throw new RuntimeException("Accommodation id is null.");
 
 
         Instant startInstant = Instant.ofEpochMilli(startDate);
@@ -247,6 +255,7 @@ public class AccommodationService {
 
         Instant endInstant = Instant.ofEpochMilli(endDate);
         LocalDateTime endLocalDateTime = LocalDateTime.ofInstant(endInstant, ZoneOffset.UTC);
+        if(startLocalDateTime.isAfter(endLocalDateTime)) throw new ValidationException("Start date is after end date.");
 
         AccommodationTotalStatsDTO totalStatsDTO = generatePeriodStatsAccommodation(accommodationId, startDate, endDate);
 
@@ -260,6 +269,7 @@ public class AccommodationService {
         try {
             LocalDateTime startDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(totalStatsDTO.getStart()), ZoneId.systemDefault());
             LocalDateTime endDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(totalStatsDTO.getEnd()), ZoneId.systemDefault());
+            if(startDate.isAfter(endDate)) throw new ValidationException("Start date is after end date.");
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
             document.add(new Paragraph("Host: " + totalStatsDTO.getHost().getName() + " " + totalStatsDTO.getHost().getSurname()));

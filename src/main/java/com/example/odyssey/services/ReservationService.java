@@ -47,6 +47,12 @@ public class ReservationService {
                 reservation.getGuestNumber() > reservation.getAccommodation().getMaxGuests())
             throw new ValidationException("Reservation guest number is invalid.");
 
+        if (reservation.getTimeSlot().getStart().isBefore(LocalDateTime.now()))
+            throw new ValidationException("Reservation start date is in the past.");
+
+        if (reservation.getTimeSlot().getStart().isAfter(reservation.getTimeSlot().getEnd()))
+            throw new ValidationException("Reservation start date is after end date.");
+
         if (overlapsReservation(reservation.getAccommodation().getId(), reservation.getTimeSlot()))
             throw new ValidationException("Accommodation is not available for selected period.");
         return reservationRepository.save(reservation);
