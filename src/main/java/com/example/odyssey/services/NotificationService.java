@@ -91,7 +91,7 @@ public class NotificationService {
     public void notifyCancelled(Reservation reservation) {
         String accommodation = reservation.getAccommodation().getTitle();
         User receiver = reservation.getAccommodation().getHost();
-        if (receiver.getSettings().getReservationDeclined())
+        if (receiver.getSettings().getReservationCancelled())
             create(new ReservationNotif(reservation, receiver, Notification.Type.RESERVATION_CANCELLED,
                     "Reservation for your accommodation " + accommodation + " has been cancelled"));
     }
