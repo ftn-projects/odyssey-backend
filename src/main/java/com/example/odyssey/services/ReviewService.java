@@ -220,7 +220,7 @@ public class ReviewService {
 
     public void accept(Long id) {
         Review review = findById(id);
-        if (review.getStatus().equals(Review.Status.DECLINED))
+        if (review.getStatus().equals(Review.Status.ACCEPTED))
             throw new ReviewException("Review is already accepted");
 
         review.setStatus(Review.Status.ACCEPTED);

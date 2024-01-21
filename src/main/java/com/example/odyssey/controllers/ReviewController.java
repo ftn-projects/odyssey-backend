@@ -30,9 +30,6 @@ public class ReviewController {
     private NotificationService notificationService;
 
     @Autowired
-    private ReportService reportService;
-
-    @Autowired
     private AccommodationService accommodationService;
 
     @Autowired
@@ -47,7 +44,6 @@ public class ReviewController {
         List<Review> reviews = service.getAllFiltered(search, statuses, types);
         return new ResponseEntity<>(reviews.stream().map(this::mapReviewToDTO).toList(), HttpStatus.OK);
     }
-
 
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews(
