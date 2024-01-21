@@ -43,12 +43,10 @@ public class ReviewController {
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) List<Review.Status> statuses,
-            @RequestParam(required = false) List<String> types
-    ) {
+            @RequestParam(required = false) List<String> types) {
         List<Review> reviews = service.getAllFiltered(search, statuses, types);
         return new ResponseEntity<>(reviews.stream().map(this::mapReviewToDTO).toList(), HttpStatus.OK);
     }
-
 
 
     @GetMapping("/host")
@@ -86,7 +84,7 @@ public class ReviewController {
     ) {
         List<AccommodationReview> reviews = service
                 .getAllAccommodationReviewsByHost(id, listTypes);
-        if(listTypes==null) System.out.println("List types is null");
+        if (listTypes == null) System.out.println("List types is null");
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
