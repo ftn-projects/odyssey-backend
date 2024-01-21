@@ -223,18 +223,36 @@ public class ReviewService {
 
     public void accept(Long id) {
         Review review = findById(id);
+        if (review.getStatus().equals(Review.Status.DECLINED))
+            throw new ReviewException("Review is already accepted");
+
         review.setStatus(Review.Status.ACCEPTED);
         save(review);
     }
 
     public void decline(Long id) {
         Review review = findById(id);
+        if (review.getStatus().equals(Review.Status.DECLINED))
+            throw new ReviewException("Review is already declined");
+
         review.setStatus(Review.Status.DECLINED);
+        save(review);
+    }
+
+    public void dismiss(Long id) {
+        Review review = findById(id);
+        if (!review.getStatus().equals(Review.Status.REPORTED))
+            throw new ReviewException("This review was not reported");
+
+        review.setStatus(Review.Status.ACCEPTED);
         save(review);
     }
 
     public void reportReview(Long id) {
         Review review = findById(id);
+        if (review.getStatus().equals(Review.Status.DECLINED) || review.getStatus().equals(Review.Status.REQUESTED))
+            throw new ReviewException("Only accepted and reported reviews can be reported");
+
         review.setStatus(Review.Status.REPORTED);
         save(review);
     }
