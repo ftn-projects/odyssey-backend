@@ -4,8 +4,9 @@ import com.example.odyssey.entity.reservations.Reservation;
 import com.example.odyssey.entity.reviews.AccommodationReview;
 import com.example.odyssey.entity.reviews.HostReview;
 import com.example.odyssey.entity.reviews.Review;
-import com.example.odyssey.exceptions.CoolerReviewException;
-import com.example.odyssey.exceptions.ReviewException;
+import com.example.odyssey.exceptions.reviews.CoolerReviewException;
+import com.example.odyssey.exceptions.reviews.ReviewException;
+import com.example.odyssey.exceptions.reviews.ReviewNotFoundException;
 import com.example.odyssey.repositories.AccommodationReviewRepository;
 import com.example.odyssey.repositories.HostReviewRepository;
 import com.example.odyssey.repositories.ReservationRepository;
@@ -44,6 +45,10 @@ public class ReviewService {
         return accommodationReviewRepository.findAllWithFilter(null, accommodationId, submitterId, listStatuses);
     }
 
+    public List<AccommodationReview> getAllAccommodationReviewsByHost(Long hostId, List<AccommodationReview.Status> listStatuses) {
+        return accommodationReviewRepository.findAllByHost(hostId, listStatuses);
+    }
+
     public List<HostReview> getAllHostReviewsFiltered(Long hostId, Long submitterId, List<HostReview.Status> listStatuses) {
         return hostReviewRepository.findAllWithFilter(null, hostId, submitterId, listStatuses);
     }
@@ -59,7 +64,7 @@ public class ReviewService {
     public Review findById(Long id) {
         Review review = findAccommodationReviewById(id);
         if (review == null) review = findHostReviewById(id);
-        if (review == null) throw new NoSuchElementException(String.format("Review with id '%d' does not exist.", id));
+        if (review == null) throw new ReviewNotFoundException(id);
         return review;
     }
 
@@ -73,7 +78,8 @@ public class ReviewService {
 
     public AccommodationReview saveAccommodationReview(AccommodationReview review) {
         review.setStatus(Review.Status.REQUESTED);
-        LocalDateTime endDate = LocalDateTime.now().minusMinutes(10080);
+        LocalDateTime startDate = LocalDateTime.now().minusMinutes(14400);
+        LocalDateTime endDate = LocalDateTime.now();
 
         List<Review.Status> reviewStatuses = Arrays.asList(
                 Review.Status.REQUESTED,
@@ -85,14 +91,14 @@ public class ReviewService {
                 Reservation.Status.ACCEPTED
         );
 
-        List<Reservation> reservations = reservationRepository.findAllWithFilterButCooler(
-                null,
-                reservationStatuses,
+        List<Reservation> reservations = reservationRepository.findAllWithFilterAccommodationReview(
+                review.getSubmitter().getId(),
                 review.getAccommodation().getId(),
+                reservationStatuses,
+                startDate,
                 endDate
         );
 
-        // Pass list of string values of enums
         List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(
                 null,
                 review.getAccommodation().getId(),
@@ -101,8 +107,9 @@ public class ReviewService {
         );
 
         if (reservations.isEmpty()) {
-            throw new CoolerReviewException("You don't have a reservation for this accommodation");
+            throw new ReviewException("You don't have a recent reservation for this accommodation");
         }
+
 
         if (reviews != null && !reviews.isEmpty()) {
             throw new ReviewException("You have already reviewed this accommodation");
@@ -113,45 +120,39 @@ public class ReviewService {
 
     public AccommodationReview reportAccommodationReview(Long id) {
         AccommodationReview review = accommodationReviewRepository.findById(id).orElse(null);
-        if (review != null) {
-            review.setStatus(Review.Status.REPORTED);
-            return accommodationReviewRepository.save(review);
-        }
-        return null;
+        if (review == null) throw new ReviewNotFoundException(id);
+        review.setStatus(Review.Status.REPORTED);
+        return accommodationReviewRepository.save(review);
     }
 
     public HostReview reportHostReview(Long id) {
         HostReview review = hostReviewRepository.findById(id).orElse(null);
-        if (review != null) {
-            review.setStatus(Review.Status.REPORTED);
-            return hostReviewRepository.save(review);
-        }
-        return null;
+        if (review == null) throw new ReviewNotFoundException(id);
+        review.setStatus(Review.Status.REPORTED);
+        return hostReviewRepository.save(review);
     }
 
     public HostReview saveHostReview(HostReview review) {
-        LocalDateTime startDate = LocalDateTime.now().minusMinutes(14400);
+        LocalDateTime startDate = LocalDateTime.now().minusMinutes(200000);
         LocalDateTime endDate = LocalDateTime.now();
-
         List<Review.Status> reviewStatuses = Arrays.asList(
                 Review.Status.REQUESTED,
                 Review.Status.REPORTED,
                 Review.Status.ACCEPTED
         );
 
-        List<String> reservationStatuses = Collections.singletonList(
-                Reservation.Status.ACCEPTED.toString()
+        List<Reservation.Status> reservationStatuses = Arrays.asList(
+                Reservation.Status.ACCEPTED
         );
-
-        List<Reservation> reservations = reservationService.getFilteredByHost(
+        List<Reservation> reservations = reservationRepository.findAllWithFilterHostReview(
+                review.getSubmitter().getId(),
                 review.getHost().getId(),
                 reservationStatuses,
-                null,
-                startDate.toEpochSecond(ZoneOffset.UTC),
-                endDate.toEpochSecond(ZoneOffset.UTC)
+                startDate,
+                endDate
         );
 
-        // Pass list of string values of enums
+
         List<HostReview> reviews = hostReviewRepository.findAllWithFilter(
                 null,
                 review.getHost().getId(),
@@ -159,11 +160,15 @@ public class ReviewService {
                 reviewStatuses
         );
 
-        if ((reviews == null || reviews.isEmpty()) && !reservations.isEmpty()) {
-            return hostReviewRepository.save(review);
+        if (reservations == null || reservations.isEmpty()) {
+            throw new ReviewException("You don't have a recent reservation at this host's accommodations");
         }
 
-        return null;
+        if (reviews != null && !reviews.isEmpty()) {
+            throw new ReviewException("You have already reviewed this host");
+        }
+
+        return hostReviewRepository.save(review);
     }
 
     public Double getTotalRatingByAccommodation(Long id) {
@@ -214,18 +219,36 @@ public class ReviewService {
 
     public void accept(Long id) {
         Review review = findById(id);
+        if (review.getStatus().equals(Review.Status.ACCEPTED))
+            throw new ReviewException("Review is already accepted");
+
         review.setStatus(Review.Status.ACCEPTED);
         save(review);
     }
 
     public void decline(Long id) {
         Review review = findById(id);
+        if (review.getStatus().equals(Review.Status.DECLINED))
+            throw new ReviewException("Review is already declined");
+
         review.setStatus(Review.Status.DECLINED);
+        save(review);
+    }
+
+    public void dismiss(Long id) {
+        Review review = findById(id);
+        if (!review.getStatus().equals(Review.Status.REPORTED))
+            throw new ReviewException("This review was not reported");
+
+        review.setStatus(Review.Status.ACCEPTED);
         save(review);
     }
 
     public void reportReview(Long id) {
         Review review = findById(id);
+        if (review.getStatus().equals(Review.Status.DECLINED) || review.getStatus().equals(Review.Status.REQUESTED))
+            throw new ReviewException("Only accepted and reported reviews can be reported");
+
         review.setStatus(Review.Status.REPORTED);
         save(review);
     }

@@ -86,27 +86,39 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/websocket").permitAll()
                 .requestMatchers(HttpMethod.DELETE,
-                        "api/v1/reviews/accommodation/*").permitAll()
+                        "api/v1/reviews/accommodation/*",
+                        "api/v1/accommodations/favorites/*/*").permitAll()
                 .requestMatchers(HttpMethod.PUT,
                         "/api/v1/reviews/accommodation/report/*").permitAll()
                 .requestMatchers(HttpMethod.POST,
                         "/api/v1/users/login",
                         "/api/v1/users/register",
                         "/api/v1/users/confirmEmail/*",
-                        "/api/v1/reviews/accommodation"
+                        "/api/v1/reviews/accommodation",
+                        "/api/v1/reviews/host",
+                        "api/v1/accommodations/favorites/*/*"
 
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET,
+                        "/api/v1/users/*",
                         "/api/v1/users/image/*",
                         "/api/v1/accommodations",
+                        "api/v1/accommodations/stats/period",
                         "/api/v1/accommodations/*",
                         "/api/v1/accommodations/*/images",
                         "/api/v1/accommodations/*/images/*",
                         "/api/v1/accommodations/*/totalPrice",
-                        "/api/v1/accommodations/stats/*",
+                        "/api/v1/accommodations/stats/host/*",
+                        "/api/v1/accommodations/stats/accommodation/*",
+                        "/api/v1/accommodations/stats/host/*/file",
+                        "/api/v1/accommodations/stats/host/*/all",
+                        "api/v1/accommodations/favorites/*",
+                        "/api/v1/accommodations/stats/accommodation/*/file",
                         "/api/v1/accommodationRequests/*/images",
                         "/api/v1/reviews/*",
+                        "/api/v1/reviews/accommodation/host/*",
                         "/api/v1/accommodationRequests/*/images/*",
                         "/api/v1/reviews/accommodation/report/*",
                         "/api/v1/reviews/accommodation/*",

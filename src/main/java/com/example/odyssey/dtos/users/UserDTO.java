@@ -28,19 +28,22 @@ public class UserDTO {
     @NotBlank
     @Pattern(regexp = "^(\\(\\+\\d{1,3}\\)( )?)?\\d{7,15}$", message = "Phone should be of pattern: (+111)000000")
     private String phone;
+    private String role;
     @NotNull
     private AddressDTO address;
-    private User.Settings settings;
+    private User.NotificationSettings settings;
     @Size(max = 200, message = "Bio should not be longer than 200 characters.")
     private String bio;
 
     public UserDTO(User user) {
         this(user.getId(), user.getEmail(), user.getName(), user.getSurname(),
-                user.getPhone(), new AddressDTO(user.getAddress()), user.getSettings(), "");
+                user.getPhone(), user.getRoles().get(0).getName(),
+                new AddressDTO(user.getAddress()), user.getSettings(), "");
     }
 
     public UserDTO(Host host) {
         this(host.getId(), host.getEmail(), host.getName(), host.getSurname(),
-                host.getPhone(), new AddressDTO(host.getAddress()), host.getSettings(), host.getBio());
+                host.getPhone(), host.getRoles().get(0).getName(),
+                new AddressDTO(host.getAddress()), host.getSettings(), host.getBio());
     }
 }

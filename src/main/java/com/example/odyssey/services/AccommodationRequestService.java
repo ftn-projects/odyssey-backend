@@ -5,9 +5,10 @@ import com.example.odyssey.entity.accommodations.AccommodationRequest;
 import com.example.odyssey.entity.accommodations.AvailabilitySlot;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.exceptions.AvailabilitySlotsOverlappingException;
-import com.example.odyssey.exceptions.InputValidationException;
 import com.example.odyssey.exceptions.InvalidAvailabilitySlotException;
 import com.example.odyssey.exceptions.SlotHasReservationsException;
+import com.example.odyssey.exceptions.FieldValidationException;
+import com.example.odyssey.exceptions.accommodations.AccommodationNotFoundException;
 import com.example.odyssey.repositories.AccommodationRequestRepository;
 import com.example.odyssey.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,7 @@ public class AccommodationRequestService {
     }
 
     public AccommodationRequest findById(Long id) {
-        return repository.findById(id).orElseThrow(() ->
-                new NoSuchElementException(String.format("Accommodation request with id '%d' does not exist.", id)));
+        return repository.findById(id).orElseThrow(() -> new AccommodationNotFoundException(id));
     }
 
     public void editStatus(AccommodationRequest request, AccommodationRequest.Status status) throws IOException {
@@ -60,13 +60,12 @@ public class AccommodationRequestService {
             accommodation = new Accommodation(request.getDetails());
             accommodation.setHost(request.getHost());
         } else {
-            accommodation = accommodationService.getOne(request.getAccommodationId());
+            accommodation = accommodationService.findById(request.getAccommodationId());
             accommodation.updateWithDetails(request.getDetails());
         }
 
         Long id = accommodationService.save(accommodation).getId();
-        ImageUtil.copyFiles(
-                imagesDirPath + request.getId(),
+        ImageUtil.copyFiles(imagesDirPath + request.getId(),
                 AccommodationService.imagesDirPath + id);
     }
 
@@ -76,18 +75,21 @@ public class AccommodationRequestService {
 
         Set<AvailabilitySlot> slots = request.getDetails().getNewAvailableSlots();
 
-         for(AvailabilitySlot slot: slots){
-             if(slot.getPrice() == null || slot.getTimeSlot().getStart() == null || slot.getTimeSlot().getEnd() == null
-                     || slot.getPrice()<=0 || slot.getTimeSlot().getEnd().isBefore(LocalDateTime.now())
-                     || !slot.getTimeSlot().getStart().isBefore(slot.getTimeSlot().getEnd())) throw new InvalidAvailabilitySlotException("newAvailableSlots");
-
-             if(request.getType().equals(AccommodationRequest.Type.UPDATE) &&
-                     reservationService.overlapsReservation(request.getAccommodationId(), slot.getTimeSlot())) throw new SlotHasReservationsException("newAvailableSlots");
-
-             for(AvailabilitySlot s: slots){
-                 if(!s.equals(slot) && s.getTimeSlot().overlaps(slot.getTimeSlot())) throw new AvailabilitySlotsOverlappingException("newAvailableSlots");
-             }
-         }
+//         for(AvailabilitySlot slot: slots){
+//             if(slot.getPrice() == null || slot.getTimeSlot().getStart() == null || slot.getTimeSlot().getEnd() == null
+//                     || slot.getPrice()<=0
+//                     || !slot.getTimeSlot().getStart().isBefore(slot.getTimeSlot().getEnd()))
+//                 throw new UnsupportedOperationException("Bad available slots");
+//
+//             if(request.getType().equals(AccommodationRequest.Type.UPDATE) &&
+//                     reservationService.overlapsReservation(request.getAccommodationId(), slot.getTimeSlot()))
+//                 throw new UnsupportedOperationException("Bad available slots");
+//
+//             for(AvailabilitySlot s: slots){
+//                 if(!s.equals(slot) && s.getTimeSlot().overlaps(slot.getTimeSlot()))
+//                     throw new UnsupportedOperationException("Bad available slots");
+//             }
+//         }
 
         return repository.save(request);
     }
@@ -127,7 +129,7 @@ public class AccommodationRequestService {
 
     public void uploadImage(Long id, MultipartFile image) throws IOException {
         if (image.getOriginalFilename() == null)
-            throw new IOException("Image is non existing.");
+            throw new FieldValidationException("Image is non existing.", "image");
 
         findById(id); // id validation
 

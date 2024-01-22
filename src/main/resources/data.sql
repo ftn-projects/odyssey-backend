@@ -3,16 +3,16 @@
 INSERT INTO roles (name)
 VALUES ('ADMIN'), ('HOST'), ('GUEST'), ('USER');
 
-INSERT INTO users (user_role, status, name, surname, email, password, phone, address_street, address_city, address_country, profile_image, bio, created)
+INSERT INTO users (user_role, status, name, surname, email, password, phone, address_street, address_city, address_country, profile_image, bio, created, reservation_requested, reservation_accepted, reservation_declined, reservation_cancelled, profile_reviewed, accommodation_reviewed)
 VALUES
-    ('USER', 1, 'Marko', 'Marković', 'admin@gmail.com', '$2a$12$ojx4gaAU/odqpcwD7JTHMe0GUCITBrDKe/llCaUVIAmdkaJAr1KjO', '(+381)69423143', 'Bulevar cara Dušana 34', 'Novi Sad', 'Serbia', 'profile.png', null, '2023-01-01 11:00:00'),
-    ('HOST', 1, 'Petar', 'Petrović', 'petar@gmail.com', '$2a$12$xygRv8VL.sBMKEgrrioX7OS81Zn4V5gHrLNnVHJ1HLP6ISXzzZf2G', '(+381)63748021', 'Slobodana Jovanovića 8', 'Kruševac', 'Serbia', 'profile.png', 'Živim u Kruševcu i izdajem 2 smeštaja.', '2023-02-10 12:00:00'),
-    ('HOST', 1, 'Nevena', 'Nevenić', 'nevena@gmail.com', '$2a$12$AxVIzXc9jiBsVPppHOTTPesNsqUp4gvIl2sSK9FtXdDdlSbXMl1ea', '(+381)65900314', 'Jovana Ristića 87', 'Niš', 'Serbia', 'profile.png', 'Iz Niš sam i izdajem 3 apartmana.', '2023-03-21 10:00:00'),
-    ('HOST', 2, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$b2qhCMoji6RCk0mGZxaNROJMDUHmC.0s4chAqIqiClMbpUcV/qjNq', '(+381)63984039', 'Bulevar vojvode Mišića 74', 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00'),
-    ('GUEST', 2, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$KmFHBhd8NSsRcA7ThwY6eOMTru7w/RQqoCXoWFQmxpUvyrUu0pAWy', '(+381)69774829', 'Bulevar vojvode Mišića 64', 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00'),
-    ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska 3', 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00'),
-    ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića 17', 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00'),
-    ('GUEST', 0, 'Novi', 'Nalog', 'novi@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)0000000', 'Neka Ulica 99', 'Beograd', 'Serbia', 'profile.png', null, '2023-12-21 08:00:00');
+    ('USER', 1, 'Marko', 'Marković', 'admin@gmail.com', '$2a$12$ojx4gaAU/odqpcwD7JTHMe0GUCITBrDKe/llCaUVIAmdkaJAr1KjO', '(+381)69423143', 'Bulevar cara Dušana 34', 'Novi Sad', 'Serbia', 'profile.png', null, '2023-01-01 11:00:00', null, null, null, null, true, true),
+    ('HOST', 1, 'Petar', 'Petrović', 'petar@gmail.com', '$2a$12$xygRv8VL.sBMKEgrrioX7OS81Zn4V5gHrLNnVHJ1HLP6ISXzzZf2G', '(+381)63748021', 'Slobodana Jovanovića 8', 'Kruševac', 'Serbia', 'profile.png', 'Živim u Kruševcu i izdajem 2 smeštaja.', '2023-02-10 12:00:00', true, null, null, true, true, true),
+    ('HOST', 1, 'Nevena', 'Nevenić', 'nevena@gmail.com', '$2a$12$AxVIzXc9jiBsVPppHOTTPesNsqUp4gvIl2sSK9FtXdDdlSbXMl1ea', '(+381)65900314', 'Jovana Ristića 87', 'Niš', 'Serbia', 'profile.png', 'Iz Niš sam i izdajem 3 apartmana.', '2023-03-21 10:00:00', true, null, null, true, true, true),
+    ('HOST', 2, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$b2qhCMoji6RCk0mGZxaNROJMDUHmC.0s4chAqIqiClMbpUcV/qjNq', '(+381)63984039', 'Bulevar vojvode Mišića 74', 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00', true, null, null, true, true, true),
+    ('GUEST', 1, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$KmFHBhd8NSsRcA7ThwY6eOMTru7w/RQqoCXoWFQmxpUvyrUu0pAWy', '(+381)69774829', 'Bulevar vojvode Mišića 64', 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00', true, true, true, null, null, null),
+    ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska 3', 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00', true, true, true, null, null, null),
+    ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića 17', 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00', true, true, true, null, null, null),
+    ('GUEST', 0, 'Novi', 'Nalog', 'novi@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)0000000', 'Neka Ulica 99', 'Beograd', 'Serbia', 'profile.png', null, '2023-12-21 08:00:00', true, true, true, null, null, null);
 
 INSERT INTO user_roles (user_id, role_id)
 VALUES
@@ -101,35 +101,63 @@ VALUES
     (4, 1), (4, 2), (4, 3), (4, 4), (4, 6), (4, 7), (4, 9),
     (5, 2), (5, 4), (5, 5), (5, 7), (5, 8), (5, 9);
 
--- --------------------------- RESERVATIONS ---------------------------- --
+
+-- ------------------------- GUEST FAVORITES --------------------------- --
+INSERT INTO guest_favourited(accommodation_id, user_id)
+VALUES
+    (1,5), (2,5), (3,5), (4,5),
+    (3,6), (7,6),
+    (8,7);
+
+-- ------------------------- RESERVATIONS --------------------------- --
 
 INSERT INTO reservations (status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
 VALUES
-    (0, 1, 7, 2, 520.0 * 2 * 2, '2023-12-22', null, '2023-12-22', '2023-12-23'),
-    (0, 2, 7, 2, 430.0 * 4 * 2, '2023-12-22', null, '2023-12-26', '2023-12-30'),
+    (1, 4, 5, 2, 520.0 * 2 * 2, '2023-12-22', null, '2023-12-22', '2023-12-23'),
+    (1, 2, 7, 2, 430.0 * 4 * 2, '2023-12-22', null, '2023-12-26', '2023-12-30'),
     (1, 3, 7, 3, 300.0 * 5 * 3, '2023-12-24', '2023-12-26', '2024-01-13', '2024-01-18'),
     (2, 4, 7, 2, 150.0 * 6, '2023-12-25', null, '2024-01-14', '2024-01-20'),
     (3, 5, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
     (1, 1, 7, 1, 430.0 * 3 * 1, '2023-12-20', '2023-12-26', '2024-01-01', '2024-01-04'),
-    (1, 1, 7, 3, 300.0 * 5 * 3, '2024-01-1', '2024-01-01', '2024-06-13', '2024-06-18');
+    (1, 1, 7, 3, 300.0 * 5 * 3, '2024-01-1', '2024-01-01', '2024-06-13', '2024-06-18'),
+    (0, 1, 7, 2, 520.0 * 2 * 2, '2023-12-22', null, '2024-01-29', '2024-01-30'),
+    (1, 2, 7, 2, 430.0 * 4 * 2, '2023-12-22', '2023-12-22', '2023-12-26', '2023-12-30'),
+    (2, 1, 7, 3, 300.0 * 5 * 3, '2023-12-24', null, '2024-01-13', '2024-01-18'),
+    (3, 2, 7, 2, 150.0 * 6, '2023-12-25', null, '2024-01-14', '2024-01-20'),
+    (4, 2, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
+    (0, 1, 6, 1, 430.0 * 3 * 1, '2023-12-20', null, '2024-01-28', '2024-01-30'),
+    (1, 1, 7, 2, 430.0 * 4 * 2, '2023-12-22', '2023-12-22', '2024-01-22', '2024-01-24');
 
--- --------------------------- REVIEWS ---------------------------- --
+-- ---------------------------- REVIEWS ----------------------------- --
 
-INSERT INTO reviews (accommodation_id, submitter_id, rating, comment, submission_date, status, type)
+INSERT INTO reviews (accommodation_id, host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
-    (1, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
-    (2, 7, 4, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
-    (3, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-01 20:00:00', 2, 'AR'),
-    (4, 7, 2, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
-    (5, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
-    (6, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
-    (7, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
-    (7, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR');
+    (1, null, 7, 5, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
+    (2, null, 7, 4, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
+    (3, null, 7, 3, 'Apartman je odličan, sve je bilo super.', '2024-01-01 20:00:00', 2, 'AR'),
+    (4, null, 7, 2, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
+    (5, null, 7, 1, 'Soba je odlična, sve je bilo super.', '2023-01-05 20:00:00', 2, 'AR'),
+    (6, null, 7, 5, 'Kuća je odlična, sve je bilo super.', '2023-01-20 20:00:00', 2, 'AR'),
+    (7, null, 7, 4, 'Apartman je odličan, sve je bilo super.', '2024-01-04 20:00:00', 2, 'AR'),
+    (7, null, 6, 3, 'Apartman je odličan, sve je bilo super.', '2023-02-10 20:00:00', 2, 'AR'),
+    (null, 2, 7, 3, 'Superr.', '2023-02-10 20:00:00', 2, 'HR');
 
--- --------------------------- HOST REVIEWS ---------------------------- --
+-- ------------------------- HOST REVIEWS --------------------------- --
+
 INSERT INTO reviews (host_id, submitter_id, rating, comment, submission_date, status, type)
 VALUES
-    (2, 7, 5, 'Host odlican.', '2023-01-05 20:00:00', 0, 'HR'),
-    (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 0, 'HR'),
+    (2, 7, 5, 'Host odlican.', '2023-01-05 20:00:00', 2, 'HR'),
+    (3, 7, 4, 'Vlasnik veoma kulturan.', '2023-01-20 20:00:00', 2, 'HR'),
     (4, 6, 3, 'Uzas Bozji, majko mila kakva budala od vlasnika.', '2024-01-24 20:00:00', 1, 'HR'),
     (2, 5, 2, 'Amazing. Totally wasnt paid to write this', '2023-02-10 20:00:00', 0, 'HR');
+
+-- ------------------------- NOTIFICATIONS -------------------------- --
+
+INSERT INTO notifications (type, receiver_id, read, date, title, description, notification_type, accommodation_review_id, host_review_id, reservation_id)
+VALUES
+    (0, 2, true, '2023-02-10 12:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 3, false, '2023-03-21 10:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 4, false, '2023-06-08 09:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 5, false, '2023-08-11 13:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 6, false, '2021=09-17 15:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 7, false, '2023-10-29 20:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null);

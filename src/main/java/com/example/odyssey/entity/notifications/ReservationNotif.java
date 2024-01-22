@@ -7,12 +7,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @DiscriminatorValue(value = "RESERVATION")
 public class ReservationNotif extends Notification {
 
@@ -22,13 +26,8 @@ public class ReservationNotif extends Notification {
     @ManyToOne
     private Reservation reservation;
 
-    public ReservationNotif() {
-        super(null, null);
-        reservation = null;
-    }
-
-    public ReservationNotif(@NonNull Reservation reservation, @NonNull User receiver) {
-        super(null, receiver);
+    public ReservationNotif(@NonNull Reservation reservation, @NonNull User receiver, Notification.Type type, String title) {
+        super(null, title, "", null, null, type, receiver);
         this.reservation = reservation;
     }
 }

@@ -45,20 +45,48 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("reservationStartDate") LocalDateTime reservationStartDate,
             @Param("reservationEndDate") LocalDateTime reservationEndDate);
 
-
     @Query("SELECT DISTINCT r " +
             "FROM Reservation  r " +
             "LEFT JOIN FETCH r.guest g " +
             "LEFT JOIN FETCH  r.accommodation a " +
-            "WHERE (r.accommodation.host.id = :hostId) " +
+            "WHERE (:hostId IS NULL OR r.accommodation.host.id = :hostId) " +
             "AND (:status IS NULL OR r.status IN :status) " +
             "AND (:accommodationId IS NULL OR r.accommodation.id = :accommodationId) " +
-            "AND (cast(:reservationEndDate as localdatetime) IS NULL) " +
-            "OR (r.timeSlot.start <= :reservationEndDate AND r.timeSlot.end >= :reservationEndDate)")
-    List<Reservation> findAllWithFilterButCooler(
+            "AND ((cast(:reservationStartDate as localdatetime) IS NULL OR cast(:reservationEndDate as localdatetime) IS NULL) " +
+            "OR (r.timeSlot.end <= :reservationEndDate AND r.timeSlot.start >= :reservationStartDate))")
+    List<Reservation> findAllWithFilterButWithId(
             @Param("hostId") Long hostId,
             @Param("status") List<Reservation.Status> status,
+            @Param("accommodationId") Long id,
+            @Param("reservationStartDate") LocalDateTime reservationStartDate,
+            @Param("reservationEndDate") LocalDateTime reservationEndDate);
+
+
+    @Query("SELECT DISTINCT r " +
+            "FROM Reservation r " +
+            "WHERE (:guestId IS NULL OR r.guest.id = :guestId) " +
+            "AND (r.status IN :statuses) " +
+            "AND (:accommodationId IS NULL OR r.accommodation.id = :accommodationId) " +
+            "AND  " +
+            "(r.timeSlot.end >= :reservationStartDate AND r.timeSlot.end <= :reservationEndDate)")
+    List<Reservation> findAllWithFilterAccommodationReview(
+            @Param("guestId") Long guestId,
             @Param("accommodationId") Long accommodationId,
+            @Param("statuses") List<Reservation.Status> status,
+            @Param("reservationStartDate") LocalDateTime reservationStartDate,
+            @Param("reservationEndDate") LocalDateTime reservationEndDate);
+
+    @Query("SELECT DISTINCT r " +
+            "FROM Reservation  r " +
+            "WHERE (:guestId IS NULL OR r.guest.id = :guestId) " +
+            "AND (:hostId IS NULL OR r.accommodation.host.id = :hostId) " +
+            "AND (:status IS NULL OR r.status IN :status) " +
+            "AND (r.timeSlot.end >= :reservationStartDate AND r.timeSlot.end <= :reservationEndDate)")
+    List<Reservation> findAllWithFilterHostReview(
+            @Param("guestId") Long guestId,
+            @Param("hostId") Long hostId,
+            @Param("status") List<Reservation.Status> status,
+            @Param("reservationStartDate") LocalDateTime reservationStartDate,
             @Param("reservationEndDate") LocalDateTime reservationEndDate);
 
 

@@ -45,8 +45,20 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             @Param("endSlotPrice") Double endSlotPrice,
             @Param("location") String location);
 
-    List<Accommodation> findAllByHost(Host host);
+    @Query("SELECT a " +
+            "FROM Accommodation a " +
+            "WHERE a.host.id = :hostId")
+    List<Accommodation> findAllByHostId(Long hostId);
 
+    @Query(
+            "SELECT a "+
+                    "FROM Accommodation  a " +
+                    "WHERE a.id IN :accommodationIds"
+    )
+
+    List<Accommodation> findAllByGuestFavorites(
+            @Param("accommodationIds") List<Long> accommodationIds
+    );
     @Query("SELECT s.price " +
             "FROM Accommodation a " +
             "JOIN a.availableSlots s " +

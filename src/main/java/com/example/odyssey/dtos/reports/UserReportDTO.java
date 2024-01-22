@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /*
     Used for admin User management feature.
@@ -26,7 +27,7 @@ public class UserReportDTO {
     public UserReportDTO(UserReport report) {
         id = report.getId();
         description = report.getDescription();
-        submissionDate = report.getSubmissionDate();
+        submissionDate = report.getSubmissionDate().truncatedTo(ChronoUnit.SECONDS);
         submitter = new UserDTO(report.getSubmitter());
         reported = new UserDTO(report.getReported());
     }

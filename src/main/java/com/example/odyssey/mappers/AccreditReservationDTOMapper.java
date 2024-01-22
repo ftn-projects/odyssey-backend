@@ -1,6 +1,6 @@
 package com.example.odyssey.mappers;
 
-import com.example.odyssey.dtos.reservation.ReservationsAccreditDTO;
+import com.example.odyssey.dtos.reservations.ReservationsAccreditDTO;
 import com.example.odyssey.entity.reservations.Reservation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
