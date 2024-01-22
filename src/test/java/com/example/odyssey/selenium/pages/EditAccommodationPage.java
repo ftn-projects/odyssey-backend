@@ -9,29 +9,26 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class CreateAccommodationPage {
+public class EditAccommodationPage {
     private WebDriver driver;
-
-    @FindBy(xpath = "//span[text()='Create']")
+    @FindBy(xpath = "//span[text()='Edit']")
     private WebElement pagetitle;
     @FindBy(xpath = "//span[contains(@class,'mdc-button__label') and text() = 'Submit ']")
-    private WebElement createBtn;
-    @FindBy(name = "title")
-    private WebElement title;
-    @FindBy(xpath = "//p[text()='TV']")
-    private WebElement amenity;
+    private WebElement editBtn;
     @FindBy(name = "defaultPrice")
     private WebElement defaultPrice;
     @FindBy(name = "cancellationDue")
     private WebElement cancellationDue;
-    @FindBy(name = "about")
-    private WebElement description;
-    @FindBy(name = "street")
-    private WebElement street;
-    @FindBy(name = "city")
-    private WebElement city;
     @FindBy(css="[aria-label='Open calendar']")
     private WebElement calender;
+    @FindBy(css="[aria-label='January 11, 2024']")
+    private WebElement january11;
+    @FindBy(xpath="//td[text()=' 1/11/2024 ']")
+    private WebElement january11text;
+    @FindBy(css="[aria-label='January 15, 2024']")
+    private WebElement january15;
+    @FindBy(xpath="//td[text()=' 1/15/2024 ']")
+    private WebElement january15text;
     @FindBy(css="[aria-label='January 24, 2024']")
     private WebElement january24;
     @FindBy(xpath="//td[text()=' 1/24/2024 ']")
@@ -60,13 +57,11 @@ public class CreateAccommodationPage {
     private WebElement addSlotBtn;
     @FindBy(xpath = "//td/button[1]")
     private WebElement removeSlotBtn;
-    @FindBy(xpath = "//a[text()='My accommodations']")
-    private WebElement myAccommodations;
     @FindBy(className = "mat-mdc-snack-bar-action")
     private WebElement snackBtn;
     @FindBy(className = "mat-mdc-snack-bar-label")
     private WebElement snackText;
-    public CreateAccommodationPage(WebDriver driver){
+    public EditAccommodationPage(WebDriver driver){
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
@@ -74,15 +69,6 @@ public class CreateAccommodationPage {
     public void waitUntilOpen(){
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.visibilityOf(pagetitle));
-    }
-
-    public void inputTitle(String titleText){
-        title.clear();
-        title.sendKeys(titleText);
-    }
-
-    public void selectAmenity(){
-        amenity.click();
     }
 
     public void inputPrice(String price){
@@ -95,22 +81,13 @@ public class CreateAccommodationPage {
         cancellationDue.sendKeys(due);
     }
 
-    public void inputDescription(String about){
-        description.clear();
-        description.sendKeys(about);
-    }
-
-    public void inputStreet(String streetName){
-        street.clear();
-        street.sendKeys(streetName);
-    }
-
-    public void inputCity(String cityName){
-        city.clear();
-        city.sendKeys(cityName);
-    }
-
     public void clickCalendar(){calender.click();}
+
+    public void inputSlotPrice(String price){
+        slotPrice.clear();
+        slotPrice.sendKeys(price);
+    }
+
     public void selectDateRange(){
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.visibilityOf(january25));
@@ -125,18 +102,27 @@ public class CreateAccommodationPage {
         january26.click();
     }
 
-    public void inputSlotPrice(String price){
-        slotPrice.clear();
-        slotPrice.sendKeys(price);
+    public void selectOverlapWithReservation(){
+        (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.visibilityOf(january11));
+        january11.click();
+        january15.click();
     }
-
-    public void addSlotClick(){ addSlotBtn.click(); }
 
     public void checkIfAdded(){
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.visibilityOf(january25text));
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.visibilityOf(january30text));
+    }
+
+    public void checkIfReservationOverlapAdded(){
+        (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.visibilityOf(january11text));
+        (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.visibilityOf(january15text));
+        (new WebDriverWait(driver, Duration.ofSeconds(10)))
+                .until(ExpectedConditions.visibilityOf(slotOverlapPrice));
     }
 
     public void checkOverlap(){
@@ -167,7 +153,10 @@ public class CreateAccommodationPage {
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.visibilityOf(slotNewPrice));
     }
-    public void createClick(){ createBtn.click();}
+
+    public void addSlotClick(){ addSlotBtn.click(); }
+
+    public void editClick(){ editBtn.click();}
 
     public void clickSnackBar(String text){
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
@@ -177,11 +166,9 @@ public class CreateAccommodationPage {
         snackBtn.click();
     }
 
-    public void clickAccommodations() {myAccommodations.click();}
     public void removeSlot(){
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.visibilityOf(removeSlotBtn));
         removeSlotBtn.click();
     }
-
 }

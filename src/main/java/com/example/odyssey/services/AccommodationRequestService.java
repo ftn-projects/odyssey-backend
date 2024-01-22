@@ -75,21 +75,20 @@ public class AccommodationRequestService {
 
         Set<AvailabilitySlot> slots = request.getDetails().getNewAvailableSlots();
 
-//         for(AvailabilitySlot slot: slots){
-//             if(slot.getPrice() == null || slot.getTimeSlot().getStart() == null || slot.getTimeSlot().getEnd() == null
-//                     || slot.getPrice()<=0
-//                     || !slot.getTimeSlot().getStart().isBefore(slot.getTimeSlot().getEnd()))
-//                 throw new UnsupportedOperationException("Bad available slots");
-//
-//             if(request.getType().equals(AccommodationRequest.Type.UPDATE) &&
-//                     reservationService.overlapsReservation(request.getAccommodationId(), slot.getTimeSlot()))
-//                 throw new UnsupportedOperationException("Bad available slots");
-//
-//             for(AvailabilitySlot s: slots){
-//                 if(!s.equals(slot) && s.getTimeSlot().overlaps(slot.getTimeSlot()))
-//                     throw new UnsupportedOperationException("Bad available slots");
-//             }
-//         }
+         for(AvailabilitySlot slot: slots){
+             if(slot.getPrice() == null || slot.getTimeSlot().getStart() == null || slot.getTimeSlot().getEnd() == null
+                     || slot.getPrice()<=0 || !slot.getTimeSlot().getStart().isBefore(slot.getTimeSlot().getEnd()))
+                 throw new InvalidAvailabilitySlotException("newAvailableSlots");
+
+             if(request.getType().equals(AccommodationRequest.Type.UPDATE) &&
+                     reservationService.overlapsReservation(request.getAccommodationId(), slot.getTimeSlot()))
+                 throw new SlotHasReservationsException("newAvailableSlots");
+
+             for(AvailabilitySlot s: slots){
+                 if(!s.equals(slot) && s.getTimeSlot().overlaps(slot.getTimeSlot()))
+                     throw new AvailabilitySlotsOverlappingException("newAvailableSlots");
+             }
+         }
 
         return repository.save(request);
     }
