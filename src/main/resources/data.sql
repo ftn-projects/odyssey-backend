@@ -10,7 +10,7 @@ VALUES
     ('HOST', 1, 'Nevena', 'Nevenić', 'nevena@gmail.com', '$2a$12$AxVIzXc9jiBsVPppHOTTPesNsqUp4gvIl2sSK9FtXdDdlSbXMl1ea', '(+381)65900314', 'Jovana Ristića 87', 'Niš', 'Serbia', 'profile.png', 'Iz Niš sam i izdajem 3 apartmana.', '2023-03-21 10:00:00', true, null, null, true, true, true),
     ('HOST', 2, 'Milica', 'Milić', 'milica@gmail.com', '$2a$12$b2qhCMoji6RCk0mGZxaNROJMDUHmC.0s4chAqIqiClMbpUcV/qjNq', '(+381)63984039', 'Bulevar vojvode Mišića 74', 'Beograd', 'Serbia', 'profile.png', 'Živim u Beogradu i posedujem nekoliko smeštaja.', '2023-06-08 09:00:00', true, null, null, true, true, true),
     ('GUEST', 1, 'Dragan', 'Draganić', 'dragan@gmail.com', '$2a$12$KmFHBhd8NSsRcA7ThwY6eOMTru7w/RQqoCXoWFQmxpUvyrUu0pAWy', '(+381)69774829', 'Bulevar vojvode Mišića 64', 'Beograd', 'Serbia', 'profile.png', null, '2023-08-11 13:00:00', true, true, true, null, null, null),
-    ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska 3', 'Novi Sad', 'Serbia', 'profile.png', null, '2021=09-17 15:00:00', true, true, true, null, null, null),
+    ('GUEST', 3, 'Marija', 'Marijanović', 'marija@gmail.com', '$2a$12$jiT6J4jdbtxjBZpZFahyY.DDlqGjLmNhssjhw.s79/8LBMeKsCcZO', '(+381)63756640', 'Stražilovska 3', 'Novi Sad', 'Serbia', 'profile.png', null, '2021-09-17 15:00:00', true, true, true, null, null, null),
     ('GUEST', 1, 'Miloš', 'Milošević', 'milos@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)651859940', 'Svetozara Radojčića 17', 'Beograd', 'Serbia', 'profile.png', null, '2023-10-29 20:00:00', true, true, true, null, null, null),
     ('GUEST', 0, 'Novi', 'Nalog', 'novi@gmail.com', '$2a$12$3ZFBD2qXIFeHtXji.PwF6udh67B6i8SccPsXKs6BbqhrHcgkBS3L6', '(+381)0000000', 'Neka Ulica 99', 'Beograd', 'Serbia', 'profile.png', null, '2023-12-21 08:00:00', true, true, true, null, null, null);
 
@@ -113,20 +113,13 @@ VALUES
 
 INSERT INTO reservations (status, accommodation_id, guest_id, guest_number, price, request_date, reservation_date, start_date, end_date)
 VALUES
-    (1, 4, 5, 2, 520.0 * 2 * 2, '2023-12-22', null, '2023-12-22', '2023-12-23'),
-    (1, 2, 7, 2, 430.0 * 4 * 2, '2023-12-22', null, '2023-12-26', '2023-12-30'),
-    (1, 3, 7, 3, 300.0 * 5 * 3, '2023-12-24', '2023-12-26', '2024-01-13', '2024-01-18'),
-    (2, 4, 7, 2, 150.0 * 6, '2023-12-25', null, '2024-01-14', '2024-01-20'),
-    (3, 5, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
-    (1, 1, 7, 1, 430.0 * 3 * 1, '2023-12-20', '2023-12-26', '2024-01-01', '2024-01-04'),
-    (1, 1, 7, 3, 300.0 * 5 * 3, '2024-01-1', '2024-01-01', '2024-06-13', '2024-06-18'),
-    (0, 1, 7, 2, 520.0 * 2 * 2, '2023-12-22', null, '2024-01-29', '2024-01-30'),
-    (1, 2, 7, 2, 430.0 * 4 * 2, '2023-12-22', '2023-12-22', '2023-12-26', '2023-12-30'),
-    (2, 1, 7, 3, 300.0 * 5 * 3, '2023-12-24', null, '2024-01-13', '2024-01-18'),
-    (3, 2, 7, 2, 150.0 * 6, '2023-12-25', null, '2024-01-14', '2024-01-20'),
-    (4, 2, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
-    (0, 1, 6, 1, 430.0 * 3 * 1, '2023-12-20', null, '2024-01-28', '2024-01-30'),
-    (1, 1, 7, 2, 430.0 * 4 * 2, '2023-12-22', '2023-12-22', '2024-01-22', '2024-01-24');
+--     (1, 4, 5, 2, 520.0 * 2 * 2, '2023-12-22', null, '2023-12-22', '2023-12-23'),
+--     (1, 2, 7, 2, 430.0 * 4 * 2, '2023-12-22', null, '2023-12-26', '2023-12-30'),
+--     (1, 3, 7, 3, 300.0 * 5 * 3, '2023-12-24', '2023-12-26', '2024-01-13', '2024-01-18'),
+--     (2, 4, 7, 2, 150.0 * 6, '2023-12-25', null, '2024-01-14', '2024-01-20'),
+    (1, 1, 7, 3, 450.0 * 4 * 3, '2023-12-27', null, '2024-01-11', '2024-01-15'),
+--     (1, 1, 7, 1, 430.0 * 3 * 1, '2023-12-20', '2023-12-26', '2024-01-01', '2024-01-04'),
+    (1, 1, 7, 3, 300.0 * 5 * 3, '2024-01-1', '2024-01-01', '2024-06-13', '2024-06-18');
 
 -- ---------------------------- REVIEWS ----------------------------- --
 
@@ -159,5 +152,5 @@ VALUES
     (0, 3, false, '2023-03-21 10:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
     (0, 4, false, '2023-06-08 09:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
     (0, 5, false, '2023-08-11 13:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
-    (0, 6, false, '2021=09-17 15:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
+    (0, 6, false, '2021-09-17 15:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null),
     (0, 7, false, '2023-10-29 20:00:00', 'Welcome to Odyssey', 'You can visit home page to browse accommodations of our hosts. Have a great stay :)', 'NOTIFICATION', null, null, null);
