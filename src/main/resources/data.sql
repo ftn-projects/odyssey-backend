@@ -1,7 +1,7 @@
 -- ----------------------------- USERS ------------------------------ --
 
 INSERT INTO roles (name)
-VALUES ('ADMIN'), ('HOST'), ('GUEST'), ('USER'), ('SUPERADMIN');
+VALUES ('ADMIN'), ('HOST'), ('GUEST'), ('SUPERADMIN'), ('USER');
 
 INSERT INTO users (user_role, status, name, surname, email, password, phone, address_street, address_city, address_country, profile_image, bio, created, reservation_requested, reservation_accepted, reservation_declined, reservation_cancelled, profile_reviewed, accommodation_reviewed)
 VALUES
@@ -17,8 +17,8 @@ VALUES
 
 INSERT INTO user_roles (user_id, role_id)
 VALUES
-    (1, 1), (2, 2), (3, 2), (4, 2), (5, 3), (6, 3), (7, 3), (8, 5),
-    (1, 4), (2, 4), (3, 4), (4, 4), (5, 4), (6, 4), (7, 4), (8, 4);
+    (1, 1), (2, 2), (3, 2), (4, 2), (5, 3), (6, 3), (7, 3), (8, 3), (9, 4),
+    (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (6, 5), (7, 5), (8, 5), (9, 5);
 
 -- ------------------------- ACCOMMODATIONS ------------------------- --
 
