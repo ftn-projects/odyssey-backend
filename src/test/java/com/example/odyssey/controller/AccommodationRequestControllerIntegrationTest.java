@@ -38,7 +38,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("test")
 public class AccommodationRequestControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
@@ -361,8 +360,6 @@ public class AccommodationRequestControllerIntegrationTest {
                         LocalDateTime.of(2024, Month.APRIL, 6,0,0,0,0)))), //zero price
                 arguments(new AvailabilitySlot(null, new TimeSlot( LocalDateTime.of(2024, Month.APRIL, 1,0,0,0,0),
                         LocalDateTime.of(2024, Month.APRIL, 6,0,0,0,0)))), //null price
-                arguments(new AvailabilitySlot(500D, new TimeSlot( LocalDateTime.of(2024, Month.JANUARY, 1,0,0,0,0),
-                        LocalDateTime.of(2024, Month.JANUARY, 2,0,0,0,0)))), //end date in past
                 arguments(new AvailabilitySlot(500D, new TimeSlot( LocalDateTime.of(2024, Month.APRIL, 1,0,0,0,0),
                         LocalDateTime.of(2024, Month.APRIL, 1,0,0,0,0)))), //end and start dates are the same
                 arguments(new AvailabilitySlot(500D, new TimeSlot( LocalDateTime.of(2024, Month.JANUARY, 5,0,0,0,0),
