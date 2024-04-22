@@ -43,7 +43,7 @@ public class UserController {
         this.service = service;
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPERADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         return new ResponseEntity<>(mapToDTO(service.getAll()), HttpStatus.OK);
