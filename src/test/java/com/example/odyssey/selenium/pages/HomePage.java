@@ -12,7 +12,7 @@ import java.time.Duration;
 
 public class HomePage {
     private WebDriver driver;
-    private static String PAGE_URL="http://localhost:4200/accommodations";
+    private static String PAGE_URL="https://localhost:4200/accommodations";
     @FindBy(xpath = "//*[text() = 'Log in']")
     private WebElement login;
 

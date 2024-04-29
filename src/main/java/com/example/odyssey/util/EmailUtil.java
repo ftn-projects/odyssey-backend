@@ -29,7 +29,7 @@ public abstract class EmailUtil {
             message.put("From", from);
             message.put("To", to);
             message.put("Subject","Welcome!");
-            message.put("HTMLPart", "You tried to make an Odyssey account, before you can proceed you need to confirm your email. Click <a href=\"http://localhost:4200/emailConfirmation/" + id +"\">here</a> in the next 24 hours to activate your account.");
+            message.put("HTMLPart", "You tried to make an Odyssey account, before you can proceed you need to confirm your email. Click <a href=\"https://localhost:4200/emailConfirmation/" + id +"\">here</a> in the next 24 hours to activate your account.");
 
             JSONArray messages = new JSONArray();
             messages.put(message);
