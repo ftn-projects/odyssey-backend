@@ -56,7 +56,7 @@ public class AccommodationRequestControllerIntegrationTest {
 
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.setBasicAuth("username","password");
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:" + randomServerPort + "/api/v1/users/login");
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://localhost:" + randomServerPort + "/api/v1/users/login");
 
             HttpEntity<?> entity = new HttpEntity<>(body.toString(),headers);
 
@@ -408,7 +408,7 @@ public class AccommodationRequestControllerIntegrationTest {
     }
 
     private ResponseEntity<String> getResult(AccommodationRequestCreationDTO creationDTO){
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:" + randomServerPort + "/api/v1/accommodationRequests");
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://localhost:" + randomServerPort + "/api/v1/accommodationRequests");
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
