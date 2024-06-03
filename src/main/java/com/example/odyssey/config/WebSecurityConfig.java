@@ -1,141 +1,126 @@
 package com.example.odyssey.config;
 
-import com.example.odyssey.security.RestAuthenticationEntryPoint;
-import com.example.odyssey.security.TokenAuthenticationFilter;
-import com.example.odyssey.services.CustomUserDetailsService;
-import com.example.odyssey.util.TokenUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
-public class WebSecurityConfig {
+class WebSecurityConfig {
+    private static final String GROUPS = "groups";
+    private static final String REALM_ACCESS_CLAIM = "realm_access";
+    private static final String ROLES_CLAIM = "roles";
+
+    private final KeycloakLogoutHandler keycloakLogoutHandler;
+
+    WebSecurityConfig(KeycloakLogoutHandler keycloakLogoutHandler) {
+        this.keycloakLogoutHandler = keycloakLogoutHandler;
+    }
+
+    @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
+    private String issuerUri;
+
     @Bean
-    public WebMvcConfigurer CORSConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(@NonNull CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("*")
-                        .allowedHeaders("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-                        .allowCredentials(false);
-            }
-        };
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withJwkSetUri(issuerUri + "/protocol/openid-connect/certs").build();
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+        return new RegisterSessionAuthenticationStrategy(sessionRegistry());
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
+    public SecurityFilterChain resourceServerFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth
+                .requestMatchers(new AntPathRequestMatcher("/*"))
+                .hasRole("user")
+                .requestMatchers(new AntPathRequestMatcher("/"))
+                .permitAll()
+                .anyRequest()
+                .authenticated());
+        http.oauth2ResourceServer((oauth2) -> oauth2
+                .jwt(Customizer.withDefaults()));
+        http.oauth2Login(Customizer.withDefaults())
+                .logout(logout -> logout.addLogoutHandler(keycloakLogoutHandler).logoutSuccessUrl("/"));
+        return http.build();
+    }
+
+    @Bean
+    public GrantedAuthoritiesMapper userAuthoritiesMapperForKeycloak() {
+        return authorities -> {
+            Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
+            var authority = authorities.iterator().next();
+
+            if (authority instanceof OidcUserAuthority oidcUserAuthority) {
+                var userInfo = oidcUserAuthority.getUserInfo();
+
+                // Tokens can be configured to return roles under
+                // Groups or REALM ACCESS hence have to check both
+                if (userInfo.hasClaim(REALM_ACCESS_CLAIM)) {
+                    var realmAccess = userInfo.getClaimAsMap(REALM_ACCESS_CLAIM);
+                    var roles = (Collection<String>) realmAccess.get(ROLES_CLAIM);
+                    mappedAuthorities.addAll(generateAuthoritiesFromClaim(roles));
+                } else if (userInfo.hasClaim(GROUPS)) {
+                    Collection<String> roles = userInfo.getClaim(GROUPS);
+                    mappedAuthorities.addAll(generateAuthoritiesFromClaim(roles));
+                }
+            } else {
+                var oauth2UserAuthority = (OAuth2UserAuthority) authority;
+                var userAttributes = oauth2UserAuthority.getAttributes();
+
+                if (userAttributes.containsKey(REALM_ACCESS_CLAIM)) {
+                    var realmAccess = (Map<String, Object>) userAttributes.get(REALM_ACCESS_CLAIM);
+                    var roles = (Collection<String>) realmAccess.get(ROLES_CLAIM);
+                    mappedAuthorities.addAll(generateAuthoritiesFromClaim(roles));
+                }
+            }
+            return mappedAuthorities;
+        };
+    }
+
+    Collection<GrantedAuthority> generateAuthoritiesFromClaim(Collection<String> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .collect(Collectors.toList());
     }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-
-        return authProvider;
-    }
-
-    @Autowired
-    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
-
-    @Autowired
-    private TokenUtil tokenUtil;
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.securityContext((securityContext) -> securityContext
-                .securityContextRepository(new RequestAttributeSecurityContextRepository()));
-
-        http.cors(cors -> CORSConfigurer());
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint));
-
-        http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/websocket").permitAll()
-                .requestMatchers(HttpMethod.DELETE,
-                        "api/v1/reviews/accommodation/*",
-                        "api/v1/accommodations/favorites/*/*").permitAll()
-                .requestMatchers(HttpMethod.PUT,
-                        "/api/v1/reviews/accommodation/report/*").permitAll()
-                .requestMatchers(HttpMethod.POST,
-                        "/api/v1/users/login",
-                        "/api/v1/users/register",
-                        "/api/v1/users/confirmEmail/*",
-                        "/api/v1/reviews/accommodation",
-                        "/api/v1/reviews/host",
-                        "api/v1/accommodations/favorites/*/*"
-
-                ).permitAll()
-                .requestMatchers(HttpMethod.GET,
-                        "/api/v1/users/*",
-                        "/api/v1/users/image/*",
-                        "/api/v1/accommodations",
-                        "api/v1/accommodations/stats/period",
-                        "/api/v1/accommodations/*",
-                        "/api/v1/accommodations/*/images",
-                        "/api/v1/accommodations/*/images/*",
-                        "/api/v1/accommodations/*/totalPrice",
-                        "/api/v1/accommodations/stats/host/*",
-                        "/api/v1/accommodations/stats/accommodation/*",
-                        "/api/v1/accommodations/stats/host/*/file",
-                        "/api/v1/accommodations/stats/host/*/all",
-                        "api/v1/accommodations/favorites/*",
-                        "/api/v1/accommodations/stats/accommodation/*/file",
-                        "/api/v1/accommodationRequests/*/images",
-                        "/api/v1/reviews/*",
-                        "/api/v1/reviews/accommodation/host/*",
-                        "/api/v1/accommodationRequests/*/images/*",
-                        "/api/v1/reviews/accommodation/report/*",
-                        "/api/v1/reviews/accommodation/*",
-                        "/api/v1/reviews/host/rating/*",
-                        "/api/v1/reviews/accommodation/rating/*"
-                ).permitAll()
-                .anyRequest().authenticated());
-        http.addFilterBefore(new TokenAuthenticationFilter(tokenUtil, userDetailsService()), UsernamePasswordAuthenticationFilter.class);
-
-        http.authenticationProvider(authenticationProvider());
-
-        return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers(HttpMethod.GET, "/", "/webjars/*", "/*.html", "favicon.ico", "/*/*.html", "/*/*.css", "/*/*.js");
     }
 }

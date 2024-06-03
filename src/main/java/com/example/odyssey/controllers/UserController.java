@@ -34,8 +34,6 @@ public class UserController {
     @Autowired
     private NotificationService notificationService;
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
     private TokenUtil tokenUtil;
 
     @Autowired
@@ -53,21 +51,6 @@ public class UserController {
     public ResponseEntity<?> findById(@PathVariable Long id) {
         User user = service.findById(id);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<UserTokenState> createAuthenticationToken(
-            @RequestBody JwtAuthenticationRequest authenticationRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        User user = (User) authentication.getPrincipal();
-        String jwt = tokenUtil.generateToken(user.getId(), user.getUsername(), user.getAuthorities());
-        long expiresIn = tokenUtil.getExpiredIn();
-
-        return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
     }
 
     @PreAuthorize("hasAuthority('USER')")
