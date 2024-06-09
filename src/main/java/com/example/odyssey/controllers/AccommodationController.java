@@ -83,7 +83,6 @@ public class AccommodationController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasAuthority('GUEST')")
     @GetMapping("/favorites/{id}")
     public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
         List<Accommodation> accommodations = new ArrayList<>();

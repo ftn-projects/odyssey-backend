@@ -1,0 +1,20 @@
+{
+  "realm": "Odyssey",
+  "auth-server-url": "https://localhost:8443",
+  "resource": "odyssey-backend",
+  "credentials": {
+    "secret": "hUNY2P7vPRlLN7CFPiiwe8PUTlais8gi"
+  },
+  "http-method-as-scope": true,
+  "paths": [
+    {
+      "path": "/api/v1/accommodations",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    }
+  ]
+}

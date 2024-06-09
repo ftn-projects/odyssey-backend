@@ -28,7 +28,7 @@ public class ReportController {
     @Autowired
     private ReviewService reviewService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/user")
     public ResponseEntity<?> getAllUsersWithReports(
             @RequestParam(required = false) String search,
@@ -44,7 +44,7 @@ public class ReportController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/user/{id}")
     public ResponseEntity<?> findUserWithReports(@PathVariable("id") Long id) {
         UserWithReportsDTO user = new UserWithReportsDTO(
@@ -52,14 +52,14 @@ public class ReportController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
+//    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/review/{id}")
     public ResponseEntity<?> reportReview(@PathVariable Long id) {
         reviewService.reportReview(id);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
+//    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("/user")
     public ResponseEntity<?> reportUser(@RequestBody UserReportSubmissionDTO dto) {
         User submitter = userService.findById(dto.getSubmitterId());
