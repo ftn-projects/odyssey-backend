@@ -34,16 +34,17 @@ public class UserDTO {
     private User.NotificationSettings settings;
     @Size(max = 200, message = "Bio should not be longer than 200 characters.")
     private String bio;
+    private String username;
 
     public UserDTO(User user) {
         this(user.getId(), user.getEmail(), user.getName(), user.getSurname(),
                 user.getPhone(), user.getRoles().get(0).getName(),
-                new AddressDTO(user.getAddress()), user.getSettings(), "");
+                new AddressDTO(user.getAddress()), user.getSettings(), "", user.getUsername());
     }
 
     public UserDTO(Host host) {
         this(host.getId(), host.getEmail(), host.getName(), host.getSurname(),
                 host.getPhone(), host.getRoles().get(0).getName(),
-                new AddressDTO(host.getAddress()), host.getSettings(), host.getBio());
+                new AddressDTO(host.getAddress()), host.getSettings(), host.getBio(), host.getUsername());
     }
 }

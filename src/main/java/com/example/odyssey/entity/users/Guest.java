@@ -25,13 +25,13 @@ public class Guest extends User {
     public Guest(User user){
         this(user.getId(), user.getStatus(), user.getName(), user.getSurname(), user.getEmail(),
                 user.getPassword(), user.getAddress(), user.getPhone(), user.getProfileImage(),
-                user.getSettings(),user.getRoles(),new HashSet<>());
+                user.getSettings(),user.getRoles(),new HashSet<>(), user.getUsername());
     }
 
     public Guest(Long id, AccountStatus status, String name, String surname,
                  String email, String password, Address address, String phone, String profileImage,
-                 NotificationSettings settings, List<Role> roles, Set<Accommodation> favorites) {
-        super(id, status, name, surname, email, password, address, phone, profileImage, settings, LocalDateTime.now(), roles);
+                 NotificationSettings settings, List<Role> roles, Set<Accommodation> favorites, String username) {
+        super(id, status, name, surname, email, password, address, phone, profileImage, settings, LocalDateTime.now(), username, roles);
         this.favorites = favorites;
     }
 }

@@ -17,6 +17,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @NonNull
     Page<User> findAll(@NonNull Pageable pageable);
 
+    Optional<User> findUserByUsername(String username);
+
     Optional<User> findUserByEmail(String email);
 
     List<User> findUsersByStatus(User.AccountStatus status);

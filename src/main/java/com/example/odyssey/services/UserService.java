@@ -50,28 +50,12 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User register(User user, String role) {
-        List<Role> roles = roleRepository.findByName(role.toUpperCase());
-        roles.add(roleRepository.findByName("USER").get(0));
-
-        user.setRoles(roles);
-        user.setStatus(User.AccountStatus.PENDING);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setCreated(LocalDateTime.now());
-
-        if (user.hasRole("GUEST")) user = new Guest(user);
-        else user = new Host(user);
-        user = userRepository.save(user);
-        EmailUtil.sendConfirmation(user.getEmail(), user.getName(), user.getId());
-        return user;
+    public User findByUsername(String username) {
+        return userRepository.findUserByUsername(username).orElseThrow(() -> new UserNotFoundException("username", username));
     }
 
-    public User findByEmail(String email) {
-        return userRepository.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException("email", email));
-    }
-
-    public void updatePassword(Long id, String oldPassword, String newPassword) {
-        User user = findById(id);
+    public void updatePassword(String username, String oldPassword, String newPassword) {
+        User user = findByUsername(username);
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword()))
             throw new FieldValidationException("Password is incorrect.", "Current password");
@@ -118,17 +102,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User confirmEmail(Long id) {
-        try {
-            if (!findById(id).getStatus().equals(User.AccountStatus.PENDING))
-                throw new FailedActivationException("User account has already been activated.");
-
-            return updateAccountStatus(id, User.AccountStatus.ACTIVE);
-        } catch (NoSuchElementException e) {
-            throw new FailedActivationException("Invalid email activation link.");
-        }
-    }
-
     public List<User> findByStatus(User.AccountStatus status) {
         return userRepository.findUsersByStatus(status);
     }
@@ -142,23 +115,23 @@ public class UserService {
         }
     }
 
-    public byte[] getImage(Long id) throws IOException {
-        String imageName = findById(id).getProfileImage();
-        String imagePath = StringUtils.cleanPath(imagesDirPath + id + "/" + imageName);
+    public byte[] getImage(String username) throws IOException {
+        String imageName = findByUsername(username).getProfileImage();
+        String imagePath = StringUtils.cleanPath(imagesDirPath + username + "/" + imageName);
         try {
             return Files.readAllBytes(new File(imagePath).toPath());
         } catch (IOException e) {
-            throw new IOException(String.format("Image file '%s' not found for the user with id '%d'.", imageName, id));
+            throw new IOException(String.format("Image file '%s' not found for the user with id '%d'.", imageName, username));
         }
     }
 
-    public void uploadImage(Long id, MultipartFile image) throws IOException {
-        User user = findById(id);
+    public void uploadImage(String username, MultipartFile image) throws IOException {
+        User user = findByUsername(username);
 
         if (image.getOriginalFilename() == null)
             throw new ValidationException("Image upload file cannot be found.");
 
-        String uploadDir = StringUtils.cleanPath(imagesDirPath + id);
+        String uploadDir = StringUtils.cleanPath(imagesDirPath + username);
         ImageUtil.saveImage(uploadDir, "profile.png", image);
         user.setProfileImage("profile.png");
         userRepository.save(user);

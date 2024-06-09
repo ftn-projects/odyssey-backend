@@ -28,13 +28,13 @@ public class Host extends User {
     public Host(User user) {
         this(user.getId(), user.getStatus(), user.getName(), user.getSurname(), user.getEmail(),
                 user.getPassword(), user.getAddress(), user.getPhone(), user.getProfileImage(),
-                user.getSettings(), user.getRoles(), "", new HashSet<>());
+                user.getSettings(), user.getRoles(), "", new HashSet<>(), user.getUsername());
 
     }
 
     public Host(Long id, AccountStatus status, String name, String surname, String email, String password, Address address,
-                String phone, String profileImage, NotificationSettings settings, List<Role> roles, String bio, Set<Accommodation> accommodations) {
-        super(id, status, name, surname, email, password, address, phone, profileImage, settings, LocalDateTime.now(), roles);
+                String phone, String profileImage, NotificationSettings settings, List<Role> roles, String bio, Set<Accommodation> accommodations, String username) {
+        super(id, status, name, surname, email, password, address, phone, profileImage, settings, LocalDateTime.now(), username, roles);
         this.bio = bio;
         this.accommodations = accommodations;
     }

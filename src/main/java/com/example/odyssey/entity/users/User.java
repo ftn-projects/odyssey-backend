@@ -38,6 +38,7 @@ public class User implements UserDetails {
     @Embedded
     private NotificationSettings settings = new NotificationSettings();
     private LocalDateTime created;
+    private String username;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

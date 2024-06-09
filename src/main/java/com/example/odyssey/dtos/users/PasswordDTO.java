@@ -15,8 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PasswordDTO {
     @NotNull
-    @Positive(message = "Id should be a natural positive number.")
-    private Long userId;
+    private String username;
     private String oldPassword;
     @Size(min = 4, message = "Password should be at least 4 characters long.")
     private String newPassword;

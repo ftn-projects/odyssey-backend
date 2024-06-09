@@ -47,9 +47,9 @@ public class UserController {
         return new ResponseEntity<>(mapToDTO(service.getAll()), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
-        User user = service.findById(id);
+    @GetMapping("/{username}")
+    public ResponseEntity<?> findById(@PathVariable String username) {
+        User user = service.findByUsername(username);
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
@@ -80,15 +80,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER')")
     @PutMapping("/password")
     public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordDTO dto) {
-        service.updatePassword(dto.getUserId(), dto.getOldPassword(), dto.getNewPassword());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PostMapping("/confirmEmail/{id}")
-    public ResponseEntity<String> confirmEmail(@PathVariable Long id) {
-        User user = service.confirmEmail(id);
-        notificationService.create(new Notification(
-                Notification.WELCOME_TITLE, Notification.WELCOME_DESCRIPTION, user));
+        service.updatePassword(dto.getUsername(), dto.getOldPassword(), dto.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -113,29 +105,15 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegistrationDTO userDTO) {
-        try {
-            User exists = this.service.findByEmail(userDTO.getEmail());
-            if (exists != null) return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
-        } catch (UserNotFoundException ignored) {
-        }
-
-        User user = UserDTOMapper.fromRegistrationDTOtoUser(userDTO);
-
-        user = service.register(user, userDTO.getRole());
-        return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.CREATED);
-    }
-
-    @GetMapping(value = "/image/{id}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity<?> getImage(@PathVariable Long id) throws IOException {
-        return new ResponseEntity<>(service.getImage(id), HttpStatus.OK);
+    @GetMapping(value = "/image/{username}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<?> getImage(@PathVariable String username) throws IOException {
+        return new ResponseEntity<>(service.getImage(username), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping(value = "/image/{id}")
-    public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile imageFile) throws IOException {
-        service.uploadImage(id, imageFile);
+    @PostMapping(value = "/image/{username}")
+    public ResponseEntity<?> uploadImage(@PathVariable String username, @RequestParam("image") MultipartFile imageFile) throws IOException {
+        service.uploadImage(username, imageFile);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
