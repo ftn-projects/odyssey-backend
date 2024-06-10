@@ -11,6 +11,7 @@ import com.example.odyssey.entity.reviews.Review;
 import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.mappers.ReviewDTOMapper;
 import com.example.odyssey.services.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +43,8 @@ public class ReviewController {
 
     @GetMapping("/host")
     public ResponseEntity<?> getAllHostReviews(
-            @RequestParam(required = false) Long hostId,
-            @RequestParam(required = false) Long submitterId,
+            @RequestParam(required = false) String hostId,
+            @RequestParam(required = false) String submitterId,
             @RequestParam(required = false) List<Review.Status> listTypes
     ) {
         List<HostReview> reviews = service
@@ -57,7 +58,7 @@ public class ReviewController {
     @GetMapping("/accommodation")
     public ResponseEntity<?> getAllAccommodationReviews(
             @RequestParam(required = false) Long accommodationId,
-            @RequestParam(required = false) Long submitterId,
+            @RequestParam(required = false) String submitterId,
             @RequestParam(required = false) List<Review.Status> listTypes
     ) {
         List<AccommodationReview> reviews = service
@@ -102,13 +103,13 @@ public class ReviewController {
     }
 
     @GetMapping("/host/rating/{id}")
-    public ResponseEntity<?> getHostRatings(@PathVariable Long id) {
+    public ResponseEntity<?> getHostRatings(@PathVariable String id) {
         List<Integer> ratings = service.getRatingsByHost(id);
         return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
 
     @PostMapping("/host")
-    public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO dto) {
+    public ResponseEntity<?> createHostReview(@Valid @RequestBody HostReviewDTO dto) {
         HostReview review = service.saveHostReview(
                 ReviewDTOMapper.fromDTOtoHostReview(dto));
         notificationService.create(new HostReviewedNotif(review, review.getHost()));
@@ -118,7 +119,7 @@ public class ReviewController {
     }
 
     @PostMapping("/accommodation")
-    public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO dto) {
+    public ResponseEntity<?> createAccommodationReview(@Valid @RequestBody AccommodationReviewDTO dto) {
         AccommodationReview review = ReviewDTOMapper.fromDTOtoAccommodationReview(dto);
         review.setSubmitter((Guest) userService.findById(dto.getSubmitter().getId()));
         review.setAccommodation(accommodationService.findById(dto.getAccommodation().getId()));
@@ -131,7 +132,7 @@ public class ReviewController {
     }
 
     @PutMapping("/host/report/{id}")
-    public ResponseEntity<?> reportHostReview(@PathVariable Long id, @RequestBody HostReviewDTO reviewDTO) {
+    public ResponseEntity<?> reportHostReview(@PathVariable Long id, @Valid @RequestBody HostReviewDTO reviewDTO) {
         HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
 
         review = service.reportHostReview(review.getId());

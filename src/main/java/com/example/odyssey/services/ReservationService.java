@@ -63,7 +63,7 @@ public class ReservationService {
     }
 
     public List<Reservation> getFilteredByHost(
-            Long hostId,
+            String hostId,
             List<String> status,
             String title,
             Long dateStart,
@@ -82,7 +82,7 @@ public class ReservationService {
     }
 
     public List<Reservation> getFilteredByGuest(
-            Long guestId,
+            String guestId,
             List<String> status,
             String title,
             Long dateStart,

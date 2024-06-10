@@ -87,7 +87,7 @@ public class AccommodationService {
         return accommodationRepository.findById(id).orElseThrow(() -> new AccommodationNotFoundException(id));
     }
 
-    public List<Accommodation> findByHostId(Long hostId) {
+    public List<Accommodation> findByHostId(String hostId) {
         return accommodationRepository.findAllByHostId(hostId);
     }
 
@@ -95,9 +95,9 @@ public class AccommodationService {
         return accommodationRepository.save(accommodation);
     }
 
-    public List<Accommodation> findByGuestFavorites(Long guestId){
+    public List<Accommodation> findByGuestFavorites(String guestId){
         List<Accommodation> accommodations = new ArrayList<>();
-        User user = userService.findById(guestId);
+        User user = userService.findByUsername(guestId);
         if(!(user instanceof Guest)){
             throw new RuntimeException("User is not a guest.");
         }
@@ -109,8 +109,8 @@ public class AccommodationService {
         return accommodations;
     }
 
-    public void addGuestFavorite(Long guestId, Long accommodationId){
-        User user = userService.findById(guestId);
+    public void addGuestFavorite(String guestId, Long accommodationId){
+        User user = userService.findByUsername(guestId);
         if(!(user instanceof Guest)){
             throw new RuntimeException("User is not a guest.");
         }
@@ -128,10 +128,10 @@ public class AccommodationService {
 
     }
 
-    public void removeGuestFavorite(Long guestId, Long accommodationId){
-        User user = userService.findById(guestId);
+    public void removeGuestFavorite(String guestId, Long accommodationId){
+        User user = userService.findByUsername(guestId);
         if(!(user instanceof Guest)){
-            throw new UserNotFoundException(guestId);
+            throw new RuntimeException("User is not a guest.");
         }
         else{
             Guest guest = (Guest) user;
@@ -223,7 +223,7 @@ public class AccommodationService {
     }
 
 
-    public byte[] generatePeriodStatsPdf(Long hostId, Long startDate, Long endDate) throws IOException, DocumentException {
+    public byte[] generatePeriodStatsPdf(String hostId, Long startDate, Long endDate) throws IOException, DocumentException {
         List<Accommodation> accommodations = findByHostId(hostId);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         if(hostId == null) throw new FieldValidationException("Host id is null.", "hostId");
@@ -355,9 +355,9 @@ public class AccommodationService {
         }
         return totalIncome;
     }
-    public TotalStatsDTO generatePeriodStats(Long hostId, Long startDate, Long endDate) {
+    public TotalStatsDTO generatePeriodStats(String hostId, Long startDate, Long endDate) {
         List<Accommodation> accommodations = findByHostId(hostId);
-        User host = userRepository.findById(hostId).orElse(null);
+        User host = userRepository.findUserByUsername(hostId).orElse(null);
         if(!(host instanceof Host)) return new TotalStatsDTO();
         List<Reservation.Status> statuses = new ArrayList<>();
         statuses.add(Reservation.Status.ACCEPTED);
@@ -413,7 +413,7 @@ public class AccommodationService {
         return monthlyStats;
     }
 
-    public List<AccommodationTotalStatsDTO> getAllAccommodationStats(Long hostId, Long startDate, Long endDate){
+    public List<AccommodationTotalStatsDTO> getAllAccommodationStats(String hostId, Long startDate, Long endDate){
         List<Accommodation> accommodations = findByHostId(hostId);
         List<AccommodationTotalStatsDTO> accommodationTotalStatsDTOS = new ArrayList<>();
         for(Accommodation accommodation : accommodations){

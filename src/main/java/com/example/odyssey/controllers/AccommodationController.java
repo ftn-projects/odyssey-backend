@@ -73,7 +73,7 @@ public class AccommodationController {
     }
 
     @GetMapping("/host/{id}")
-    public ResponseEntity<?> findByHostId(@PathVariable Long id) {
+    public ResponseEntity<?> findByHostId(@PathVariable String id) {
         List<Accommodation> accommodations = new ArrayList<>();
         accommodations = service.findByHostId(id);
         List<AccommodationDTO> dtos = mapToDTO(accommodations);
@@ -84,7 +84,7 @@ public class AccommodationController {
     }
 
     @GetMapping("/favorites/{id}")
-    public ResponseEntity<?> findByGuestFavorites(@PathVariable Long id) {
+    public ResponseEntity<?> findByGuestFavorites(@PathVariable String id) {
         List<Accommodation> accommodations = new ArrayList<>();
         accommodations = service.findByGuestFavorites(id);
         List<AccommodationDTO> dtos = mapToDTO(accommodations);
@@ -96,7 +96,7 @@ public class AccommodationController {
 
     @PutMapping(value="favorites/{guestId}/{accommodationId}")
     public ResponseEntity<?> addGuestFavorites(
-            @PathVariable Long guestId,
+            @PathVariable String guestId,
             @PathVariable Long accommodationId
             ){
         service.addGuestFavorite(guestId, accommodationId);
@@ -105,7 +105,7 @@ public class AccommodationController {
 
     @DeleteMapping(value="favorites/{guestId}/{accommodationId}")
     public ResponseEntity<?> removeGuestFavorites(
-            @PathVariable Long guestId,
+            @PathVariable String guestId,
             @PathVariable Long accommodationId
     ){
         service.removeGuestFavorite(guestId, accommodationId);
@@ -130,7 +130,7 @@ public class AccommodationController {
 
     @GetMapping(value = "/stats/host/{id}/file", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> getPeriodStatsAsPdf(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate
     ) {
@@ -183,7 +183,7 @@ public class AccommodationController {
 
     @GetMapping(value = "/stats/host/{id}")
     public ResponseEntity<?> getPeriodStats(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate
     ) {
@@ -192,7 +192,7 @@ public class AccommodationController {
 
     @GetMapping(value = "/stats/host/{id}/all")
     public ResponseEntity<?> getPeriodStatsAllAccommodation(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(required = false) Long startDate,
             @RequestParam(required = false) Long endDate
     ) {

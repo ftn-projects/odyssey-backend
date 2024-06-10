@@ -17,12 +17,12 @@ public interface AccommodationReviewRepository extends JpaRepository<Accommodati
             "FROM AccommodationReview r " +
             "WHERE (:accommodationTitle IS NULL OR UPPER(r.accommodation.title) LIKE %:accommodationTitle%) " +
             "  AND (:accommodationId IS NULL OR r.accommodation.id = :accommodationId) " +
-            "  AND (:submitterId IS NULL OR r.submitter.id = :submitterId) " +
+            "  AND (:submitterId IS NULL OR r.submitter.username = :submitterId) " +
             "  AND (:listStatuses IS NULL OR r.status IN :listStatuses)")
     List<AccommodationReview> findAllWithFilter(
             @Param("accommodationTitle") String accommodationTitle,
             @Param("accommodationId") Long accommodationId,
-            @Param("submitterId") Long guestId,
+            @Param("submitterId") String guestId,
             @Param("listStatuses") List<Review.Status> listStatuses
     );
 

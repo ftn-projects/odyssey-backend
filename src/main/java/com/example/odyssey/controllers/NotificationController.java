@@ -4,6 +4,7 @@ import com.example.odyssey.dtos.notifications.NotificationDTO;
 import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.mappers.NotificationDTOMapper;
 import com.example.odyssey.services.NotificationService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class NotificationController {
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody NotificationDTO notificationDTO) {
+    public ResponseEntity<?> update(@Valid @RequestBody NotificationDTO notificationDTO) {
         Notification notification = NotificationDTOMapper.fromDTOtoNotification(notificationDTO);
         notification = service.save(notification);
         return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);

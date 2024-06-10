@@ -47,8 +47,8 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     @Query("SELECT a " +
             "FROM Accommodation a " +
-            "WHERE a.host.id = :hostId")
-    List<Accommodation> findAllByHostId(Long hostId);
+            "WHERE a.host.username = :hostId")
+    List<Accommodation> findAllByHostId(String hostId);
 
     @Query(
             "SELECT a "+

@@ -11,6 +11,7 @@ import com.example.odyssey.services.AccommodationService;
 import com.example.odyssey.services.NotificationService;
 import com.example.odyssey.services.ReservationService;
 import com.example.odyssey.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class ReservationController {
 
     @GetMapping("/guest/{id}")
     public ResponseEntity<?> getByGuestId(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
@@ -62,7 +63,7 @@ public class ReservationController {
 
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getReservationsByHost(
-            @PathVariable Long id,
+            @PathVariable String id,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) List<String> status,
             @RequestParam(required = false) Long startDate,
@@ -75,7 +76,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ReservationRequestDTO requestDTO) {
+    public ResponseEntity<?> create(@Valid @RequestBody ReservationRequestDTO requestDTO) {
         Reservation reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
         reservation.setStatus(Reservation.Status.REQUESTED);
         reservation.setAccommodation(accommodationService.findById(requestDTO.getAccommodationId()));

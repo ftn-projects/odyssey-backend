@@ -9,6 +9,7 @@ import com.example.odyssey.entity.users.User;
 import com.example.odyssey.services.ReportService;
 import com.example.odyssey.services.ReviewService;
 import com.example.odyssey.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +58,7 @@ public class ReportController {
     }
 
     @PostMapping("/user")
-    public ResponseEntity<?> reportUser(@RequestBody UserReportSubmissionDTO dto) {
+    public ResponseEntity<?> reportUser(@Valid @RequestBody UserReportSubmissionDTO dto) {
         User submitter = userService.findById(dto.getSubmitterId());
         if (submitter.hasRole("HOST")) {
             reportService.createHostReportGuest(new UserReport(-1L,

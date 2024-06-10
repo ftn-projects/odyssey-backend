@@ -41,7 +41,7 @@ public class ReviewService {
         return hostReviewRepository.findAll();
     }
 
-    public List<AccommodationReview> getAllAccommodationReviewsFiltered(Long accommodationId, Long submitterId, List<AccommodationReview.Status> listStatuses) {
+    public List<AccommodationReview> getAllAccommodationReviewsFiltered(Long accommodationId, String submitterId, List<AccommodationReview.Status> listStatuses) {
         return accommodationReviewRepository.findAllWithFilter(null, accommodationId, submitterId, listStatuses);
     }
 
@@ -49,7 +49,7 @@ public class ReviewService {
         return accommodationReviewRepository.findAllByHost(hostId, listStatuses);
     }
 
-    public List<HostReview> getAllHostReviewsFiltered(Long hostId, Long submitterId, List<HostReview.Status> listStatuses) {
+    public List<HostReview> getAllHostReviewsFiltered(String hostId, String submitterId, List<HostReview.Status> listStatuses) {
         return hostReviewRepository.findAllWithFilter(null, hostId, submitterId, listStatuses);
     }
 
@@ -102,7 +102,7 @@ public class ReviewService {
         List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(
                 null,
                 review.getAccommodation().getId(),
-                review.getSubmitter().getId(),
+                review.getSubmitter().getUsername(),
                 reviewStatuses
         );
 
@@ -155,8 +155,8 @@ public class ReviewService {
 
         List<HostReview> reviews = hostReviewRepository.findAllWithFilter(
                 null,
-                review.getHost().getId(),
-                review.getSubmitter().getId(),
+                review.getHost().getUsername(),
+                review.getSubmitter().getUsername(),
                 reviewStatuses
         );
 
@@ -180,15 +180,6 @@ public class ReviewService {
         return reviews.stream().mapToDouble(AccommodationReview::getRating).sum() / reviews.size();
     }
 
-    public Double getTotalRatingByHost(Long id) {
-        List<Review.Status> statuses = List.of(
-                Review.Status.ACCEPTED
-        );
-        List<HostReview> reviews = hostReviewRepository.findAllWithFilter(null, id, null, statuses);
-        if (reviews == null || reviews.isEmpty()) return 0.0;
-        return reviews.stream().mapToDouble(HostReview::getRating).sum() / reviews.size();
-    }
-
     public List<Integer> getRatingsByAccommodation(Long id) {
         List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
         List<AccommodationReview> reviews = accommodationReviewRepository.findAllWithFilter(null, id, null, statuses);
@@ -203,7 +194,7 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
-    public List<Integer> getRatingsByHost(Long id) {
+    public List<Integer> getRatingsByHost(String id) {
         List<Review.Status> statuses = Collections.singletonList(Review.Status.ACCEPTED);
         List<HostReview> reviews = hostReviewRepository.findAllWithFilter(null, id, null, statuses);
 
