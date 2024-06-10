@@ -20,21 +20,18 @@ public class NotificationController {
     @Autowired
     private NotificationService service;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         List<Notification> notifications = service.getAll();
         return new ResponseEntity<>(mapToDTO(notifications), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         Notification notification = service.findById(id);
         return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/user/{id}")
     public ResponseEntity<?> findByUserId(
             @PathVariable Long id,
@@ -45,7 +42,6 @@ public class NotificationController {
         return new ResponseEntity<>(mapToDTO(notifications), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping
     public ResponseEntity<?> update(@RequestBody NotificationDTO notificationDTO) {
         Notification notification = NotificationDTOMapper.fromDTOtoNotification(notificationDTO);
@@ -53,14 +49,12 @@ public class NotificationController {
         return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @PutMapping(value = "/{id}/{read}")
     public ResponseEntity<?> updateRead(@PathVariable Long id, @PathVariable Boolean read) {
         Notification notification = service.updateRead(id, read);
         return new ResponseEntity<>(NotificationDTOMapper.fromNotificationToDTO(notification), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);

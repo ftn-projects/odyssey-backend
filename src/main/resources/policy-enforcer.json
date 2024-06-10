@@ -8,7 +8,88 @@
   "http-method-as-scope": true,
   "paths": [
     {
-      "path": "/api/v1/accommodations",
+      "path": "/api/v1/accommodations*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/host*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/accommodation*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/accommodation/host*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/host*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/accommodation*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/accommodation/rating*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/host/rating*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/reviews/accommodationRequests/*/images*",
+      "enforcement-mode": "DISABLED",
+      "methods": [
+        {
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "path": "/api/v1/users/image/*",
       "enforcement-mode": "DISABLED",
       "methods": [
         {

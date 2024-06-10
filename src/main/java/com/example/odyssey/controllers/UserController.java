@@ -1,25 +1,17 @@
 package com.example.odyssey.controllers;
 
-import com.example.odyssey.dtos.users.*;
+import com.example.odyssey.dtos.users.PasswordDTO;
+import com.example.odyssey.dtos.users.UserDTO;
 import com.example.odyssey.entity.Address;
-import com.example.odyssey.entity.notifications.Notification;
 import com.example.odyssey.entity.users.Host;
 import com.example.odyssey.entity.users.User;
-import com.example.odyssey.exceptions.users.UserNotFoundException;
 import com.example.odyssey.mappers.UserDTOMapper;
-import com.example.odyssey.services.NotificationService;
 import com.example.odyssey.services.UserService;
-import com.example.odyssey.util.TokenUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,10 +23,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService service;
-    @Autowired
-    private NotificationService notificationService;
-    @Autowired
-    private TokenUtil tokenUtil;
 
     @Autowired
     public UserController(UserService service) {
@@ -52,7 +40,6 @@ public class UserController {
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @PutMapping
     public ResponseEntity<?> update(@Valid @RequestBody UserDTO dto) {
         User user = service.findById(dto.getId());
@@ -76,28 +63,24 @@ public class UserController {
         return new ResponseEntity<>(UserDTOMapper.fromUserToDTO(user), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @PutMapping("/password")
     public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordDTO dto) {
         service.updatePassword(dto.getUsername(), dto.getOldPassword(), dto.getNewPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @DeleteMapping("/deactivate/{id}")
     public ResponseEntity<?> deactivate(@PathVariable Long id) {
         service.deactivate(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/activate/{id}")
     public ResponseEntity<?> activate(@PathVariable Long id) {
         service.activate(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/block/{id}")
     public ResponseEntity<?> block(@PathVariable Long id) {
         service.block(id);
@@ -109,7 +92,6 @@ public class UserController {
         return new ResponseEntity<>(service.getImage(username), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('USER')")
     @PostMapping(value = "/image/{username}")
     public ResponseEntity<?> uploadImage(@PathVariable String username, @RequestParam("image") MultipartFile imageFile) throws IOException {
         service.uploadImage(username, imageFile);

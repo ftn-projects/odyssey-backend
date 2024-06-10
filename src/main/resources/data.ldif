@@ -21,32 +21,18 @@ ou: people
 
 
 
-dn: cn=admin,dc=springframework,dc=org
+dn: uid=admin,ou=people,dc=springframework,dc=org
 objectclass: top
 objectclass: person
 objectclass: organizationalPerson
 objectclass: inetOrgPerson
 sAMAccountName: admin
-mail: admin@gmail.com
-cn: admin
-givenName: admin
-uid: admin
-userPassword: 123456
-
-
-
-dn: uid=marko,ou=people,dc=springframework,dc=org
-objectclass: top
-objectclass: person
-objectclass: organizationalPerson
-objectclass: inetOrgPerson
-sAMAccountName: marko
 mail: marko@gmail.com
 cn: Marko Markovic
 givenName: Marko
 sn: Markovic
-uid: marko
-userPassword: markopassword
+uid: admin
+userPassword: 1234
 
 dn: uid=petar,ou=people,dc=springframework,dc=org
 objectclass: top

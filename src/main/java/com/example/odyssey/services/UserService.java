@@ -1,18 +1,13 @@
 package com.example.odyssey.services;
 
 import com.example.odyssey.entity.reservations.Reservation;
-import com.example.odyssey.entity.users.Guest;
-import com.example.odyssey.entity.users.Host;
-import com.example.odyssey.entity.users.Role;
 import com.example.odyssey.entity.users.User;
 import com.example.odyssey.exceptions.FieldValidationException;
 import com.example.odyssey.exceptions.ValidationException;
-import com.example.odyssey.exceptions.users.FailedActivationException;
 import com.example.odyssey.exceptions.users.FailedDeactivationException;
 import com.example.odyssey.exceptions.users.UserNotFoundException;
 import com.example.odyssey.repositories.RoleRepository;
 import com.example.odyssey.repositories.UserRepository;
-import com.example.odyssey.util.EmailUtil;
 import com.example.odyssey.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,7 +21,6 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class UserService {

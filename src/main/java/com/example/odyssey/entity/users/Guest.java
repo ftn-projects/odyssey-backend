@@ -22,10 +22,10 @@ public class Guest extends User {
     @JoinTable(name = "guest_favourited", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "accommodation_id", referencedColumnName = "id"))
     private Set<Accommodation> favorites;
 
-    public Guest(User user){
+    public Guest(User user) {
         this(user.getId(), user.getStatus(), user.getName(), user.getSurname(), user.getEmail(),
                 user.getPassword(), user.getAddress(), user.getPhone(), user.getProfileImage(),
-                user.getSettings(),user.getRoles(),new HashSet<>(), user.getUsername());
+                user.getSettings(), user.getRoles(), new HashSet<>(), user.getUsername());
     }
 
     public Guest(Long id, AccountStatus status, String name, String surname,

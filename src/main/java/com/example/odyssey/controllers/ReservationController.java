@@ -32,8 +32,6 @@ public class ReservationController {
     @Autowired
     private NotificationService notificationService;
 
-    // GET method for getting all reservations
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll() {
         List<Reservation> reservations = service.getAll();
@@ -41,8 +39,6 @@ public class ReservationController {
         return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
     }
 
-    // GET method for getting all reservations for accommodation
-    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getByAccommodationId(@PathVariable Long id) {
         List<Reservation> reservations = service.findByAccommodation(id);
@@ -50,8 +46,6 @@ public class ReservationController {
         return new ResponseEntity<>(mapToDTO(reservations), HttpStatus.OK);
     }
 
-    // GET method for getting all reservations for guest
-    @PreAuthorize("hasAuthority('GUEST')")
     @GetMapping("/guest/{id}")
     public ResponseEntity<?> getByGuestId(
             @PathVariable Long id,
@@ -66,8 +60,6 @@ public class ReservationController {
         return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
-    // GET method for getting all reservations for host
-    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getReservationsByHost(
             @PathVariable Long id,
@@ -82,8 +74,6 @@ public class ReservationController {
         return new ResponseEntity<>(mapToAccreditDTO(reservations), HttpStatus.OK);
     }
 
-    // POST method for creating a reservation
-    @PreAuthorize("hasAuthority('GUEST')")
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ReservationRequestDTO requestDTO) {
         Reservation reservation = ReservationRequestDTOMapper.fromDTOtoReservation(requestDTO);
@@ -97,8 +87,6 @@ public class ReservationController {
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.CREATED);
     }
 
-    // PUT method for updating a reservation status
-    @PreAuthorize("hasAuthority('HOST') || hasAuthority('GUEST')")
     @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(
             @PathVariable Long id,

@@ -57,11 +57,6 @@ public class User implements UserDetails {
         return roles;
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
     @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {

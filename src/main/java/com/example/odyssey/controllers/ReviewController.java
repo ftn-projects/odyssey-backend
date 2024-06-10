@@ -22,20 +22,15 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/reviews")
 public class ReviewController {
-
     @Autowired
     private ReviewService service;
-
     @Autowired
     private NotificationService notificationService;
-
     @Autowired
     private AccommodationService accommodationService;
-
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAll(
             @RequestParam(required = false) String search,
@@ -84,7 +79,6 @@ public class ReviewController {
         return new ResponseEntity<>(reviews.stream().map(AccommodationReviewDTO::new).toList(), HttpStatus.OK);
     }
 
-    //    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/host/{id}")
     public ResponseEntity<?> getHostReviewById(@PathVariable Long id) {
         HostReview review;
@@ -93,7 +87,6 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
     }
 
-    //    @PreAuthorize("hasAuthority('HOST')")
     @GetMapping("/accommodation/{id}")
     public ResponseEntity<?> getAccommodationReviewById(@PathVariable Long id) {
         AccommodationReview review;
@@ -114,7 +107,6 @@ public class ReviewController {
         return new ResponseEntity<>(ratings, HttpStatus.OK);
     }
 
-
     @PostMapping("/host")
     public ResponseEntity<?> createHostReview(@RequestBody HostReviewDTO dto) {
         HostReview review = service.saveHostReview(
@@ -124,7 +116,6 @@ public class ReviewController {
 
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.CREATED);
     }
-
 
     @PostMapping("/accommodation")
     public ResponseEntity<?> createAccommodationReview(@RequestBody AccommodationReviewDTO dto) {
@@ -139,7 +130,6 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromAccommodationReviewToDTO(review), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
     @PutMapping("/host/report/{id}")
     public ResponseEntity<?> reportHostReview(@PathVariable Long id, @RequestBody HostReviewDTO reviewDTO) {
         HostReview review = ReviewDTOMapper.fromDTOtoHostReview(reviewDTO);
@@ -149,7 +139,6 @@ public class ReviewController {
         return new ResponseEntity<>(ReviewDTOMapper.fromHostReviewToDTO(review), HttpStatus.OK);
     }
 
-    //    @PreAuthorize("hasAuthority('HOST')")
     @PutMapping("/accommodation/report/{id}")
     public ResponseEntity<?> reportAccommodationReview(@PathVariable Long id) {
         AccommodationReview review = service.reportAccommodationReview(id);
@@ -158,7 +147,6 @@ public class ReviewController {
         else
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
-
 
     @DeleteMapping("/host/{id}")
     public ResponseEntity<?> deleteHostReview(@PathVariable Long id) {
@@ -176,33 +164,22 @@ public class ReviewController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/accept/{id}")
     public ResponseEntity<?> accept(@PathVariable Long id) {
         service.accept(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/decline/{id}")
     public ResponseEntity<?> decline(@PathVariable Long id) {
         service.decline(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/dismiss/{id}")
     public ResponseEntity<?> dismiss(@PathVariable Long id) {
         service.dismiss(id);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private static List<AccommodationReviewDTO> mapAccommodationReviewToDTO(List<AccommodationReview> users) {
-        return users.stream().map(AccommodationReviewDTO::new).toList();
-    }
-
-    private static List<HostReviewDTO> mapHostReviewToDTO(List<HostReview> users) {
-        return users.stream().map(HostReviewDTO::new).toList();
     }
 
     private ReviewDTO mapReviewToDTO(Review review) {

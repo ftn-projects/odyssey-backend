@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -39,7 +40,27 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> CORSConfigurer())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .headers(headers ->
+                headers.xssProtection(
+                        xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)
+                ).contentSecurityPolicy(
+                        cps -> cps.policyDirectives("script-src 'self'")
+                ))
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/accommodations",
+                                "/api/v1/accommodations/**",
+                                "/api/v1/accommodationRequests/*/images",
+                                "/api/v1/accommodationRequests/*/images/*",
+                                "/api/v1/users/image/*",
+                                "/api/v1/reviews/host",
+                                "/api/v1/reviews/accommodation",
+                                "/api/v1/reviews/accommodation/host/**",
+                                "/api/v1/reviews/host/**",
+                                "/api/v1/reviews/accommodation/**",
+                                "/api/v1/reviews/accommodation/rating/**",
+                                "/api/v1/reviews/host/rating/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(auth -> auth.jwt(Customizer.withDefaults()))

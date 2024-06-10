@@ -30,21 +30,18 @@ public class AccommodationRequestController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public ResponseEntity<?> findByStatus(@RequestParam AccommodationRequest.Status status) {
         List<AccommodationRequest> requests = service.findByStatus(status);
         return new ResponseEntity<>(mapToDTO(requests), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         AccommodationRequest request = service.findById(id);
         return new ResponseEntity<>(AccommodationRequestDTOMapper.fromAccommodationRequestToDTO(request), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/status/{id}")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam AccommodationRequest.Status status) throws IOException {
         AccommodationRequest request = service.findById(id);
@@ -62,14 +59,12 @@ public class AccommodationRequestController {
         return new ResponseEntity<>(service.getImageNames(id), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
     @PostMapping(value = "/image/{id}")
     public ResponseEntity<?> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException {
         service.uploadImage(id, image);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('HOST')")
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody AccommodationRequestCreationDTO dto) throws IOException {
         AccommodationRequest.Details details = AccommodationDTOMapper.fromCreationDTOToAccommodationDetails(dto);
