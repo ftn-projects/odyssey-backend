@@ -28,4 +28,28 @@ public class ReservationRepositoryTest {
 
         assertThat(savedReservation).usingRecursiveComparison().ignoringFields("id").isEqualTo(reservation);
     }
+
+    @Test
+    public void shouldFindReservationById() {
+        Reservation reservation = new Reservation(null, 150.0, 2, Reservation.Status.ACCEPTED,
+                LocalDateTime.now(), LocalDateTime.now().plusDays(3),
+                new TimeSlot(LocalDateTime.now(), LocalDateTime.now().plusHours(2)), new Accommodation(), new Guest());
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        Reservation foundReservation = reservationRepository.findById(savedReservation.getId()).orElse(null);
+
+        assertThat(foundReservation).usingRecursiveComparison().isEqualTo(savedReservation);
+    }
+
+    @Test
+    public void shouldNotFindReservationByInvalidId() {
+        Reservation reservation = new Reservation(null, 150.0, 2, Reservation.Status.ACCEPTED,
+                LocalDateTime.now(), LocalDateTime.now().plusDays(3),
+                new TimeSlot(LocalDateTime.now(), LocalDateTime.now().plusHours(2)), new Accommodation(), new Guest());
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        Reservation foundReservation = reservationRepository.findById(99L).orElse(null);
+
+        assertThat(foundReservation).isNull();
+    }
 }
