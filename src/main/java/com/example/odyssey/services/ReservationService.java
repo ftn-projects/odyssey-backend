@@ -135,12 +135,15 @@ public class ReservationService {
             throw new ValidationException("Reservation has already been accepted.");
         if (!reservation.getStatus().equals(REQUESTED))
             throw new ValidationException("Reservation status is not requested.");
-        if (!reservation.getTimeSlot().getStart().isAfter(LocalDateTime.now()))
-            throw new ValidationException("Reservation start date has already passed.");
 
         reservation.setStatus(ACCEPTED);
         reservation = save(reservation);
-        cancelOverlapping(reservation.getAccommodation().getId(), reservation);
+
+        var overlapping = getOverlapping(reservation.getAccommodation().getId(), reservation);
+        for (Reservation r : overlapping) {
+            r.setStatus(Reservation.Status.DECLINED);
+            save(r);
+        }
 
         return reservation;
     }
@@ -161,14 +164,15 @@ public class ReservationService {
         return cancels;
     }
 
-    public void cancelOverlapping(Long accommodationId, Reservation reservation) {
+    public List<Reservation> getOverlapping(Long accommodationId, Reservation reservation) {
+        var overlapping = new ArrayList<Reservation>();
         List<Reservation> reservations = findByAccommodation(accommodationId);
         for (Reservation i : reservations) {
             if (i.getTimeSlot().overlaps(reservation.getTimeSlot()) && i.getStatus().equals(Reservation.Status.REQUESTED)) {
-                i.setStatus(Reservation.Status.DECLINED);
-                save(i);
+                overlapping.add(i);
             }
         }
+        return overlapping;
     }
 
     public void declineExpiredReservations() {
@@ -184,7 +188,11 @@ public class ReservationService {
         if (r.getAccommodation().getAutomaticApproval()) {
             r.setStatus(ACCEPTED);
             save(r);
-            cancelOverlapping(r.getAccommodation().getId(), r);
+            var overlapping = getOverlapping(r.getAccommodation().getId(), r);
+            for (Reservation i : overlapping) {
+                i.setStatus(Reservation.Status.DECLINED);
+                save(i);
+            }
         }
     }
 
