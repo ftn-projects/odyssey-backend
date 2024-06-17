@@ -10,10 +10,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class LoggedInPage {
-    private WebDriver driver;
+    private final WebDriver driver;
 
-    @FindBy(xpath = "//a[text()='Create']")
-    private WebElement create;
+    @FindBy(xpath = "//a[text()='Reservations']")
+    public WebElement reservations;
 
     public LoggedInPage(WebDriver driver){
         this.driver = driver;
@@ -22,8 +22,10 @@ public class LoggedInPage {
 
     public void waitUntilOpen(){
         (new WebDriverWait(driver, Duration.ofSeconds(10)))
-                .until(ExpectedConditions.elementToBeClickable(create));
+                .until(ExpectedConditions.elementToBeClickable(reservations));
     }
 
-    public void clickCreate(){ create.click(); }
+    public void navigateToReservations(){
+        reservations.click();
+    }
 }
