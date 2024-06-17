@@ -90,11 +90,14 @@ public class ReservationController {
         reservation.setStatus(Reservation.Status.REQUESTED);
         reservation.setAccommodation(accommodationService.findById(requestDTO.getAccommodationId()));
         reservation.setGuest((Guest) userService.findById(requestDTO.getGuestId()));
-        reservation = service.create(reservation);
-        service.automaticApproval(reservation);
-
-        notificationService.notifyRequested(reservation);
-        return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.CREATED);
+        try {
+            reservation = service.create(reservation);
+            service.automaticApproval(reservation);
+            notificationService.notifyRequested(reservation);
+            return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to create reservation: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     // PUT method for updating a reservation status
