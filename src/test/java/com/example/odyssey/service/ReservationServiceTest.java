@@ -11,18 +11,21 @@ import com.example.odyssey.services.ReservationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.example.odyssey.entity.reservations.Reservation.Status.ACCEPTED;
+import static com.example.odyssey.entity.reservations.Reservation.Status.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,59 +71,106 @@ public class ReservationServiceTest {
         assertEquals("Reservation status is not requested.", thrown.getMessage());
     }
 
-    @Test
-    void shouldAcceptRequestedReservationAndDeclineOverlappingReservations() {
-        Long accommodationId = 1L;
-        var reservation = new Reservation();
-        reservation.setStatus(Reservation.Status.REQUESTED);
-        var accommodation = new Accommodation();
-        accommodation.setId(accommodationId);
-        reservation.setAccommodation(accommodation);
-        reservation.setTimeSlot(new TimeSlot(
-                LocalDateTime.of(2023, 6, 17, 10, 0),
-                LocalDateTime.of(2023, 6, 17, 12, 0)
-        ));
-
-        var overlappingReservation = new Reservation();
-        overlappingReservation.setStatus(Reservation.Status.REQUESTED);
-        overlappingReservation.setAccommodation(accommodation);
-        overlappingReservation.setTimeSlot(new TimeSlot(
-                LocalDateTime.of(2023, 6, 17, 11, 0),
-                LocalDateTime.of(2023, 6, 17, 13, 0)
-        ));
-
-        when(reservationRepository.findById(eq(1L))).thenReturn(Optional.of(reservation));
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
-        when(service.getOverlapping(accommodationId, any())).thenReturn(List.of(overlappingReservation));
-
-        Reservation acceptedReservation = service.accept(1L);
-
-        assertEquals(Reservation.Status.ACCEPTED, acceptedReservation.getStatus());
-        verify(reservationRepository, times(2)).save(any(Reservation.class));
-        assertEquals(Reservation.Status.DECLINED, overlappingReservation.getStatus());
+    static Stream<Arguments> provideReservationsForOverlapTests() {
+        return Stream.of(
+                /* Test cases for overlapping reservations */
+                Arguments.of(
+                        getTimeSlot("2024/06/19", "2024/06/22"),
+                        List.of(getTimeSlot("2024/06/21", "2024/06/24")),
+                        List.of(DECLINED)
+                ),
+                Arguments.of(
+                        getTimeSlot("2024/06/25", "2024/06/28"),
+                        List.of(getTimeSlot("2024/06/22", "2024/06/26")),
+                        List.of(DECLINED)
+                ),
+                Arguments.of(
+                        getTimeSlot("2024/06/19", "2024/06/22"),
+                        List.of(getTimeSlot("2024/06/21", "2024/06/25"), getTimeSlot("2024/06/20", "2024/06/25")),
+                        List.of(DECLINED, DECLINED)
+                ),
+                Arguments.of(
+                        getTimeSlot("2024/06/25", "2024/06/28"),
+                        List.of(getTimeSlot("2024/06/22", "2024/06/26"), getTimeSlot("2024/06/22", "2024/06/27")),
+                        List.of(DECLINED, DECLINED)
+                ),
+                /* Test cases for some overlapping reservations (not all) */
+                Arguments.of(
+                        getTimeSlot("2024/06/25", "2024/06/28"),
+                        List.of(getTimeSlot("2024/06/22", "2024/06/23"), getTimeSlot("2024/06/22", "2024/06/27")),
+                        List.of(REQUESTED, DECLINED)
+                ),
+                Arguments.of(
+                        getTimeSlot("2024/06/19", "2024/06/22"),
+                        List.of(getTimeSlot("2024/06/20", "2024/06/23"), getTimeSlot("2024/06/23", "2024/06/27")),
+                        List.of(DECLINED, REQUESTED)
+                ),
+                /* Test cases for non-overlapping reservations */
+                Arguments.of(
+                        getTimeSlot("2024/06/19", "2024/06/22"),
+                        List.of(getTimeSlot("2024/06/22", "2024/06/24")),
+                        List.of(REQUESTED)
+                ),
+                Arguments.of(
+                        getTimeSlot("2024/06/25", "2024/06/28"),
+                        List.of(getTimeSlot("2024/06/22", "2024/06/25")),
+                        List.of(REQUESTED)
+                ),
+                Arguments.of(
+                        getTimeSlot("2024/06/19", "2024/06/22"),
+                        List.of(getTimeSlot("2024/06/23", "2024/06/27"), getTimeSlot("2024/06/23", "2024/06/26")),
+                        List.of(REQUESTED, REQUESTED)
+                ),
+                Arguments.of(
+                        getTimeSlot("2024/06/25", "2024/06/28"),
+                        List.of(getTimeSlot("2024/06/21", "2024/06/24"), getTimeSlot("2024/06/29", "2024/06/30")),
+                        List.of(REQUESTED, REQUESTED)
+                )
+        );
     }
 
-    @Test
-    void shouldHandleNoOverlappingReservations() {
+    @ParameterizedTest
+    @MethodSource("provideReservationsForOverlapTests")
+    void shouldUpdateStatusesForOverlappingReservations(TimeSlot acceptingTimeSlot, List<TimeSlot> reservationTimeSlots, List<Reservation.Status> expectedStatuses) {
         Long accommodationId = 1L;
-        var reservation = new Reservation();
-        reservation.setStatus(Reservation.Status.REQUESTED);
         var accommodation = new Accommodation();
         accommodation.setId(accommodationId);
+
+        var reservation = new Reservation();
+        reservation.setStatus(Reservation.Status.REQUESTED);
         reservation.setAccommodation(accommodation);
-        reservation.setTimeSlot(new TimeSlot(
-                LocalDateTime.of(2023, 6, 17, 10, 0),
-                LocalDateTime.of(2023, 6, 17, 12, 0)
-        ));
+        reservation.setTimeSlot(acceptingTimeSlot);
+
+        var reservations = reservationTimeSlots.stream().map(slot -> {
+            var r = new Reservation();
+            r.setStatus(REQUESTED);
+            r.setAccommodation(accommodation);
+            r.setTimeSlot(slot);
+            return r;
+        }).collect(Collectors.toList());
 
         when(reservationRepository.findById(eq(1L))).thenReturn(Optional.of(reservation));
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
-        when(service.getOverlapping(accommodationId, any())).thenReturn(Collections.emptyList());
+        when(reservationRepository.findReservationsByAccommodation_Id(accommodationId)).thenReturn(reservations);
 
         Reservation acceptedReservation = service.accept(1L);
 
-        assertEquals(Reservation.Status.ACCEPTED, acceptedReservation.getStatus());
-        verify(reservationRepository, times(1)).save(any(Reservation.class));
+        assertEquals(ACCEPTED, acceptedReservation.getStatus());
+        for (int i = 0; i < reservations.size(); ++i)
+            assertEquals(expectedStatuses.get(i), reservations.get(i).getStatus());
+        verify(reservationRepository, times(countDeclined(expectedStatuses) + 1)).save(any(Reservation.class));
+    }
+
+    private static TimeSlot getTimeSlot(String start, String end) {
+        var formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return new TimeSlot(
+                LocalDate.parse(start, formatter).atStartOfDay(),
+                LocalDate.parse(end, formatter).atStartOfDay()
+        );
+    }
+
+    private static int countDeclined(List<Reservation.Status> statuses) {
+        return (int) statuses.stream().filter(status -> status.equals(DECLINED)).count();
     }
 }
 
