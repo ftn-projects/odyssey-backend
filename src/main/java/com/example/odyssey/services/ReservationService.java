@@ -22,6 +22,9 @@ public class ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 
+    @Autowired
+    private OverlappingService overlappingService;
+
     public List<Reservation> getAll() {
         return reservationRepository.findAll();
     }
@@ -53,7 +56,8 @@ public class ReservationService {
         if (reservation.getTimeSlot().getStart().isAfter(reservation.getTimeSlot().getEnd()))
             throw new ValidationException("Reservation start date is after end date.");
 
-        if (overlapsReservation(reservation.getAccommodation().getId(), reservation.getTimeSlot()))
+
+        if (overlappingService.overlapsReservation(reservation.getAccommodation().getId(), reservation.getTimeSlot()))
             throw new ValidationException("Accommodation is not available for selected period.");
         return reservationRepository.save(reservation);
     }
