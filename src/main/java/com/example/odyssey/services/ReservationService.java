@@ -2,9 +2,9 @@ package com.example.odyssey.services;
 
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.reservations.Reservation;
+import com.example.odyssey.exceptions.ValidationException;
 import com.example.odyssey.exceptions.reservations.FailedCancellationException;
 import com.example.odyssey.repositories.ReservationRepository;
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +12,11 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.TimeZone;
 
 import static com.example.odyssey.entity.reservations.Reservation.Status.ACCEPTED;
+import static com.example.odyssey.entity.reservations.Reservation.Status.REQUESTED;
 
 @Service
 public class ReservationService {
@@ -27,7 +29,8 @@ public class ReservationService {
     }
 
     public Reservation find(Long id) {
-        return reservationRepository.findReservationsById(id);
+        return reservationRepository.findById(id).orElseThrow(() ->
+                new NoSuchElementException("Reservation with id " + id + " not found."));
     }
 
     public List<Reservation> findByAccommodation(Long id) {
@@ -105,16 +108,16 @@ public class ReservationService {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(date), TimeZone.getDefault().toZoneId());
     }
 
-    public void updateStatus(Reservation reservation, String status) {
+    public Reservation updateStatus(Long id, String status) {
+        var reservation = find(id);
+
         if (status.equals("CANCELLED_REQUEST") || status.equals("CANCELLED_RESERVATION")) {
             if (LocalDateTime.now().isAfter(reservation.getTimeSlot().getStart().minusDays(
                     reservation.getAccommodation().getCancellationDue().toDays())))
                 throw new FailedCancellationException("because due date has already passed.");
         }
 
-        if (status.equals("ACCEPTED") && reservation.getStatus().equals(ACCEPTED))
-            throw new ValidationException("Reservation has already been accepted.");
-        else if (status.equals("DECLINED") && reservation.getStatus().equals(Reservation.Status.DECLINED))
+        if (status.equals("DECLINED") && reservation.getStatus().equals(Reservation.Status.DECLINED))
             throw new ValidationException("Reservation has already been declined.");
         else if (status.equals("CANCELLED_REQUEST") && reservation.getStatus().equals(Reservation.Status.CANCELLED_REQUEST))
             throw new ValidationException("Reservation request has already been cancelled.");
@@ -122,8 +125,24 @@ public class ReservationService {
             throw new ValidationException("Reservation has already been cancelled.");
 
         reservation.setStatus(Reservation.Status.valueOf(status));
+        return save(reservation);
+    }
+
+    public Reservation accept(Long id) {
+        Reservation reservation = find(id);
+
+        if (reservation.getStatus().equals(ACCEPTED))
+            throw new ValidationException("Reservation has already been accepted.");
+        if (!reservation.getStatus().equals(REQUESTED))
+            throw new ValidationException("Reservation status is not requested.");
+        if (!reservation.getTimeSlot().getStart().isAfter(LocalDateTime.now()))
+            throw new ValidationException("Reservation start date has already passed.");
+
+        reservation.setStatus(ACCEPTED);
         reservation = save(reservation);
         cancelOverlapping(reservation.getAccommodation().getId(), reservation);
+
+        return reservation;
     }
 
     public boolean overlapsReservation(Long accommodationId, TimeSlot slot) {
@@ -143,7 +162,6 @@ public class ReservationService {
     }
 
     public void cancelOverlapping(Long accommodationId, Reservation reservation) {
-        if (!reservation.getStatus().equals(ACCEPTED)) return;
         List<Reservation> reservations = findByAccommodation(accommodationId);
         for (Reservation i : reservations) {
             if (i.getTimeSlot().overlaps(reservation.getTimeSlot()) && i.getStatus().equals(Reservation.Status.REQUESTED)) {
@@ -180,4 +198,5 @@ public class ReservationService {
             save(r);
         });
     }
+
 }

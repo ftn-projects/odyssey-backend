@@ -1,3 +1,0 @@
-INSERT INTO accommodation_requests (type, status, submission_date, host_id, accommodation_id, new_accommodation_type, new_title, new_description, address_street, address_city, address_country, new_pricing, new_default_price, new_automatic_approval, new_cancellation_due, new_min_guests, new_max_guests)
-VALUES
-    (0, 2, '2023-11-4 12:00:00', 2, null, 1, 'Soba', '', 'Dušana Radovića 40', 'Vrnjačka Banja', 'Serbia', 0, 4500.0, true, 125, 1, 3);

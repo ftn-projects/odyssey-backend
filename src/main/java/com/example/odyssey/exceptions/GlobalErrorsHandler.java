@@ -41,9 +41,9 @@ public class GlobalErrorsHandler {
     }
 
     @ExceptionHandler({ValidationException.class}) // FOR GENERAL VALIDATION
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected ResponseEntity<String> handleConstraintViolationException(ValidationException e) {
-        return new ResponseEntity<>(e.getMessage(), getHeaders("validation"), HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(e.getMessage(), getHeaders("validation"), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({UnsupportedOperationException.class}) // FOR INVALID OPERATION

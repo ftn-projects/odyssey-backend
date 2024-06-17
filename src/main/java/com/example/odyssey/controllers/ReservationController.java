@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -104,8 +105,7 @@ public class ReservationController {
             @PathVariable Long id,
             @RequestParam String status
     ) {
-        Reservation reservation = service.find(id);
-        service.updateStatus(reservation, status);
+        var reservation = service.updateStatus(id, status);
 
         if (reservation.getStatus().equals(Reservation.Status.CANCELLED_RESERVATION))
             notificationService.notifyCancelled(reservation);
@@ -114,6 +114,14 @@ public class ReservationController {
         else if (reservation.getStatus().equals(Reservation.Status.DECLINED))
             notificationService.notifyDeclined(reservation);
 
+        return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('HOST')")
+    @PutMapping("/accept/{id}")
+    public ResponseEntity<?> acceptReservation(@PathVariable Long id) {
+        var reservation = service.accept(id);
+        notificationService.notifyAccepted(reservation);
         return new ResponseEntity<>(ReservationDTOMapper.fromReservationToDTO(reservation), HttpStatus.OK);
     }
 
