@@ -4,10 +4,7 @@ import com.example.odyssey.dtos.TimeSlotDTO;
 import com.example.odyssey.dtos.reservations.ReservationRequestDTO;
 import com.example.odyssey.entity.TimeSlot;
 import com.example.odyssey.entity.reservations.Reservation;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -62,6 +59,7 @@ public class ReservationControllerIntegrationTest {
     );
 
 
+    @DisplayName("Create reservation unauthorized")
     @Test
     public void CreateReservationUnauthorizedTest() throws Exception{
         SetupTests("petar@gmail.com","petar");
@@ -78,6 +76,7 @@ public class ReservationControllerIntegrationTest {
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
+    @DisplayName("Create reservation success")
     @Test
     public void CreateReservationSuccessTest() throws Exception{
         ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
@@ -93,6 +92,7 @@ public class ReservationControllerIntegrationTest {
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
     }
 
+    @DisplayName("Create reservation when start date is after end date")
     @Test
     public void CreateReservationStartAfterEndSlotTest() throws Exception{
         ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
@@ -110,6 +110,7 @@ public class ReservationControllerIntegrationTest {
     }
 
 
+    @DisplayName("Create reservation when start date is in the past")
     @Test
     public void CreateReservationPastInvalidSlotTest() throws Exception{
         ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
@@ -126,6 +127,7 @@ public class ReservationControllerIntegrationTest {
         assertEquals("Failed to create reservation: Reservation start date is in the past.", result.getBody());
     }
 
+    @DisplayName("Create reservation when accommodation is not available")
     @Test
     public void CreateReservationInvalidSlotTest() throws Exception{
         ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
@@ -142,6 +144,7 @@ public class ReservationControllerIntegrationTest {
         assertEquals("Failed to create reservation: Accommodation is not available for selected period.", result.getBody());
     }
 
+    @DisplayName("Create reservation when guest number is invalid")
     @Test
     public void CreateReservationInvalidGuestNumberTest() throws Exception{
         ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO();
@@ -180,7 +183,7 @@ public class ReservationControllerIntegrationTest {
     private ResponseEntity<String> sendUnauthorizedRequest(ReservationRequestDTO dto) {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://localhost:" + randomServerPort + "/api/v1/reservations");
 
-        HttpHeaders headers = new HttpHeaders(); // No authorization header
+        HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<ReservationRequestDTO> request = new HttpEntity<>(dto, headers);
 

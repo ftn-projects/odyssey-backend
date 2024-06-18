@@ -1,6 +1,5 @@
 package com.example.odyssey.selenium.student3.tests;
 
-import com.example.odyssey.entity.users.Guest;
 import com.example.odyssey.selenium.student3.pages.GuestHomePage;
 import com.example.odyssey.selenium.student3.pages.HomePage;
 import com.example.odyssey.selenium.student3.pages.LoginPage;
@@ -10,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)

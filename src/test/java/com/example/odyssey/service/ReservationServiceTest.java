@@ -10,6 +10,7 @@ import com.example.odyssey.services.OverlappingService;
 import com.example.odyssey.services.ReservationService;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -94,6 +95,7 @@ public class ReservationServiceTest {
     );
 
 
+    @DisplayName("Test successful reservation creation.")
     @Test
     public void ValidReservationCreation(){
         Reservation reservation = new Reservation();
@@ -108,6 +110,7 @@ public class ReservationServiceTest {
         verify(reservationRepository, times(1)).save(reservation);
     }
 
+    @DisplayName("Test reservation creation when guest number is invalid.")
     @Test
     public void InvalidGuestNumberCreation(){
         Reservation reservation = new Reservation();
@@ -123,6 +126,7 @@ public class ReservationServiceTest {
         verify(reservationRepository, times(0)).save(reservation);
     }
 
+    @DisplayName("Test reservation creation when start date is in the past.")
     @Test
     public void StartDayPastCreation(){
         Reservation reservation = new Reservation();
@@ -138,6 +142,7 @@ public class ReservationServiceTest {
         verify(reservationRepository, times(0)).save(reservation);
     }
 
+    @DisplayName("Test reservation creation when start date is after end date.")
     @Test
     public void StartDayAfterEndCreation(){
         Reservation reservation = new Reservation();
@@ -155,6 +160,7 @@ public class ReservationServiceTest {
 
 
 
+    @DisplayName("Test reservation creation when accommodation is not available.")
     @Test
     public void InvalidReservationCreation(){
 
